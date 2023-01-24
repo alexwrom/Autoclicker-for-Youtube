@@ -1,0 +1,56 @@
+{
+  "project_info": {
+    "project_number": "160062857426",
+    "project_id": "youtube-clicker",
+    "storage_bucket": "youtube-clicker.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:160062857426:android:1011bf8d6edb15297d8d0b",
+        "android_client_info": {
+          "package_name": "com.alex.youtube_clicker"
+        }
+      },
+
+      "oauth_client": [
+        {
+          "client_id": "160062857426-idq2sfno0838lnqmbbum7np2dcmb6bso.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.alex.youtube_clicker",
+            "certificate_hash": "ee3fd008987090797fc6461a7baf76f93001d60d"
+          }
+        },
+        {
+          "client_id": "160062857426-nd47pb2qab54pkbd42oeac2aae7dda2k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.alex.youtube_clicker",
+            "certificate_hash": "05c8f26ee9436b79c38a2eee6e42d235936c7f8d"
+
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCGeEtnly7g5LstarASgdJ3DVmTbNH1bVI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "160062857426-1q5nmqgvumhv01oe3mibe347gqob6lum.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.alex.youtubeClicker"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

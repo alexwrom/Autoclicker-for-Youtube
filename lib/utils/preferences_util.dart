@@ -1,0 +1,49 @@
+
+
+ import 'dart:convert';
+
+import 'package:shared_preferences/shared_preferences.dart';
+
+class PreferencesUtil{
+
+  static SharedPreferences? _prefsInstance;
+
+
+  static Future<SharedPreferences?> init() async {
+   _prefsInstance = await SharedPreferences.getInstance();
+   return _prefsInstance;
+  }
+
+
+  static Future<void> setHeadersGoogleApi(Map<String,String> header)async{
+       final headerToString=json.encode(header);
+      await _prefsInstance!.setString(prefsKeyGoogleToken, headerToString);
+  }
+
+  static Future<void> setUrlAvatar(String url)async{
+    await _prefsInstance!.setString(prefsKeyUrlAvatar, url);
+  }
+
+  static Future<void> setUserNAmer(String name)async{
+    await _prefsInstance!.setString(prefsKeyUserName, name);
+  }
+
+
+
+
+ static String get getHeaderApiGoogle =>_prefsInstance!.getString(prefsKeyGoogleToken)??'';
+  static String get getUrlAvatar=>_prefsInstance!.getString(prefsKeyUrlAvatar)??'';
+  static String get getUserName=>_prefsInstance!.getString(prefsKeyUserName)??'';
+
+  static clear(){
+    _prefsInstance!.clear();
+  }
+
+
+ }
+
+
+
+  const String prefsKeyGoogleToken='token';
+  const String prefsKeyUrlAvatar='avatar';
+  const String prefsKeyUserName='name';
