@@ -6,11 +6,14 @@ import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:youtube_clicker/di/locator.dart';
 import 'package:youtube_clicker/domain/models/video_model.dart';
 import 'package:youtube_clicker/resourses/colors_app.dart';
 
+import '../../components/dialoger.dart';
+import '../../data/models/hive_models/video.dart';
 import '../../data/services/youtube_api_service.dart';
 import '../../utils/parse_time_duration.dart';
 import 'bloc/translate_bloc.dart';
@@ -32,6 +35,8 @@ class _TranslatePageState extends State<TranslatePage> {
 
    String _textButton='Translate title and description';
    late TranslateBloc _translateBloc;
+   List<String> _listCodeLanguage=[];
+   final boxVideo=Hive.box('video_box');
 
 
   @override
@@ -204,33 +209,60 @@ class _TranslatePageState extends State<TranslatePage> {
                           Visibility(
                             visible: !state.translateStatus.isTranslating,
                             child: Padding(
-                              padding: const EdgeInsets.only(left: 20),
-                              child: ElevatedButton(
-                                style: ButtonStyle(
-                                  shape: MaterialStatePropertyAll(RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20)
-                                  )),
-                                  backgroundColor: MaterialStateProperty.all(colorRed),
-                                ),
+                              padding: const EdgeInsets.only(left: 20,right: 20),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  ElevatedButton(
+                                    style: ButtonStyle(
+                                      shape: MaterialStatePropertyAll(RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(20)
+                                      )),
+                                      backgroundColor: MaterialStateProperty.all(colorRed),
+                                    ),
 
-                                  onPressed:()async{
-                                     final list=await Navigator.of(context).push(MaterialPageRoute(builder: (_)=> ChoiceLanguagePage(idVideo:widget.videoModel.idVideo)));
-                                     if(list!=null){
-                                       if((list as List<String>).isNotEmpty){
-                                         _translateBloc.add(StartTranslateEvent(
-                                             codeLanguage: list,
-                                             videoModel: widget.videoModel));
-                                       }
-                                     }
+                                      onPressed:()async{
+
+                                        if(_listCodeLanguage.isNotEmpty){
+                                          _translateBloc.add(StartTranslateEvent(
+                                              codeLanguage: _listCodeLanguage,
+                                              videoModel: widget.videoModel));
+                                        }else{
+                                          Dialoger.showMessageSnackBar('No languages selected for translation', context);
+                                        }
+
+                                       },
+                                      child: Text(_textButton,
+                                    style:const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500
+                                    ),)),
+                                  ElevatedButton(
+                                      style: ButtonStyle(
+                                        shape: MaterialStatePropertyAll(RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(20)
+                                        )),
+                                        backgroundColor: MaterialStateProperty.all(colorPrimary),
+                                      ),
+
+                                      onPressed:()async{
+                                        final list=await Navigator.of(context).push(MaterialPageRoute(builder: (_)=> ChoiceLanguagePage(idVideo:widget.videoModel.idVideo)));
+                                        if(list!=null){
+                                          _listCodeLanguage=list as List<String>;
+
+                                        }
 
 
-                                   },
-                                  child: Text(_textButton,
-                                style:const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500
-                                ),)),
+                                      },
+                                      child:const Text('+',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 30,
+                                            fontWeight: FontWeight.w400
+                                        ),)),
+                                ],
+                              ),
                             ),
                           ),
 
@@ -362,6 +394,12 @@ class _TranslatePageState extends State<TranslatePage> {
   void initState() {
     super.initState();
     _translateBloc=TranslateBloc();
+    boxVideo.keys.map((key) {
+      final Video value = boxVideo.get(key);
+      if(widget.videoModel.idVideo==value.id){
+        _listCodeLanguage=value.codeLanguage;
+      }
+    }).toList();
 
   }
 
