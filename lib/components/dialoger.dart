@@ -160,7 +160,7 @@ class Dialoger {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         backgroundColor: colorPrimary,
         content: Text(message,style:const TextStyle(
-            color: Colors.grey
+            color: Colors.white
         ),)));
   }
 

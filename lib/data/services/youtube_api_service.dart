@@ -1,11 +1,15 @@
 
 
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:dio/adapter.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/io_client.dart';
 import 'package:googleapis/youtube/v3.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:youtube_clicker/data/models/channel_model_from_api.dart';
 import 'package:youtube_clicker/utils/failure.dart';
 import '../../di/locator.dart';
@@ -19,17 +23,19 @@ import '../models/video_model_from_api.dart';
     IOClient? httpClient;
     final _googleSingIn=locator.get<GoogleSignIn>();
 
+
     YouTubeApiService(){
       final authHeaderString=PreferencesUtil.getHeaderApiGoogle;
       final authHeaders=json.decode(authHeaderString);
       final header=Map<String,String>.from(authHeaders);
-      header.addAll({
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      });
-      header.addAll({
-        'Accept': 'application/json',
-      });
+      // header.addAll({
+      //   'Accept': 'application/json',
+      //   'Content-Type': 'application/json'
+      // });
+      // header.addAll({
+      //   'Accept': 'application/json',
+      // });
+      print('Hed ${header}');
       httpClient = GoogleHttpClient(header);
     }
 
@@ -114,16 +120,58 @@ import '../models/video_model_from_api.dart';
 
      }
 
-
+     //todo
      Future<void> loadCaptions(String idVideo)async{
-      print('ID Video $idVideo');
         final  api=YouTubeApi(httpClient!);
-         //final caption= await api.captions.download('AUieDaYwoeBgoIO8hV8KeIpOUgpAP6tTCqt7iWxtoVuj');
-         await api.captions.insert(Caption(), ['snippet']);
+        final cap=await api.captions.list(['id'], idVideo);
+        final idCap= cap.items![0].id;
+
+      final caption=await init().get('/$idCap',queryParameters: {
+        'tlang': 'en','tfmt': 'sbv'
+      });
+      String dir = (await getTemporaryDirectory()).path;
+          final f1 = '$dir/captions.sbv';
+          final f=await File(f1).create();
+         final file=await  f.writeAsString(caption.data);
+         Stream<List<int>> stream = file.openRead();
+         final media=Media(stream,(await file.length()));
+       final res= await api.captions.insert(Caption(
+          snippet: CaptionSnippet(
+            videoId: idVideo,
+            language: 'en',
+            name: 'caption_en'
+          ),
+         ), ['snippet'],
+         uploadMedia: media);
+       print('Res ${res}');
      }
 
 
+    Dio init() {
+       SecurityContext? securityContext;
+       final authHeaderString=PreferencesUtil.getHeaderApiGoogle;
+       final authHeaders=json.decode(authHeaderString);
+       final header=Map<String,String>.from(authHeaders);
+       header.addAll({
+         'Content-Type':'application/octet-stream'
+       });
+      final dio = Dio(
+        BaseOptions(
+          headers: header,
+          baseUrl: 'https://www.googleapis.com/youtube/v3/captions/',
+          connectTimeout: 15000,
+          receiveTimeout: 10000,
+        ),
+      );
 
+      final httpClientAdapter = dio.httpClientAdapter;
+      if (httpClientAdapter is DefaultHttpClientAdapter) {
+        httpClientAdapter.onHttpClientCreate = (_) => HttpClient(
+          context: securityContext,
+        );
+      }
+      return dio;
+    }
 
 
 

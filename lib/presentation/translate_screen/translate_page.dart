@@ -224,6 +224,7 @@ class _TranslatePageState extends State<TranslatePage> {
                                       onPressed:()async{
 
                                         if(_listCodeLanguage.isNotEmpty){
+                                          print('Codes ${_listCodeLanguage.length}');
                                           _translateBloc.add(StartTranslateEvent(
                                               codeLanguage: _listCodeLanguage,
                                               videoModel: widget.videoModel));
@@ -302,7 +303,7 @@ class _TranslatePageState extends State<TranslatePage> {
 
                                 onPressed:()async{
                                     final g=locator.get<YouTubeApiService>();
-                                    await g.loadCaptions('');
+                                    await g.loadCaptions(widget.videoModel.idVideo);
                                 },
                                 child:const Text('Translate subtitle',
                                   style: TextStyle(
