@@ -34,9 +34,16 @@ class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
 
      TranslateBloc():super(TranslateState.unknown()){
         on<StartTranslateEvent>(_initTranslate);
+        on<GetSubtitlesEvent>(_getCaption);
 
 
+     }
 
+
+     Future<void> _getCaption(GetSubtitlesEvent event,emit)async{
+        emit(state.copyWith(captionStatus: CaptionStatus.loading));
+        await Future.delayed(Duration(seconds: 3));
+        emit(state.copyWith(captionStatus: CaptionStatus.success));
      }
 
 
@@ -132,6 +139,7 @@ class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
               _getProgress(_operationQueueAll, _operationQueueTotal)));
 
       if (_operationQueueAll == 0) {
+        _clearVar();
         emit(state.copyWith(translateStatus: TranslateStatus.success));
       }
     }

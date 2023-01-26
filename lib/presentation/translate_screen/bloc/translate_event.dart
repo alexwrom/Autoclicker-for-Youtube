@@ -20,4 +20,25 @@ class TranslateEvent extends Equatable{
      required this.videoModel,
     required this.codeLanguage,
   });
+
+
 }
+
+  class TranslateSubtitlesEvent extends TranslateEvent {
+    final List<String> codeLanguage;
+    final String captionId;
+
+    TranslateSubtitlesEvent({
+      required this.codeLanguage,
+      required this.captionId,
+    });
+  }
+
+     class GetSubtitlesEvent extends TranslateEvent{
+
+     final String videoId;
+
+     GetSubtitlesEvent({
+     required this.videoId,
+     });
+    }

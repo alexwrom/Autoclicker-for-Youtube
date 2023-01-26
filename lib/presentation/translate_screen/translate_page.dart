@@ -34,6 +34,7 @@ class TranslatePage extends StatefulWidget{
 class _TranslatePageState extends State<TranslatePage> {
 
    String _textButton='Translate title and description';
+   String _textStatusCaption='Getting subtitles...';
    late TranslateBloc _translateBloc;
    List<String> _listCodeLanguage=[];
    final boxVideo=Hive.box('video_box');
@@ -61,7 +62,13 @@ class _TranslatePageState extends State<TranslatePage> {
           create: (context)=>_translateBloc,
           child: BlocConsumer<TranslateBloc,TranslateState>(
             listener: (_,stateLis){
-
+                if(stateLis.captionStatus.isSuccess){
+                  _textStatusCaption='Title track loaded successfully';
+                }else if(stateLis.captionStatus.isError){
+                  _textStatusCaption='Error getting subtitles';
+                }else if(stateLis.captionStatus.isLoading){
+                  _textStatusCaption='Getting subtitles...';
+                }
             },
             builder: (context,state) {
               return SingleChildScrollView(
@@ -124,6 +131,57 @@ class _TranslatePageState extends State<TranslatePage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          Row(
+                          mainAxisAlignment : MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                    color: colorPrimary,
+                                    borderRadius: BorderRadius.circular(20)
+                                ),
+                                padding: const EdgeInsets.only(left: 10,top: 5,bottom: 5,right: 10),
+                                child: Row(
+                                  children: [
+                                    const Text('Selected translations:',
+                                      style: TextStyle(
+                                          color: Colors.grey,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w400
+                                      ),),
+                                    const SizedBox(width: 10),
+                                    Text('${_listCodeLanguage.length}',
+                                      style:const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w700
+                                      ),),
+                                  ],
+                                ),
+                              ),
+                              ElevatedButton(
+                                  style: ButtonStyle(
+                                    shape: MaterialStatePropertyAll(RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(20)
+                                    )),
+                                    backgroundColor: MaterialStateProperty.all(colorPrimary),
+                                  ),
+
+                                  onPressed:()async{
+                                    final list=await Navigator.of(context).push(MaterialPageRoute(builder: (_)=> ChoiceLanguagePage(idVideo:widget.videoModel.idVideo)));
+                                    if(list!=null){
+                                      setState((){
+                                        _listCodeLanguage=list as List<String>;
+                                      });
+
+
+                                    }
+
+
+                                  },
+                                  child:const Icon(Icons.translate,color: Colors.white,)),
+                            ],
+                          ),
+                          const SizedBox(height: 20),
                           Container(
                             padding: const EdgeInsets.only(left: 15,right: 15,top: 10,bottom: 10),
                             decoration: BoxDecoration(
@@ -133,6 +191,7 @@ class _TranslatePageState extends State<TranslatePage> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
+
                                 Container(
                                   alignment: Alignment.centerLeft,
                                   padding: const EdgeInsets.only(left: 20,top: 5,right: 20,bottom: 5),
@@ -210,60 +269,31 @@ class _TranslatePageState extends State<TranslatePage> {
                             visible: !state.translateStatus.isTranslating,
                             child: Padding(
                               padding: const EdgeInsets.only(left: 20,right: 20),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  ElevatedButton(
-                                    style: ButtonStyle(
-                                      shape: MaterialStatePropertyAll(RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(20)
-                                      )),
-                                      backgroundColor: MaterialStateProperty.all(colorRed),
-                                    ),
+                              child: ElevatedButton(
+                                style: ButtonStyle(
+                                  shape: MaterialStatePropertyAll(RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20)
+                                  )),
+                                  backgroundColor: MaterialStateProperty.all(colorRed),
+                                ),
 
-                                      onPressed:()async{
+                                  onPressed:()async{
 
-                                        if(_listCodeLanguage.isNotEmpty){
-                                          print('Codes ${_listCodeLanguage.length}');
-                                          _translateBloc.add(StartTranslateEvent(
-                                              codeLanguage: _listCodeLanguage,
-                                              videoModel: widget.videoModel));
-                                        }else{
-                                          Dialoger.showMessageSnackBar('No languages selected for translation', context);
-                                        }
+                                    if(_listCodeLanguage.isNotEmpty){
+                                      _translateBloc.add(StartTranslateEvent(
+                                          codeLanguage: _listCodeLanguage,
+                                          videoModel: widget.videoModel));
+                                    }else{
+                                      Dialoger.showMessageSnackBar('No languages selected for translation', context);
+                                    }
 
-                                       },
-                                      child: Text(_textButton,
-                                    style:const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500
-                                    ),)),
-                                  ElevatedButton(
-                                      style: ButtonStyle(
-                                        shape: MaterialStatePropertyAll(RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(20)
-                                        )),
-                                        backgroundColor: MaterialStateProperty.all(colorPrimary),
-                                      ),
-
-                                      onPressed:()async{
-                                        final list=await Navigator.of(context).push(MaterialPageRoute(builder: (_)=> ChoiceLanguagePage(idVideo:widget.videoModel.idVideo)));
-                                        if(list!=null){
-                                          _listCodeLanguage=list as List<String>;
-
-                                        }
-
-
-                                      },
-                                      child:const Text('+',
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 30,
-                                            fontWeight: FontWeight.w400
-                                        ),)),
-                                ],
-                              ),
+                                   },
+                                  child: Text(_textButton,
+                                style:const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500
+                                ),)),
                             ),
                           ),
 
@@ -274,13 +304,25 @@ class _TranslatePageState extends State<TranslatePage> {
                                 borderRadius: BorderRadius.circular(20),
                                 color: colorPrimary
                             ),
-                            child: Wrap(
-                              crossAxisAlignment: WrapCrossAlignment.center,
-                              direction: Axis.horizontal,
-                              children: const[
-                                 Icon(Icons.check_circle_outline_rounded,color: Colors.lightGreen),
-                                 SizedBox(width: 10),
-                                 Text('Title track loaded successfully',style: TextStyle(
+                          child: Wrap(
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            direction: Axis.horizontal,
+                            children: [
+                              state.captionStatus.isSuccess
+                                  ? const Icon(
+                                      Icons.check_circle_outline_rounded,
+                                      color: Colors.lightGreen)
+                                  : state.captionStatus.isLoading
+                                      ? SizedBox(
+                                          width: 20,
+                                          height: 20,
+                                          child: CircularProgressIndicator(
+                                              color: colorBackground,
+                                              strokeWidth: 1))
+                                      : state.captionStatus.isError
+                                          ? Icon(Icons.error_outline,color: colorRed):Container(),
+                                const SizedBox(width: 10),
+                                 Text(_textStatusCaption,style:const TextStyle(
                                     color: Colors.grey,
                                     fontSize: 16,
                                     fontWeight: FontWeight.w400
@@ -291,26 +333,30 @@ class _TranslatePageState extends State<TranslatePage> {
 
                           const SizedBox(height: 20),
 
-                          Padding(
-                            padding: const EdgeInsets.only(left: 20),
-                            child: ElevatedButton(
-                                style: ButtonStyle(
-                                  shape: MaterialStatePropertyAll(RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20)
-                                  )),
-                                  backgroundColor: MaterialStateProperty.all(colorRed),
-                                ),
+                          Visibility(
+                            visible: state.captionStatus.isSuccess,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 20),
+                              child: ElevatedButton(
+                                  style: ButtonStyle(
+                                    shape: MaterialStatePropertyAll(RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(20)
+                                    )),
+                                    backgroundColor: MaterialStateProperty.all(colorRed),
+                                  ),
 
-                                onPressed:()async{
-                                    final g=locator.get<YouTubeApiService>();
-                                    await g.loadCaptions(widget.videoModel.idVideo);
-                                },
-                                child:const Text('Translate subtitle',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500
-                                  ),)),
+                                  onPressed:()async{
+
+                                      // final g=locator.get<YouTubeApiService>();
+                                      // await g.loadCaptions(widget.videoModel.idVideo);
+                                  },
+                                  child:const Text('Translate subtitle',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500
+                                    ),)),
+                            ),
                           ),
                         ],
                       ),
@@ -395,6 +441,7 @@ class _TranslatePageState extends State<TranslatePage> {
   void initState() {
     super.initState();
     _translateBloc=TranslateBloc();
+    _translateBloc.add(GetSubtitlesEvent(videoId: widget.videoModel.idVideo));
     boxVideo.keys.map((key) {
       final Video value = boxVideo.get(key);
       if(widget.videoModel.idVideo==value.id){

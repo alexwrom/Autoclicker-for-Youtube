@@ -67,13 +67,11 @@ class _ChoiceLanguagePageState extends State<ChoiceLanguagePage> {
                                     index: index,
                                     callback: (i){
                                       if(i!['add']){
-                                        setState(() {
-                                          _addChoiceCodeLanguage(ListTranslate.langCode(i['index']),widget.idVideo);
-                                        });
+                                        _addChoiceCodeLanguage(ListTranslate.langCode(i['index']),widget.idVideo);
+                                        Dialoger.showMessageSnackBar('Language added successfully', context);
                                       }else{
-                                        setState(() {
-                                          _removeChoiceCodeLanguage(ListTranslate.langCode(i['index']),widget.idVideo);
-                                        });
+                                        _removeChoiceCodeLanguage(ListTranslate.langCode(i['index']),widget.idVideo);
+                                        Dialoger.showMessageSnackBar('Language removed successfully', context);
                                       }
 
                                     },);
@@ -81,29 +79,26 @@ class _ChoiceLanguagePageState extends State<ChoiceLanguagePage> {
                           ),
                         ),
                      ),
-                     Visibility(
-                       visible: _choiceCodeLanguageList.isNotEmpty,
-                       child: Positioned(
-                         bottom: 40,
-                         right: 40,
-                         child: ElevatedButton(
-                             style: ButtonStyle(
-                               shape: MaterialStatePropertyAll(RoundedRectangleBorder(
-                                   borderRadius: BorderRadius.circular(20)
-                               )),
-                               backgroundColor: MaterialStateProperty.all(colorRed),
-                             ),
+                     Positioned(
+                       bottom: 40,
+                       right: 40,
+                       child: ElevatedButton(
+                           style: ButtonStyle(
+                             shape: MaterialStatePropertyAll(RoundedRectangleBorder(
+                                 borderRadius: BorderRadius.circular(20)
+                             )),
+                             backgroundColor: MaterialStateProperty.all(colorRed),
+                           ),
 
-                             onPressed:(){
-                              Navigator.pop(context,_choiceCodeLanguageList);
-                             },
-                             child:const Text('Download translation',
-                               style: TextStyle(
-                                   color: Colors.white,
-                                   fontSize: 16,
-                                   fontWeight: FontWeight.w500
-                               ),)),
-                       ),
+                           onPressed:(){
+                            Navigator.pop(context,_choiceCodeLanguageList);
+                           },
+                           child:const Text('Back',
+                             style: TextStyle(
+                                 color: Colors.white,
+                                 fontSize: 16,
+                                 fontWeight: FontWeight.w500
+                             ),)),
                      ),
                    ],
                  ))
