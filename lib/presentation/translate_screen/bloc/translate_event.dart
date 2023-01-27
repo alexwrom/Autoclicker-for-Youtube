@@ -42,3 +42,14 @@ class TranslateEvent extends Equatable{
      required this.videoId,
      });
     }
+
+  class InsertSubtitlesEvent extends TranslateEvent{
+
+    final List<String> codesLang;
+    final String idVideo;
+
+    InsertSubtitlesEvent({
+      required this.codesLang,
+      required this.idVideo
+    });
+  }

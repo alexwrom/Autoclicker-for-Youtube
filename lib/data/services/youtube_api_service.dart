@@ -15,19 +15,21 @@ import 'package:youtube_clicker/utils/failure.dart';
 import '../../di/locator.dart';
 import '../../domain/models/video_model.dart';
 import '../../utils/preferences_util.dart';
+import '../dio_client/dio_client_insert_caption.dart';
 import '../http_clien/http_client.dart';
 import '../models/video_model_from_api.dart';
 
-  class YouTubeApiService{
+  class YouTubeApiService {
 
     IOClient? httpClient;
-    final _googleSingIn=locator.get<GoogleSignIn>();
+    final _googleSingIn = locator.get<GoogleSignIn>();
+    final _dio = locator.get<DioClientInsertCaption>();
 
 
-    YouTubeApiService(){
-      final authHeaderString=PreferencesUtil.getHeaderApiGoogle;
-      final authHeaders=json.decode(authHeaderString);
-      final header=Map<String,String>.from(authHeaders);
+    YouTubeApiService() {
+      final authHeaderString = PreferencesUtil.getHeaderApiGoogle;
+      final authHeaders = json.decode(authHeaderString);
+      final header = Map<String, String>.from(authHeaders);
       // header.addAll({
       //   'Accept': 'application/json',
       //   'Content-Type': 'application/json'
@@ -40,143 +42,137 @@ import '../models/video_model_from_api.dart';
     }
 
 
-
-    Future<List<ChannelModelFromApi>> getListChanel(bool reload) async{
-      try{
-        if(reload){
+    Future<List<ChannelModelFromApi>> getListChanel(bool reload) async {
+      try {
+        if (reload) {
           await _googleSingIn.signIn();
-          if(_googleSingIn.currentUser==null){
+          if (_googleSingIn.currentUser == null) {
             throw const Failure('Error auth');
           }
-          final authHeaders =await _googleSingIn.currentUser!.authHeaders;
+          final authHeaders = await _googleSingIn.currentUser!.authHeaders;
           await PreferencesUtil.setHeadersGoogleApi(authHeaders);
           httpClient = GoogleHttpClient(authHeaders);
         }
-        final data= YouTubeApi(httpClient!);
-        final result=await data.channels.list(['snippet,contentDetails,statistics'],mine: true);
-        return result.items!.map((e) => ChannelModelFromApi.fromApi(channel: e)).toList();
-      } on Failure catch(error,stackTrace){
+        final data = YouTubeApi(httpClient!);
+        final result = await data.channels.list(
+            ['snippet,contentDetails,statistics'], mine: true);
+        return result.items!
+            .map((e) => ChannelModelFromApi.fromApi(channel: e))
+            .toList();
+      } on Failure catch (error, stackTrace) {
         Error.throwWithStackTrace(Failure(error.message), stackTrace);
-      } on PlatformException catch(error,stackTrace){
+      } on PlatformException catch (error, stackTrace) {
         Error.throwWithStackTrace(Failure(error.message!), stackTrace);
-      } catch(error,stackTrace){
+      } catch (error, stackTrace) {
         Error.throwWithStackTrace(Failure(error.toString()), stackTrace);
       }
-
-
-
-
-
-
     }
 
 
-
-     Future<List<AllVideoModelFromApi>> getVideoFromAccount(String idUpload)async{
-        List<String> idsVideo=[];
-      try{
-         final data= YouTubeApi(httpClient!);
-         final result =await data.search.list(['snippet'],forMine: true,maxResults: 20,type: ['video']);
-         for(var item in result.items!){
-           idsVideo.add(item.id!.videoId!);
-         }
-         final ids=idsVideo.toString().split('[')[1].split(']')[0].replaceAll(' ', '');
-         final listVideo=await data.videos.list(['snippet,contentDetails,statistics,status'],id: [ids]);
-         return listVideo.items!.map((e) => AllVideoModelFromApi.fromApi(video: e)).toList();
-       } on Failure catch(error,stackTrace){
-         Error.throwWithStackTrace(Failure(error.message), stackTrace);
-       } on PlatformException catch(error,stackTrace){
-         Error.throwWithStackTrace(Failure(error.message!), stackTrace);
-       } catch(error,stackTrace){
-         Error.throwWithStackTrace(Failure(error.toString()), stackTrace);
-       }
-
-
-     }
-     
-     
-
-     Future<void> updateLocalization(VideoModel videoModel,Map<String,VideoLocalization> map)async{
-      try{
-         final data= YouTubeApi(httpClient!);
-         final res=await data.videos.update(Video(
-             id: videoModel.idVideo,
-             snippet: VideoSnippet(
-                 description: videoModel.description,
-                 title: videoModel.title,
-                 categoryId: videoModel.categoryId,
-                 defaultLanguage: videoModel.defaultLanguage
-             ),
-             localizations: map
-         ), ['localizations,snippet,status']);
-         print('Response ${res.localizations}');
-       } on Failure catch(error,stackTrace){
-         Error.throwWithStackTrace(Failure(error.message), stackTrace);
-       } on PlatformException catch(error,stackTrace){
-         Error.throwWithStackTrace(Failure(error.message!), stackTrace);
-       } catch(error,stackTrace){
-         Error.throwWithStackTrace(Failure(error.toString()), stackTrace);
-       }
-
-     }
-
-     //todo
-     Future<void> loadCaptions(String idVideo)async{
-        final  api=YouTubeApi(httpClient!);
-        final cap=await api.captions.list(['id'], idVideo);
-        final idCap= cap.items![0].id;
-
-      final caption=await init().get('/$idCap',queryParameters: {
-        'tlang': 'en','tfmt': 'sbv'
-      });
-      String dir = (await getTemporaryDirectory()).path;
-          final f1 = '$dir/captions.sbv';
-          final f=await File(f1).create();
-         final file=await  f.writeAsString(caption.data);
-         Stream<List<int>> stream = file.openRead();
-         final media=Media(stream,(await file.length()));
-       final res= await api.captions.insert(Caption(
-          snippet: CaptionSnippet(
-            videoId: idVideo,
-            language: 'en',
-            name: 'caption_en'
-          ),
-         ), ['snippet'],
-         uploadMedia: media);
-       print('Res ${res}');
-     }
-
-
-    Dio init() {
-       SecurityContext? securityContext;
-       final authHeaderString=PreferencesUtil.getHeaderApiGoogle;
-       final authHeaders=json.decode(authHeaderString);
-       final header=Map<String,String>.from(authHeaders);
-       header.addAll({
-         'Content-Type':'application/octet-stream'
-       });
-      final dio = Dio(
-        BaseOptions(
-          headers: header,
-          baseUrl: 'https://www.googleapis.com/youtube/v3/captions/',
-          connectTimeout: 15000,
-          receiveTimeout: 10000,
-        ),
-      );
-
-      final httpClientAdapter = dio.httpClientAdapter;
-      if (httpClientAdapter is DefaultHttpClientAdapter) {
-        httpClientAdapter.onHttpClientCreate = (_) => HttpClient(
-          context: securityContext,
-        );
+    Future<List<AllVideoModelFromApi>> getVideoFromAccount(
+        String idUpload) async {
+      List<String> idsVideo = [];
+      try {
+        final data = YouTubeApi(httpClient!);
+        final result = await data.search.list(
+            ['snippet'], forMine: true, maxResults: 20, type: ['video']);
+        for (var item in result.items!) {
+          idsVideo.add(item.id!.videoId!);
+        }
+        final ids = idsVideo.toString().split('[')[1].split(']')[0].replaceAll(
+            ' ', '');
+        final listVideo = await data.videos.list(
+            ['snippet,contentDetails,statistics,status'], id: [ids]);
+        return listVideo.items!.map((e) =>
+            AllVideoModelFromApi.fromApi(video: e)).toList();
+      } on Failure catch (error, stackTrace) {
+        Error.throwWithStackTrace(Failure(error.message), stackTrace);
+      } on PlatformException catch (error, stackTrace) {
+        Error.throwWithStackTrace(Failure(error.message!), stackTrace);
+      } catch (error, stackTrace) {
+        Error.throwWithStackTrace(Failure(error.toString()), stackTrace);
       }
-      return dio;
     }
 
 
+    Future<void> updateLocalization(VideoModel videoModel,
+        Map<String, VideoLocalization> map) async {
+      try {
+        final data = YouTubeApi(httpClient!);
+        final res = await data.videos.update(Video(
+            id: videoModel.idVideo,
+            snippet: VideoSnippet(
+                description: videoModel.description,
+                title: videoModel.title,
+                categoryId: videoModel.categoryId,
+                defaultLanguage: videoModel.defaultLanguage
+            ),
+            localizations: map
+        ), ['localizations,snippet,status']);
+        print('Response ${res.localizations}');
+      } on Failure catch (error, stackTrace) {
+        Error.throwWithStackTrace(Failure(error.message), stackTrace);
+      } on PlatformException catch (error, stackTrace) {
+        Error.throwWithStackTrace(Failure(error.message!), stackTrace);
+      } catch (error, stackTrace) {
+        Error.throwWithStackTrace(Failure(error.toString()), stackTrace);
+      }
+    }
 
 
-}
+    Future<String> loadCaptions(String idVideo) async {
+      String idCap = '';
+      try {
+        final api = YouTubeApi(httpClient!);
+        final cap = await api.captions.list(['id'], idVideo);
+        if (cap.items!.isNotEmpty) {
+          idCap = cap.items![0].id!;
+        }
+
+        return idCap;
+      } on Failure catch (error, stackTrace) {
+        Error.throwWithStackTrace(Failure(error.message), stackTrace);
+      } on PlatformException catch (error, stackTrace) {
+        Error.throwWithStackTrace(Failure(error.message!), stackTrace);
+      } catch (error, stackTrace) {
+        Error.throwWithStackTrace(Failure(error.toString()), stackTrace);
+      }
+    }
+
+
+    Future<void> insertCaption({required String idCap, required String idVideo, required String codeLang}) async {
+      try {
+        final api = YouTubeApi(httpClient!);
+        final caption = await _dio.init().get('/$idCap', queryParameters: {
+          'tlang': codeLang, 'tfmt': 'sbv'
+        });
+        String dir = (await getTemporaryDirectory()).path;
+        final f1 = '$dir/captions.sbv';
+        final f = await File(f1).create();
+        final file = await f.writeAsString(caption.data);
+        Stream<List<int>> stream = file.openRead();
+        final media = Media(stream, (await file.length()));
+        final res = await api.captions.insert(Caption(
+          snippet: CaptionSnippet(
+              videoId: idVideo,
+              language: codeLang,
+              name: 'caption_$codeLang'
+          ),
+        ), ['snippet'],
+            uploadMedia: media);
+        print('Res ${res}');
+      } on Failure catch (error, stackTrace) {
+        Error.throwWithStackTrace(Failure(error.message), stackTrace);
+      } on PlatformException catch (error, stackTrace) {
+        Error.throwWithStackTrace(Failure(error.message!), stackTrace);
+      } on DioError catch (error, stackTrace) {
+        Error.throwWithStackTrace(Failure.fromDioError(error), stackTrace);
+      } catch (error, stackTrace) {
+        Error.throwWithStackTrace(Failure(error.toString()), stackTrace);
+      }
+    }
+
+  }
 
 
 

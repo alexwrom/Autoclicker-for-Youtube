@@ -2,7 +2,7 @@
 
 
 import 'package:dio/dio.dart';
-import 'package:youtube_clicker/data/dio_client/dio_client.dart';
+import 'package:youtube_clicker/data/dio_client/dio_client_translate.dart';
 
 import '../../di/locator.dart';
 import '../../utils/failure.dart';

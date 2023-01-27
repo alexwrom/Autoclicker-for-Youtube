@@ -68,6 +68,8 @@ class _TranslatePageState extends State<TranslatePage> {
                   _textStatusCaption='Error getting subtitles';
                 }else if(stateLis.captionStatus.isLoading){
                   _textStatusCaption='Getting subtitles...';
+                }else if(stateLis.captionStatus.isEmpty){
+                  _textStatusCaption='Subtitle list is empty';
                 }
             },
             builder: (context,state) {
@@ -346,9 +348,8 @@ class _TranslatePageState extends State<TranslatePage> {
                                   ),
 
                                   onPressed:()async{
-
-                                      // final g=locator.get<YouTubeApiService>();
-                                      // await g.loadCaptions(widget.videoModel.idVideo);
+                                    _translateBloc.add(InsertSubtitlesEvent(codesLang: _listCodeLanguage,
+                                    idVideo: widget.videoModel.idVideo));
                                   },
                                   child:const Text('Translate subtitle',
                                     style: TextStyle(

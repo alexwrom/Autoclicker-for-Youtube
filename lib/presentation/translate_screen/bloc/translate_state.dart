@@ -14,7 +14,8 @@
     error,
     success,
     translating,
-    unknown
+    unknown,
+    empty
   }
 
    extension TranslateStatusExt on TranslateStatus{
@@ -27,6 +28,7 @@
     bool get isError=>this==CaptionStatus.error;
     bool get isSuccess=>this==CaptionStatus.success;
     bool get isTranslating=>this==CaptionStatus.translating;
+    bool get isEmpty=>this==CaptionStatus.empty;
   }
 
 

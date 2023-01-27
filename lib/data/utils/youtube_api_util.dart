@@ -47,6 +47,14 @@ class YouTubeApiUtil{
 
     }
 
+    Future<String> loadCaptions(String idVideo)async{
+      return await _youTubeApi.loadCaptions(idVideo);
+    }
+
+    Future<void> insertCaption({required String idCap,required String idVideo,required String codeLang})async{
+      return await _youTubeApi.insertCaption(idCap: idCap, idVideo: idVideo, codeLang: codeLang);
+    }
+
 
 
 
