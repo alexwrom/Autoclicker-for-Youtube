@@ -348,8 +348,13 @@ class _TranslatePageState extends State<TranslatePage> {
                                   ),
 
                                   onPressed:()async{
-                                    _translateBloc.add(InsertSubtitlesEvent(codesLang: _listCodeLanguage,
-                                    idVideo: widget.videoModel.idVideo));
+                                    if(_listCodeLanguage.isNotEmpty){
+                                      _translateBloc.add(InsertSubtitlesEvent(codesLang: _listCodeLanguage,
+                                          idVideo: widget.videoModel.idVideo));
+                                    }else{
+                                      Dialoger.showMessageSnackBar('No languages selected for translation', context);
+                                    }
+
                                   },
                                   child:const Text('Translate subtitle',
                                     style: TextStyle(
