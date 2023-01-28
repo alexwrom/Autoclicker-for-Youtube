@@ -34,7 +34,6 @@ class TranslatePage extends StatefulWidget{
 class _TranslatePageState extends State<TranslatePage> {
 
    String _textButton='Translate title and description';
-   String _textStatusCaption='Getting subtitles...';
    late TranslateBloc _translateBloc;
    List<String> _listCodeLanguage=[];
    final boxVideo=Hive.box('video_box');
@@ -62,15 +61,10 @@ class _TranslatePageState extends State<TranslatePage> {
           create: (context)=>_translateBloc,
           child: BlocConsumer<TranslateBloc,TranslateState>(
             listener: (_,stateLis){
-                if(stateLis.captionStatus.isSuccess){
-                  _textStatusCaption='Title track loaded successfully';
-                }else if(stateLis.captionStatus.isError){
-                  _textStatusCaption='Error getting subtitles';
-                }else if(stateLis.captionStatus.isLoading){
-                  _textStatusCaption='Getting subtitles...';
-                }else if(stateLis.captionStatus.isEmpty){
-                  _textStatusCaption='Subtitle list is empty';
-                }
+              if(stateLis.captionStatus.isEmpty){
+                Dialoger.showInfoDialog(context, 'Titles missing!',
+                    'There are no subtitles. Download basic subtitles in Youtube Studio if you need them',false);
+              }
             },
             builder: (context,state) {
               return SingleChildScrollView(
@@ -267,102 +261,78 @@ class _TranslatePageState extends State<TranslatePage> {
                             visible: widget.videoModel.description.isNotEmpty,
                               child: const SizedBox(height: 20)),
 
-                          Visibility(
-                            visible: !state.translateStatus.isTranslating,
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 20,right: 20),
-                              child: ElevatedButton(
-                                style: ButtonStyle(
-                                  shape: MaterialStatePropertyAll(RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20)
-                                  )),
-                                  backgroundColor: MaterialStateProperty.all(colorRed),
-                                ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 20,right: 20),
+                            child: ElevatedButton(
+                              style: ButtonStyle(
+                                shape: MaterialStatePropertyAll(RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20)
+                                )),
+                                backgroundColor: MaterialStateProperty.all(colorRed),
+                              ),
 
-                                  onPressed:()async{
+                                onPressed:()async{
+                                 if(!state.captionStatus.isTranslating&&!state.translateStatus.isTranslating){
+                                   if(_listCodeLanguage.isNotEmpty){
+                                     _translateBloc.add(StartTranslateEvent(
+                                         codeLanguage: _listCodeLanguage,
+                                         videoModel: widget.videoModel));
+                                   }else{
+                                     Dialoger.showMessageSnackBar('No languages selected for translation', context);
+                                   }
+                                 }
 
-                                    if(_listCodeLanguage.isNotEmpty){
-                                      _translateBloc.add(StartTranslateEvent(
-                                          codeLanguage: _listCodeLanguage,
-                                          videoModel: widget.videoModel));
-                                    }else{
-                                      Dialoger.showMessageSnackBar('No languages selected for translation', context);
-                                    }
 
-                                   },
-                                  child: Text(_textButton,
-                                style:const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500
-                                ),)),
-                            ),
-                          ),
-
-                          const SizedBox(height: 40),
-                          Container(
-                            padding: const EdgeInsets.only(left: 15,right: 15,top: 10,bottom: 10),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                color: colorPrimary
-                            ),
-                          child: Wrap(
-                            crossAxisAlignment: WrapCrossAlignment.center,
-                            direction: Axis.horizontal,
-                            children: [
-                              state.captionStatus.isSuccess
-                                  ? const Icon(
-                                      Icons.check_circle_outline_rounded,
-                                      color: Colors.lightGreen)
-                                  : state.captionStatus.isLoading
-                                      ? SizedBox(
-                                          width: 20,
-                                          height: 20,
-                                          child: CircularProgressIndicator(
-                                              color: colorBackground,
-                                              strokeWidth: 1))
-                                      : state.captionStatus.isError
-                                          ? Icon(Icons.error_outline,color: colorRed):Container(),
-                                const SizedBox(width: 10),
-                                 Text(_textStatusCaption,style:const TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w400
-                                ),),
-                              ],
-                            ),
+                                 },
+                                child: Text(_textButton,
+                              style:const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500
+                              ),)),
                           ),
 
                           const SizedBox(height: 20),
 
-                          Visibility(
-                            visible: state.captionStatus.isSuccess,
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 20),
-                              child: ElevatedButton(
-                                  style: ButtonStyle(
-                                    shape: MaterialStatePropertyAll(RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(20)
-                                    )),
-                                    backgroundColor: MaterialStateProperty.all(colorRed),
-                                  ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 20),
+                            child: ElevatedButton(
+                                style: ButtonStyle(
+                                  shape: MaterialStatePropertyAll(RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20)
+                                  )),
+                                  backgroundColor: MaterialStateProperty.all(colorRed),
+                                ),
 
-                                  onPressed:()async{
-                                    if(_listCodeLanguage.isNotEmpty){
-                                      _translateBloc.add(InsertSubtitlesEvent(codesLang: _listCodeLanguage,
-                                          idVideo: widget.videoModel.idVideo));
-                                    }else{
-                                      Dialoger.showMessageSnackBar('No languages selected for translation', context);
+                                onPressed:()async{
+                                  if(!state.captionStatus.isTranslating&&!state.translateStatus.isTranslating){
+                                    if(state.captionStatus.isSuccess){
+                                      if(_listCodeLanguage.isNotEmpty){
+                                        _translateBloc.add(InsertSubtitlesEvent(codesLang: _listCodeLanguage,
+                                            idVideo: widget.videoModel.idVideo));
+                                      }else{
+                                        Dialoger.showMessageSnackBar('No languages selected for translation', context);
+                                      }
+                                    }else if(state.captionStatus.isLoading){
+                                      Dialoger.showMessageSnackBar('The titles haven\'t loaded yet', context);
+                                    }else if(state.captionStatus.isError){
+                                      Dialoger.showInfoDialog(context, 'Error!',
+                                          'There were errors loading subtitles. Subtitle translation is not available. Try again later',true);
+                                    }else if(state.captionStatus.isEmpty){
+                                      Dialoger.showInfoDialog(context, 'Titles missing!',
+                                          'There are no subtitles. Download basic subtitles in Youtube Studio if you need them',false);
                                     }
+                                  }
 
-                                  },
-                                  child:const Text('Translate subtitle',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500
-                                    ),)),
-                            ),
+
+
+                                },
+                                child:const Text('Translate subtitle',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500
+                                  ),)),
                           ),
                         ],
                       ),

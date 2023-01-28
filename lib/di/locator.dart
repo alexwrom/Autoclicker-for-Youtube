@@ -3,10 +3,10 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:googleapis/youtube/v3.dart';
-import 'package:youtube_clicker/data/dio_client/dio_client_insert_caption.dart';
 
-import '../data/dio_client/dio_auth_client.dart';
-import '../data/dio_client/dio_client_translate.dart';
+import '../data/http_client/dio_auth_client.dart';
+import '../data/http_client/dio_client_insert_caption.dart';
+import '../data/http_client/dio_client_translate.dart';
 import '../data/repository/auth_repository_impl.dart';
 import '../data/repository/translate_repository_impl.dart';
 import '../data/repository/youtube_reposotory_impl.dart';

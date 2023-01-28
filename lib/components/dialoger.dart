@@ -73,7 +73,8 @@ class Dialoger {
       title,
       style: TextStyle(
         color: titleColor,
-        fontSize: 17,
+        fontSize: 18,
+        fontWeight: FontWeight.w500
       ),
     );
     return showDialog<T>(
@@ -105,22 +106,23 @@ class Dialoger {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     TextButton(
-                      child:  Text(textButtonCancel,style: TextStyle(
-                          color: colorPrimary,
+                      child:  Text(textButtonCancel,style:const TextStyle(
+                          color: Colors.white,
 
                       )),
-                      onPressed: () {},
-                    ),
-                    TextButton(
-                      child:  Text(textButtonAccept,style: TextStyle(
-                          color: colorPrimary,
-
-                      ),),
                       onPressed: () {
-                        // context.read<AuthBloc>().add(LogOutEvent());
-                        // GoRouter.of(context).replace(authPath);
+                           Navigator.pop(context);
                       },
-                    )
+                    ),
+                    // TextButton(
+                    //   child:  Text(textButtonAccept,style: TextStyle(
+                    //       color: colorPrimary,
+                    //
+                    //   ),),
+                    //   onPressed: () {
+                    //
+                    //   },
+                    // )
                   ],
                 )
               ],
@@ -136,16 +138,31 @@ class Dialoger {
               child:  Text(textButtonCancel),
               onPressed: (){},
             ),
-            TextButton(
-              child:  Text(textButtonAccept),
-              onPressed: () {
-                // contextUp.read<AuthBloc>().add(LogOutEvent());
-                // GoRouter.of(context).replace(authPath);
-              },
-            )
+            // TextButton(
+            //   child:  Text(textButtonAccept),
+            //   onPressed: () {
+            //
+            //   },
+            // )
           ],
         ),
       ),
+    );
+  }
+
+  static void showInfoDialog(BuildContext context,String title,String body,bool isError) {
+    showCustomDialog(
+      textButtonCancel: 'Ok',
+      textButtonAccept: '',
+      contextUp: context,
+      title: title,
+      titleColor: isError?colorRed:Colors.white,
+      content:  Text(body,style:const TextStyle(
+        color: Colors.white,
+        fontSize: 16,
+        fontWeight: FontWeight.normal
+      ),),
+
     );
   }
 

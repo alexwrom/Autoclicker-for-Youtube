@@ -1,19 +1,15 @@
 
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:youtube_clicker/utils/preferences_util.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:googleapis_auth/auth_io.dart';
-import 'package:http/http.dart' as http;
 import '../../di/locator.dart';
 import '../../utils/failure.dart';
-import '../dio_client/dio_auth_client.dart';
+import '../http_client/dio_auth_client.dart';
 
 
 class AuthService{
@@ -69,6 +65,7 @@ class AuthService{
       try{
       String imei='';
       final googleSignInAccount= await _googleSingIn.signIn();
+
       if(_googleSingIn.currentUser==null){
         throw const Failure('Error auth');
       }

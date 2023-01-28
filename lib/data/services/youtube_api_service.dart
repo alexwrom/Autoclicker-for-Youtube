@@ -3,10 +3,10 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dio/adapter.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:googleapis_auth/auth_io.dart';
 import 'package:http/io_client.dart';
 import 'package:googleapis/youtube/v3.dart';
 import 'package:path_provider/path_provider.dart';
@@ -15,8 +15,8 @@ import 'package:youtube_clicker/utils/failure.dart';
 import '../../di/locator.dart';
 import '../../domain/models/video_model.dart';
 import '../../utils/preferences_util.dart';
-import '../dio_client/dio_client_insert_caption.dart';
-import '../http_clien/http_client.dart';
+import '../http_client/dio_client_insert_caption.dart';
+import '../http_client/http_client.dart';
 import '../models/video_model_from_api.dart';
 
   class YouTubeApiService {
@@ -30,15 +30,8 @@ import '../models/video_model_from_api.dart';
       final authHeaderString = PreferencesUtil.getHeaderApiGoogle;
       final authHeaders = json.decode(authHeaderString);
       final header = Map<String, String>.from(authHeaders);
-      // header.addAll({
-      //   'Accept': 'application/json',
-      //   'Content-Type': 'application/json'
-      // });
-      // header.addAll({
-      //   'Accept': 'application/json',
-      // });
-      print('Hed ${header}');
       httpClient = GoogleHttpClient(header);
+
     }
 
 
@@ -156,7 +149,7 @@ import '../models/video_model_from_api.dart';
           snippet: CaptionSnippet(
               videoId: idVideo,
               language: codeLang,
-              name: 'caption_$codeLang'
+              name: ''
           ),
         ), ['snippet'],
             uploadMedia: media);
