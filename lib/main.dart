@@ -5,6 +5,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:youtube_clicker/presentation/auth_screen/bloc/auth_bloc.dart';
 import 'package:youtube_clicker/presentation/main_screen/bloc/main_bloc.dart';
 import 'package:youtube_clicker/presentation/main_screen/channels_page.dart';
+import 'package:youtube_clicker/presentation/membership_screen/membership_page.dart';
 import 'package:youtube_clicker/utils/preferences_util.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -97,7 +98,7 @@ class _AppState extends State<App> {
 
           return const AuthPage();
         }
-
+        //return  MembershipPage();
         return const ChannelsPage();
 
       },
