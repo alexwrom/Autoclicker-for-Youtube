@@ -28,12 +28,17 @@ class PreferencesUtil{
     await _prefsInstance!.setString(prefsKeyUserName, name);
   }
 
+  static Future<void> setUserId(String uid)async{
+    await _prefsInstance!.setString(prefsKeyUid, uid);
+  }
+
 
 
 
  static String get getHeaderApiGoogle =>_prefsInstance!.getString(prefsKeyGoogleToken)??'';
   static String get getUrlAvatar=>_prefsInstance!.getString(prefsKeyUrlAvatar)??'';
   static String get getUserName=>_prefsInstance!.getString(prefsKeyUserName)??'';
+  static String get getUid=>_prefsInstance!.getString(prefsKeyUid)??'';
 
   static clear(){
     _prefsInstance!.clear();
@@ -47,3 +52,4 @@ class PreferencesUtil{
   const String prefsKeyGoogleToken='token';
   const String prefsKeyUrlAvatar='avatar';
   const String prefsKeyUserName='name';
+  const String prefsKeyUid='uid';

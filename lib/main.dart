@@ -90,15 +90,11 @@ class _AppState extends State<App> {
         if (state.error != '') Dialoger.showError(state.error,context);
       },
       builder: (_, state) {
-
         if (state.authStatusCheck == AuthStatusCheck.unknown) {
-
           return const SplashPage();
         } else if (state.authStatusCheck == AuthStatusCheck.unauthenticated) {
-
           return const AuthPage();
         }
-        //return  MembershipPage();
         return const ChannelsPage();
 
       },

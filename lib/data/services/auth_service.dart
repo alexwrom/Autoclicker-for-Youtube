@@ -81,6 +81,7 @@ class AuthService{
       await _auth!.signInWithCredential(credential);
        await PreferencesUtil.setUrlAvatar(userCredential.user!.photoURL!);
        await PreferencesUtil.setUserNAmer(userCredential.user!.displayName!);
+       await PreferencesUtil.setUserId(userCredential.user!.uid);
       if(Platform.isIOS){
         final iosImei=await _deviceInfoPlugin.iosInfo;
          imei=iosImei.identifierForVendor!;
@@ -88,11 +89,23 @@ class AuthService{
         final androidImei=await _deviceInfoPlugin.androidInfo;
         imei=androidImei.androidId!;
       }
-      await _firebaseFirestore!.collection('users').doc(userCredential.user!.uid).set({
-        'imei':imei,
-        'isActive':false,
-        'description':''
-      });
+
+      DocumentSnapshot userDoc=await _firebaseFirestore!.collection('users').doc(userCredential.user!.uid).get();
+      if(userDoc.exists){
+        await _firebaseFirestore!.collection('users').doc(userCredential.user!.uid).update({
+          'imei':imei
+        });
+      }else{
+        final ts=DateTime.now().millisecondsSinceEpoch;
+        await _firebaseFirestore!.collection('users').doc(userCredential.user!.uid).set({
+          'imei':imei,
+          'isActive':false,
+          'description':userCredential.user!.displayName!.isNotEmpty?userCredential.user!.displayName!:'',
+          'balance':6,
+          'timeStamp':ts
+        });
+      }
+
     } on FirebaseAuthException catch(error,stackTrace){
       Error.throwWithStackTrace(Failure.fromAuthApiError(error), stackTrace);
 

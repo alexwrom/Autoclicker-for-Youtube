@@ -17,6 +17,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
 
 
+
   AppBloc() : super(AppState.unknown()) {
     on<AuthInitCheck>(_authInitCheck);
   }

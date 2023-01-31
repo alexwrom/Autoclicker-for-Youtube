@@ -18,6 +18,7 @@ class AppState extends Equatable {
   final bool isLoading;
   final bool isLoadingChekAuth;
 
+
   bool get isAuthenticated => authStatusCheck == AuthStatus.authenticated;
 
 
@@ -25,11 +26,11 @@ class AppState extends Equatable {
       [this.isLoading = false,this.isLoadingChekAuth=false]);
 
   factory AppState.unauthenticated() {
-    return const AppState(AuthStatusCheck.unauthenticated,LocalStatus.ru,'');
+    return  const AppState(AuthStatusCheck.unauthenticated,LocalStatus.ru,'');
   }
 
   factory AppState.unknown() {
-    return const AppState(AuthStatusCheck.unknown, LocalStatus.ru,'');
+    return  const AppState(AuthStatusCheck.unknown, LocalStatus.ru,'');
   }
 
   @override
@@ -40,14 +41,16 @@ class AppState extends Equatable {
     LocalStatus? localStatus,
     String? error,
     bool? isLoading,
-    bool? isLoadingChekAuth
+    bool? isLoadingChekAuth,
+
   }) {
     return AppState(
         authStatusCheck ?? this.authStatusCheck,
         localStatus??this.localStatus,
         error ?? this.error,
         isLoading ?? this.isLoading,
-        isLoadingChekAuth??this.isLoadingChekAuth
+        isLoadingChekAuth??this.isLoadingChekAuth,
+
     );
   }
 }

@@ -9,15 +9,19 @@ import '../data/http_client/dio_client_insert_caption.dart';
 import '../data/http_client/dio_client_translate.dart';
 import '../data/repository/auth_repository_impl.dart';
 import '../data/repository/translate_repository_impl.dart';
+import '../data/repository/user_repository_impl.dart';
 import '../data/repository/youtube_reposotory_impl.dart';
 import '../data/services/auth_service.dart';
 import '../data/services/translate_api_service.dart';
+import '../data/services/user_api_service.dart';
 import '../data/services/youtube_api_service.dart';
 import '../data/utils/auth_api_util.dart';
 import '../data/utils/translate_api_util.dart';
+import '../data/utils/user_data_api_util.dart';
 import '../data/utils/youtube_api_util.dart';
 import '../domain/repository/auth_repository.dart';
 import '../domain/repository/translate_repository.dart';
+import '../domain/repository/user_repository.dart';
 import '../domain/repository/youtube_repository.dart';
   final locator=GetIt.instance;
 
@@ -52,6 +56,11 @@ import '../domain/repository/youtube_repository.dart';
      locator.registerLazySingleton(() => TranslateApiService());
      locator.registerLazySingleton(() => TranslateApiUtil());
      locator.registerFactory<TranslateRepository>(() => TranslateRepositoryImpl());
+
+     //User
+    locator.registerLazySingleton(() => UserApiService());
+    locator.registerLazySingleton(() => UserDataApiUtil());
+    locator.registerFactory<UserRepository>(() => UserRepositoryImpl());
 
 
   }

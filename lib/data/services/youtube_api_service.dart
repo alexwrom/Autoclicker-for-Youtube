@@ -6,7 +6,6 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:googleapis_auth/auth_io.dart';
 import 'package:http/io_client.dart';
 import 'package:googleapis/youtube/v3.dart';
 import 'package:path_provider/path_provider.dart';

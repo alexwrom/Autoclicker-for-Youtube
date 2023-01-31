@@ -8,9 +8,11 @@ import 'package:youtube_clicker/presentation/main_screen/bloc/main_event.dart';
 import 'package:youtube_clicker/presentation/main_screen/bloc/main_state.dart';
 import 'package:youtube_clicker/presentation/main_screen/widgets/item_channel.dart';
 import 'package:youtube_clicker/presentation/main_screen/widgets/item_notpub_video.dart';
+import 'package:youtube_clicker/presentation/main_screen/widgets/user_data_card.dart';
 import '../../components/dialoger.dart';
 import '../../resourses/colors_app.dart';
 import '../auth_screen/bloc/auth_bloc.dart';
+import 'cubit/user_data_cubit.dart';
 
 class ChannelsPage extends StatefulWidget{
   const ChannelsPage({super.key,this.reAuth=true});
@@ -22,6 +24,8 @@ class ChannelsPage extends StatefulWidget{
 }
 
 class _ChannelsPageState extends State<ChannelsPage> {
+
+
 
 
 
@@ -105,11 +109,17 @@ class _ChannelsPageState extends State<ChannelsPage> {
                             ),
                           ),
                           const SizedBox(width: 20),
-                          Text(state.userName,style:const TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w700
-                          ),),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(state.userName,style:const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w700
+                              ),),
+                               const UserDataCard()
+                            ],
+                          ),
                         ],
                       ),
 
@@ -250,3 +260,5 @@ class _ChannelsPageState extends State<ChannelsPage> {
 
 
 }
+
+
