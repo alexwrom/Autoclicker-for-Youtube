@@ -32,4 +32,23 @@ class UserApiService{
    }
 
     }
+
+    Future<void> updateBalance({required int balance,required String uid,required bool isActive})async{
+      Map<String,dynamic> map={};
+      if(!isActive){
+        map.addAll({'balance':balance});
+      }else{
+        map.addAll({'balanceActive':balance});
+      }
+      try{
+        await _firebaseFirestore!.collection('users').doc(uid).update(map);
+
+      }on FirebaseException catch(error,stackTrace){
+        Error.throwWithStackTrace(Failure(error.message!), stackTrace);
+      } on Failure catch(error,stackTrace){
+        Error.throwWithStackTrace(Failure(error.message), stackTrace);
+      }on PlatformException catch(error,stackTrace){
+        Error.throwWithStackTrace(Failure(error.message!), stackTrace);
+      }
+    }
 }

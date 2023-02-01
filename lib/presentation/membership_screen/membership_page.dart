@@ -28,16 +28,21 @@ class MembershipPage extends StatelessWidget{
           children: [
                Align(
                  alignment: Alignment.centerRight,
-                 child: Container(
-                   margin:const EdgeInsets.only(right: 20,top: 60),
-                   width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: colorPrimary
-                  ),
-                   child:const Icon(Icons.close_rounded,color: Colors.white),
+                 child: GestureDetector(
+                   onTap: (){
+                     Navigator.pop(context);
+                   },
+                   child: Container(
+                     margin:const EdgeInsets.only(right: 20,top: 60),
+                     width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: colorPrimary
+                    ),
+                     child:const Icon(Icons.close_rounded,color: Colors.white),
               ),
+                 ),
                ),
             Padding(
               padding: const EdgeInsets.only(top: 10,left: 40,bottom: 10),

@@ -17,5 +17,9 @@ class UserDataApiUtil{
       return UserDataMapper.fromApi(userDataFromApi: data);
     }
 
+    Future<void> updateBalance({required int balance,required String uid,required bool isActive})async{
+      return await _api.updateBalance(balance: balance, uid: uid, isActive: isActive);
+    }
+
 
   }

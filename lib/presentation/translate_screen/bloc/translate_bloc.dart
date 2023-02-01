@@ -4,7 +4,8 @@
 
 
 
-   import 'package:flutter_bloc/flutter_bloc.dart';
+   import 'package:bloc_concurrency/bloc_concurrency.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:googleapis/youtube/v3.dart';
 import 'package:hive/hive.dart';
 import 'package:youtube_clicker/domain/models/video_model.dart';
@@ -15,12 +16,14 @@ import 'package:youtube_clicker/utils/failure.dart';
 import '../../../di/locator.dart';
 import '../../../domain/repository/translate_repository.dart';
 import '../../../domain/repository/youtube_repository.dart';
+import '../../main_screen/cubit/user_data_cubit.dart';
 
 class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
 
 
     final _translateRepository=locator.get<TranslateRepository>();
     final _youTubeRepository=locator.get<YouTubeRepository>();
+    final _cubitUserData=locator.get<UserDataCubit>();
     final Map<String,VideoLocalization> _mapUpdateLocalisation={};
     final List<String> _titleTranslate=[];
     final List<String> _descTranslate=[];
@@ -34,9 +37,9 @@ class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
     String? idCap;
 
      TranslateBloc():super(TranslateState.unknown()){
-        on<StartTranslateEvent>(_initTranslate);
-        on<GetSubtitlesEvent>(_getCaption);
-        on<InsertSubtitlesEvent>(_insertCaption);
+        on<StartTranslateEvent>(_initTranslate,transformer: droppable());
+        on<GetSubtitlesEvent>(_getCaption,transformer: droppable());
+        on<InsertSubtitlesEvent>(_insertCaption,transformer: droppable());
 
 
      }
@@ -52,7 +55,6 @@ class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
         }else{
           emit(state.copyWith(captionStatus: CaptionStatus.success));
         }
-        print('Id Cap $idCap');
 
         }on Failure catch (e) {
          emit(state.copyWith(captionStatus: CaptionStatus.error,error: e.message));
@@ -60,29 +62,35 @@ class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
      }
 
      Future<void> _insertCaption(InsertSubtitlesEvent event,emit)async{
-       emit(state.copyWith(translateStatus: TranslateStatus.translating,progressTranslate: '0%',progressTranslateDouble: 0.0));
-       final listCode=event.codesLang;
-       int operationAll=listCode.length;
-       int opTick=operationAll;
-       try {
-         for(int i=0;i<operationAll;i++){
-                  opTick--;
-                  await _youTubeRepository.insertCaption(idCap: idCap!, idVideo: event.idVideo, codeLang:listCode[i]);
-                  print('Op ${opTick}');
-                  emit(state.copyWith(
-                      translateStatus: TranslateStatus.translating,
-                      progressTranslateDouble:
-                      _getProgressDouble(opTick, operationAll),
-                      progressTranslate:
-                      _getProgress(opTick, operationAll)));
-                  if(opTick==0){
-                    emit(state.copyWith(translateStatus: TranslateStatus.success));
-                  }
+       if(_cubitUserData.state.userData.numberOfTrans==0){
+         emit(state.copyWith(translateStatus: TranslateStatus.forbidden));
+       }else{
+         emit(state.copyWith(translateStatus: TranslateStatus.translating,progressTranslate: '0%',progressTranslateDouble: 0.0));
+         final listCode=event.codesLang;
+         int operationAll=listCode.length;
+         int opTick=operationAll;
+         try {
+           for(int i=0;i<operationAll;i++){
+             opTick--;
+             //await _youTubeRepository.insertCaption(idCap: idCap!, idVideo: event.idVideo, codeLang:listCode[i]);
+             await Future.delayed(Duration(seconds: 2));
+             emit(state.copyWith(
+                 translateStatus: TranslateStatus.translating,
+                 progressTranslateDouble:
+                 _getProgressDouble(opTick, operationAll),
+                 progressTranslate:
+                 _getProgress(opTick, operationAll)));
+             if(opTick==0){
+               _cubitUserData.updateBalance();
+               emit(state.copyWith(translateStatus: TranslateStatus.success));
+             }
 
-                }
-       }on Failure catch (e) {
-         emit(state.copyWith(translateStatus: TranslateStatus.error,error: e.message));
+           }
+         }on Failure catch (e) {
+           emit(state.copyWith(translateStatus: TranslateStatus.error,error: e.message));
+         }
        }
+
 
 
      }
@@ -90,19 +98,25 @@ class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
 
      Future<void> _initTranslate(StartTranslateEvent event,emit)async{
        _clearVar();
-       final num=event.videoModel.description.isEmpty?1:2;
-       _codeList=event.codeLanguage;
-       _operationQueueAll=(_codeList.length*num)+1;
-       _operationQueueTotal=_operationQueueAll;
-       event.videoModel.description.isNotEmpty?_operationQueueDescTrans=_codeList.length:0;
-       _operationQueueTitleTrans=_codeList.length;
-        emit(state.copyWith(translateStatus: TranslateStatus.translating,progressTranslate: '0%',progressTranslateDouble: 0.0));
-       try{
-         await _cycleTranslate(event.videoModel, event.codeLanguage);
-       }on Failure catch(error){
-         _clearVar();
-         emit(state.copyWith(translateStatus: TranslateStatus.error,error: error.message));
+       if(_cubitUserData.state.userData.numberOfTrans==0){
+         print('State _initTranslate');
+         emit(state.copyWith(translateStatus: TranslateStatus.forbidden));
+       }else{
+         final num=event.videoModel.description.isEmpty?1:2;
+         _codeList=event.codeLanguage;
+         _operationQueueAll=(_codeList.length*num)+1;
+         _operationQueueTotal=_operationQueueAll;
+         event.videoModel.description.isNotEmpty?_operationQueueDescTrans=_codeList.length:0;
+         _operationQueueTitleTrans=_codeList.length;
+         emit(state.copyWith(translateStatus: TranslateStatus.translating,progressTranslate: '0%',progressTranslateDouble: 0.0));
+         try{
+           await _cycleTranslate(event.videoModel, event.codeLanguage);
+         }on Failure catch(error){
+           _clearVar();
+           emit(state.copyWith(translateStatus: TranslateStatus.error,error: error.message));
+         }
        }
+
 
 
 
@@ -142,16 +156,16 @@ class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
       VideoModel videoModel, List<String> codeLanguage) async {
     if (_operationQueueAll > 0) {
       if (_operationQueueTitleTrans > 0) {
-        final titleT =await _translateRepository.translate(codeLanguage[_indexTitle],videoModel.title);
-        //await Future.delayed(Duration(seconds: 2));
-        _titleTranslate.add(titleT);
+        //final titleT =await _translateRepository.translate(codeLanguage[_indexTitle],videoModel.title);
+        await Future.delayed(Duration(seconds: 2));
+        _titleTranslate.add('titleT');
         _indexTitle++;
         _operationQueueTitleTrans--;
       } else if (_operationQueueTitleTrans == 0) {
         if (_operationQueueDescTrans > 0) {
-          //await Future.delayed(Duration(seconds: 2));
-          final descT= await _translateRepository.translate(codeLanguage[_indexDesc],videoModel.description);
-          _descTranslate.add(descT);
+          await Future.delayed(Duration(seconds: 2));
+          //final descT= await _translateRepository.translate(codeLanguage[_indexDesc],videoModel.description);
+          _descTranslate.add('descT');
           _indexDesc++;
           _operationQueueDescTrans--;
         }
@@ -166,8 +180,8 @@ class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
             });
 
         }
-        await _youTubeRepository.updateLocalization(videoModel,_mapUpdateLocalisation);
-        //await Future.delayed(Duration(seconds: 2));
+        //await _youTubeRepository.updateLocalization(videoModel,_mapUpdateLocalisation);
+        await Future.delayed(Duration(seconds: 2));
       }
 
       _operationQueueAll--;
@@ -182,6 +196,7 @@ class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
 
       if (_operationQueueAll == 0) {
         _clearVar();
+        _cubitUserData.updateBalance();
         emit(state.copyWith(translateStatus: TranslateStatus.success));
 
       }

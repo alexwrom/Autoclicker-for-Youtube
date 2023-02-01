@@ -102,6 +102,7 @@ class AuthService{
           'isActive':false,
           'description':userCredential.user!.displayName!.isNotEmpty?userCredential.user!.displayName!:'',
           'balance':6,
+          'balanceActive':1000,
           'timeStamp':ts
         });
       }

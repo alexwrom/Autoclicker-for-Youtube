@@ -23,6 +23,7 @@ import '../domain/repository/auth_repository.dart';
 import '../domain/repository/translate_repository.dart';
 import '../domain/repository/user_repository.dart';
 import '../domain/repository/youtube_repository.dart';
+import '../presentation/main_screen/cubit/user_data_cubit.dart';
   final locator=GetIt.instance;
 
 
@@ -61,6 +62,7 @@ import '../domain/repository/youtube_repository.dart';
     locator.registerLazySingleton(() => UserApiService());
     locator.registerLazySingleton(() => UserDataApiUtil());
     locator.registerFactory<UserRepository>(() => UserRepositoryImpl());
+    locator.registerLazySingleton(() => UserDataCubit());
 
 
   }

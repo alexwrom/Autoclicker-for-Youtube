@@ -6,7 +6,8 @@
     error,
     success,
     translating,
-    unknown
+    unknown,
+    forbidden
   }
 
   enum CaptionStatus{
@@ -15,13 +16,15 @@
     success,
     translating,
     unknown,
-    empty
+    empty,
+
   }
 
    extension TranslateStatusExt on TranslateStatus{
      bool get isError=>this==TranslateStatus.error;
      bool get isSuccess=>this==TranslateStatus.success;
      bool get isTranslating=>this==TranslateStatus.translating;
+     bool get isForbidden=>this==TranslateStatus.forbidden;
    }
   extension CaptionStatusExt on CaptionStatus{
     bool get isLoading=>this==CaptionStatus.loading;
@@ -29,6 +32,7 @@
     bool get isSuccess=>this==CaptionStatus.success;
     bool get isTranslating=>this==CaptionStatus.translating;
     bool get isEmpty=>this==CaptionStatus.empty;
+
   }
 
 

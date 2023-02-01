@@ -14,5 +14,10 @@ class UserRepositoryImpl extends UserRepository{
     return await _util.getDataUser(uid: uid);
   }
 
+  @override
+  Future<void> updateBalance({required int balance, required String uid, required bool isActive}) async {
+    return await _util.updateBalance(balance: balance, uid: uid, isActive: isActive);
+  }
+
 
   }

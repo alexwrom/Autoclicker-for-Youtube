@@ -6,6 +6,7 @@ import 'package:youtube_clicker/presentation/auth_screen/auth_page.dart';
 import 'package:youtube_clicker/presentation/main_screen/bloc/main_bloc.dart';
 import 'package:youtube_clicker/presentation/main_screen/bloc/main_event.dart';
 import 'package:youtube_clicker/presentation/main_screen/bloc/main_state.dart';
+import 'package:youtube_clicker/presentation/main_screen/widgets/card_free_trial.dart';
 import 'package:youtube_clicker/presentation/main_screen/widgets/item_channel.dart';
 import 'package:youtube_clicker/presentation/main_screen/widgets/item_notpub_video.dart';
 import 'package:youtube_clicker/presentation/main_screen/widgets/user_data_card.dart';
@@ -109,25 +110,25 @@ class _ChannelsPageState extends State<ChannelsPage> {
                             ),
                           ),
                           const SizedBox(width: 20),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(state.userName,style:const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w700
-                              ),),
-                               const UserDataCard()
-                            ],
-                          ),
+                          Text(state.userName,style:const TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700
+                          ),),
+
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          const UserDataCard(),
+                          IconButton(onPressed: (){
+                            context.read<AuthBloc>().add(LogOutEvent());
+                            Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=>const AuthPage()));
+                          },
+                              icon: Icon(Icons.logout,color: colorRed))
                         ],
                       ),
 
-                      IconButton(onPressed: (){
-                        context.read<AuthBloc>().add(LogOutEvent());
-                        Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=>const AuthPage()));
-                      },
-                          icon: Icon(Icons.logout,color: colorRed))
 
                     ],
                   ),
@@ -138,6 +139,7 @@ class _ChannelsPageState extends State<ChannelsPage> {
                       margin:const EdgeInsets.symmetric(horizontal: 20),
                       child: Column(
                         children: [
+                          CardFreeTrial(),
                           Align(
                             alignment: Alignment.centerLeft,
                             child: Container(

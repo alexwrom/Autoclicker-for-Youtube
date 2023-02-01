@@ -3,6 +3,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:youtube_clicker/di/locator.dart';
+import 'package:youtube_clicker/resourses/colors_app.dart';
 
 
 import '../../../components/dialoger.dart';
@@ -17,7 +19,7 @@ class UserDataCard extends StatefulWidget{
 }
 
 class _UserDataCardState extends State<UserDataCard> {
-  final _cubitUserData=UserDataCubit();
+  final _cubitUserData=locator.get<UserDataCubit>();
 
 
   @override
@@ -26,6 +28,10 @@ class _UserDataCardState extends State<UserDataCard> {
     _cubitUserData.getDataUser();
     print('Init User');
 
+  }
+
+  double _getWight(int count){
+    return count>999?50.0:40.0;
   }
 
   @override
@@ -38,11 +44,32 @@ class _UserDataCardState extends State<UserDataCard> {
           if (stLis.error != '') Dialoger.showError(stLis.error,context);
         },
         builder: (context,state) {
-          return Container(
-            child: Text('${state.userData.timeStamp}',style: TextStyle(
-                color:Colors.white
-            ),),
-          );
+            return Badge(
+              alignment:AlignmentDirectional.topStart,
+              label: Text('${state.userData.numberOfTrans}',style:
+                const TextStyle(
+                  fontWeight: FontWeight.w700
+                ),),
+              child: GestureDetector(
+                onTap: (){
+
+                },
+                child: Container(
+                  alignment: Alignment.centerRight,
+                  width: _getWight(state.userData.numberOfTrans),
+                  height: 40,
+                  child: Container(
+                    width: 35,
+                    height: 35,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: colorBackground
+                    ),
+                    child:const Icon(Icons.translate,color: Colors.white),
+                  ),
+                ),
+              ),
+            );
         }
       ),
     );

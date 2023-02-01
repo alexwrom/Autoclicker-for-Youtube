@@ -7,10 +7,12 @@ class UserDataFromApi{
 
    final bool isActive;
    final int numberOfTrans;
+   final int numberOfTransActive;
    final int timeStamp;
 
   UserDataFromApi.fromApi({required DocumentSnapshot documentSnapshot}):
         isActive=documentSnapshot.get('isActive'),
         numberOfTrans=documentSnapshot.get('balance'),
+        numberOfTransActive=documentSnapshot.get('balanceActive'),
         timeStamp=documentSnapshot.get('timeStamp');
  }

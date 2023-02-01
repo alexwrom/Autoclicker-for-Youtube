@@ -65,6 +65,10 @@ class _TranslatePageState extends State<TranslatePage> {
                 Dialoger.showInfoDialog(context, 'Titles missing!',
                     'There are no subtitles. Download basic subtitles in Youtube Studio if you need them',false);
               }
+              print('Init Tran Dialog ${stateLis.translateStatus}');
+              if(stateLis.translateStatus.isForbidden){
+                Dialoger.showNotSubscribed(context);
+              }
             },
             builder: (context,state) {
               return SingleChildScrollView(
