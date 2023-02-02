@@ -65,10 +65,8 @@ class _TranslatePageState extends State<TranslatePage> {
                 Dialoger.showInfoDialog(context, 'Titles missing!',
                     'There are no subtitles. Download basic subtitles in Youtube Studio if you need them',false);
               }
-              print('Init Tran Dialog ${stateLis.translateStatus}');
-              if(stateLis.translateStatus.isForbidden){
-                Dialoger.showNotSubscribed(context);
-              }
+
+
             },
             builder: (context,state) {
               return SingleChildScrollView(
@@ -276,11 +274,17 @@ class _TranslatePageState extends State<TranslatePage> {
                               ),
 
                                 onPressed:()async{
+                                  if(state.translateStatus.isForbidden){
+                                    Dialoger.showNotSubscribed(context);
+                                    return;
+                                  }
                                  if(!state.captionStatus.isTranslating&&!state.translateStatus.isTranslating){
                                    if(_listCodeLanguage.isNotEmpty){
-                                     _translateBloc.add(StartTranslateEvent(
-                                         codeLanguage: _listCodeLanguage,
-                                         videoModel: widget.videoModel));
+                                     Dialoger.showGetStartedTranslate(context, () {
+                                       _translateBloc.add(StartTranslateEvent(
+                                           codeLanguage: _listCodeLanguage,
+                                           videoModel: widget.videoModel));
+                                     });
                                    }else{
                                      Dialoger.showMessageSnackBar('No languages selected for translation', context);
                                    }
@@ -309,11 +313,19 @@ class _TranslatePageState extends State<TranslatePage> {
                                 ),
 
                                 onPressed:()async{
+
+                                  if(state.translateStatus.isForbidden){
+                                    Dialoger.showNotSubscribed(context);
+                                    return;
+                                  }
                                   if(!state.captionStatus.isTranslating&&!state.translateStatus.isTranslating){
                                     if(state.captionStatus.isSuccess){
                                       if(_listCodeLanguage.isNotEmpty){
-                                        _translateBloc.add(InsertSubtitlesEvent(codesLang: _listCodeLanguage,
-                                            idVideo: widget.videoModel.idVideo));
+                                        Dialoger.showGetStartedTranslate(context,(){
+                                          _translateBloc.add(InsertSubtitlesEvent(codesLang: _listCodeLanguage,
+                                              idVideo: widget.videoModel.idVideo));
+                                        });
+
                                       }else{
                                         Dialoger.showMessageSnackBar('No languages selected for translation', context);
                                       }

@@ -23,9 +23,9 @@ class CardFreeTrial extends StatelessWidget{
    CardFreeTrial({super.key});
 
    int _timeEnd(int timeStamp){
-     final timeNow=DateTime.now().millisecondsSinceEpoch+10000;
+     final timeNow=DateTime.now().millisecondsSinceEpoch;
      const int dayFreeTrial=432000000;
-     final int dayAuth=(timeNow-timeStamp)~/10000;
+     final int dayAuth=timeNow-timeStamp;
      final int restDays=dayFreeTrial-dayAuth;
      return  timeNow+restDays;
 
@@ -36,7 +36,6 @@ class CardFreeTrial extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-     final ts=_cubitUserData.state.userData.timeStamp;
     return BlocProvider(
       create: (_)=>_cubitUserData,
       child: BlocBuilder<UserDataCubit,UserdataState>(
@@ -66,7 +65,7 @@ class CardFreeTrial extends StatelessWidget{
                     const SizedBox(height: 15),
 
                     CountdownTimer(
-                      endTime: _timeEnd(ts),
+                      endTime: _timeEnd(state.userData.timeStamp),
                       widgetBuilder: (_, time) {
                         if (time == null) {
                           _cubitUserData.clearBalance();

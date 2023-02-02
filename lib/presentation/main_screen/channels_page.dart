@@ -122,8 +122,7 @@ class _ChannelsPageState extends State<ChannelsPage> {
                         children: [
                           const UserDataCard(),
                           IconButton(onPressed: (){
-                            context.read<AuthBloc>().add(LogOutEvent());
-                            Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=>const AuthPage()));
+                           Dialoger.showLogOut(context: context);
                           },
                               icon: Icon(Icons.logout,color: colorRed))
                         ],

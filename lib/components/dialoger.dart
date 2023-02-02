@@ -7,8 +7,12 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:youtube_clicker/presentation/membership_screen/membership_page.dart';
 
+import '../presentation/auth_screen/auth_page.dart';
+import '../presentation/auth_screen/bloc/auth_bloc.dart';
 import '../resourses/colors_app.dart';
 
 
@@ -19,16 +23,21 @@ class Dialoger {
 
   static void showLogOut({required BuildContext context}){
     showCustomDialog(
-      textButtonCancel: 'Отмена',
-      textButtonAccept: 'Выйти',
+      textButtonCancel: 'Close',
+      textButtonAccept: 'Ok',
+      textButtonColor: Colors.white,
       contextUp: context,
-      title: 'Выйти из аккаунта?',
-      titleColor: colorGrey,
-      content:  Text('Ваши данные сохранены на сервере',
+      title: 'Sign out?',
+      titleColor: Colors.white,
+      content:const  Text('Your data is saved on the server',
         style: TextStyle(
-            color: colorGrey,
-            fontSize: 14
+            color: Colors.grey,
+
         ),),
+      voidCallback: (){
+        context.read<AuthBloc>().add(LogOutEvent());
+        Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=>const AuthPage()));
+      }
     );
 
 
@@ -36,27 +45,41 @@ class Dialoger {
 
 
 
-  static void showGetStarted(BuildContext context) {
+  static void showGetStartedTranslate(BuildContext context,VoidCallback callback) {
     showCustomDialog(
-      textButtonCancel: 'Отмена',
-      textButtonAccept: 'Выйти',
+      textButtonCancel: 'Cancel',
+      textButtonAccept: 'To begin',
+      textButtonColor: Colors.white,
       contextUp: context,
-      title: 'Get Started!',
-      content: const Text('Free trial'),
+      title: 'Translate?',
+      titleColor: Colors.white,
+      content: const Text('One transfer will be taken from your balance',
+        style: TextStyle(
+            color: Colors.grey
+        ),),
+      voidCallback: (){
+          callback();
+      }
 
     );
   }
 
   static void showNotSubscribed(BuildContext context) {
     showCustomDialog(
-      textButtonCancel: 'Отмена',
-      textButtonAccept: 'Выйти',
+      textButtonCancel: 'Close',
+      textButtonAccept: 'Subscribe',
       contextUp: context,
-      title: 'Error: You do not have an active subscription!',
-      titleColor: const Color(0xFFFF0000),
+      title: 'The balance of active transfers is over',
+      titleColor: const Color.fromRGBO(212,32,60, 1),
       content: const Text(
-        'You can continue to use quick connect, or start your free full access trial to continue.',
+        'Choose the appropriate offer for further work with translations',
+        style: TextStyle(
+          color: Colors.white
+        ),
       ),
+      voidCallback: (){
+          Navigator.of(context).push(MaterialPageRoute(builder: (_)=>MembershipPage()));
+      }
 
     );
   }
@@ -66,6 +89,8 @@ class Dialoger {
     required String title,
     required String textButtonCancel,
     required String textButtonAccept,
+    required VoidCallback voidCallback,
+    Color? textButtonColor=const Color.fromRGBO(212,32,60, 1),
     Color? titleColor,
     Widget? content,
   }) async {
@@ -91,7 +116,7 @@ class Dialoger {
           //title: titleWidget,
           content: Container(
             height: 200,
-            padding: const EdgeInsets.only(left: 20.0,right: 15.0,top: 15.0,bottom: 15.0),
+            padding: const EdgeInsets.only(left: 30.0,right: 30.0,top: 15.0,bottom: 15.0),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20.0),
               color: colorPrimary,
@@ -114,15 +139,16 @@ class Dialoger {
                            Navigator.pop(context);
                       },
                     ),
-                    // TextButton(
-                    //   child:  Text(textButtonAccept,style: TextStyle(
-                    //       color: colorPrimary,
-                    //
-                    //   ),),
-                    //   onPressed: () {
-                    //
-                    //   },
-                    // )
+                    TextButton(
+                      child:  Text(textButtonAccept,style: TextStyle(
+                          color: textButtonColor,
+
+                      ),),
+                      onPressed: () {
+                        Navigator.pop(context);
+                          voidCallback();
+                      },
+                    )
                   ],
                 )
               ],
@@ -138,12 +164,12 @@ class Dialoger {
               child:  Text(textButtonCancel),
               onPressed: (){},
             ),
-            // TextButton(
-            //   child:  Text(textButtonAccept),
-            //   onPressed: () {
-            //
-            //   },
-            // )
+            TextButton(
+              child:  Text(textButtonAccept),
+              onPressed: () {
+                 voidCallback();
+              },
+            )
           ],
         ),
       ),
@@ -162,6 +188,9 @@ class Dialoger {
         fontSize: 16,
         fontWeight: FontWeight.normal
       ),),
+      voidCallback: (){
+
+      }
 
     );
   }
