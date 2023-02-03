@@ -26,6 +26,9 @@ class CardFreeTrial extends StatelessWidget{
      final timeNow=DateTime.now().millisecondsSinceEpoch;
      const int dayFreeTrial=432000000;
      final int dayAuth=timeNow-timeStamp;
+     if(dayFreeTrial<dayAuth){
+       return 0;
+     }
      final int restDays=dayFreeTrial-dayAuth;
      return  timeNow+restDays;
 

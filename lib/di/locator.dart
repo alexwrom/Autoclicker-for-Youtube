@@ -3,6 +3,8 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:googleapis/youtube/v3.dart';
+import 'package:youtube_clicker/data/repository/in_app_purchase_repository_impl.dart';
+import 'package:youtube_clicker/domain/repository/in_app_purchase_repository.dart';
 
 import '../data/http_client/dio_auth_client.dart';
 import '../data/http_client/dio_client_insert_caption.dart';
@@ -12,10 +14,12 @@ import '../data/repository/translate_repository_impl.dart';
 import '../data/repository/user_repository_impl.dart';
 import '../data/repository/youtube_reposotory_impl.dart';
 import '../data/services/auth_service.dart';
+import '../data/services/in_app_purchase_service.dart';
 import '../data/services/translate_api_service.dart';
 import '../data/services/user_api_service.dart';
 import '../data/services/youtube_api_service.dart';
 import '../data/utils/auth_api_util.dart';
+import '../data/utils/product_purchase_util.dart';
 import '../data/utils/translate_api_util.dart';
 import '../data/utils/user_data_api_util.dart';
 import '../data/utils/youtube_api_util.dart';
@@ -63,6 +67,11 @@ import '../presentation/main_screen/cubit/user_data_cubit.dart';
     locator.registerLazySingleton(() => UserDataApiUtil());
     locator.registerFactory<UserRepository>(() => UserRepositoryImpl());
     locator.registerLazySingleton(() => UserDataCubit());
+
+    //in app purchase
+    locator.registerLazySingleton(() => InAppPurchaseService());
+    locator.registerLazySingleton(() => ProductPurchaseUtil());
+    locator.registerFactory<InAppPurchaseRepository>(() => InAppPurchaseRepositoryImpl());
 
 
   }
