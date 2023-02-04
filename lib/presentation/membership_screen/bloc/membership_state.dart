@@ -2,7 +2,6 @@
 
 
     import 'package:equatable/equatable.dart';
-import 'package:in_app_purchase/in_app_purchase.dart';
 
 import '../../../domain/models/product_purchase_model.dart';
 
@@ -16,7 +15,7 @@ import '../../../domain/models/product_purchase_model.dart';
    purchased,
    unknown,
    loaded,
-   empty
+   empty,
     }
 
     extension MemberShipStatusExt on MemberShipStatus{
@@ -37,30 +36,33 @@ class MemberShipState extends Equatable{
    final List<ProductPurchaseModel> listDetails;
    final MemberShipStatus memebStatus;
    final String error;
+   final List<String> priceOneTranslate;
 
 
-   const MemberShipState(this.listDetails, this.memebStatus, this.error);
+   const MemberShipState(this.listDetails, this.memebStatus, this.error,this.priceOneTranslate);
 
 
   factory MemberShipState.unknown(){
-    return const MemberShipState([], MemberShipStatus.unknown, '');
+    return const MemberShipState([], MemberShipStatus.unknown, '',[]);
   }
 
 
 
 
   @override
-  List<Object?> get props => [listDetails,memebStatus,error];
+  List<Object?> get props => [listDetails,memebStatus,error,priceOneTranslate];
 
    MemberShipState copyWith({
     List<ProductPurchaseModel>? listDetails,
      MemberShipStatus? memebStatus,
     String? error,
+     List<String>? priceOneTranslate
   }) {
     return MemberShipState(
       listDetails ?? this.listDetails,
        memebStatus ?? this.memebStatus,
       error ?? this.error,
+      priceOneTranslate??this.priceOneTranslate
     );
   }
 }

@@ -3,7 +3,8 @@
 
 
 
-  import 'package:flutter/cupertino.dart';
+  import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:super_banners/super_banners.dart';
@@ -25,11 +26,6 @@ class MembershipPage extends StatefulWidget{
 class _MembershipPageState extends State<MembershipPage> {
  final List<int> _limit=[60,200,600];
 
- final List<String> _cost=['\$0.5', '\$0,45','\$0,4' ];
-
- final List<String> _costSub=['15\$','45\$','120\$'];
-
- final List<String> _sales=['','10%','20%'];
 
  final MemberShipBloc _memberShipBloc=MemberShipBloc();
 
@@ -124,13 +120,13 @@ class _MembershipPageState extends State<MembershipPage> {
                       ],
                     ),
                   ),
-                    ...List.generate(3, (index) {
+                    ...List.generate(state.listDetails.length, (index) {
                       return Stack(
                         children: [
                           Container(
-                            padding: EdgeInsets.only(left: 30,right: 30,top:_sales[index].isNotEmpty?60:40,bottom: 10),
+                            padding: EdgeInsets.only(left: 30,right: 30,top:state.listDetails[index].isSale?60:40,bottom: 10),
                             margin:const EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-                            height: _sales[index].isNotEmpty?235:220,
+                            height: state.listDetails[index].isSale?235:220,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(30),
                               color: colorPrimary,
@@ -144,14 +140,14 @@ class _MembershipPageState extends State<MembershipPage> {
                                     children: [
                                       Image.asset(item,width: 20,height: 20,color: Colors.amber,),
                                       const SizedBox(width: 10),
-                                      const Text('The cost of translating one video is only',
-                                        style: TextStyle(
+                                       Text(state.listDetails[index].titlePriceOneTransfer,
+                                        style:const TextStyle(
                                             color: Colors.white,
                                             fontWeight: FontWeight.w700,
                                             fontSize: 16
                                         ),),
                                       const SizedBox(width: 10,),
-                                      Text(_cost[index],style:const TextStyle(
+                                      Text('${state.priceOneTranslate[index]}${state.listDetails[index].currencySymbol}',style:const TextStyle(
                                         color: Colors.amber,
                                           fontWeight: FontWeight.w700,
                                           fontSize: 20
@@ -165,8 +161,8 @@ class _MembershipPageState extends State<MembershipPage> {
                                     children: [
                                       Image.asset(item,width: 20,height: 20,color: Colors.amber),
                                       const SizedBox(width: 10),
-                                      const Text('Limit translations per month ',
-                                        style: TextStyle(
+                                       Text('${state.listDetails[index].titleLimitTranslation} ',
+                                        style:const TextStyle(
                                             color: Colors.white,
                                             fontWeight: FontWeight.w700,
                                             fontSize: 16
@@ -178,7 +174,7 @@ class _MembershipPageState extends State<MembershipPage> {
                                           color: Colors.amber
                                         ),
                                         padding:const EdgeInsets.only(left: 5,right: 5),
-                                        child: Text('${_limit[index]}',style: TextStyle(
+                                        child: Text('${state.listDetails[index].limitTranslation}',style: TextStyle(
                                             color: colorPrimary,
                                             fontWeight: FontWeight.w800,
                                             fontSize: 20
@@ -191,26 +187,31 @@ class _MembershipPageState extends State<MembershipPage> {
                                   children: [
                                     Image.asset(item,width: 20,height: 20,color: Colors.amber),
                                     const SizedBox(width: 10),
-                                    const Text('Subscription cost per month ',
-                                      style: TextStyle(
+                                    AutoSizeText('${state.listDetails[index].titlePrice} ',
+                                      style:const TextStyle(
                                           color: Colors.white,
                                           fontWeight: FontWeight.w700,
                                           fontSize: 22
-                                      ),),
+                                      ),
+                                        maxLines: 1,),
                                     const SizedBox(width: 5),
-                                    Text(
-                                    _costSub[index],
-                                    style: const TextStyle(
-                                        color: Colors.amber,
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: 24),
-                                  )
+                                    Expanded(
+                                      child: AutoSizeText('${_getPrice(state.listDetails[index].rawPrice)}${state.listDetails[index].currencySymbol}',
+                                      style: const TextStyle(
+                                          color: Colors.amber,
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 24),
+                                          maxLines: 1
+                                  ),
+                                    )
                                 ],
                                 ),
                                 const SizedBox(height: 20),
                                 Align(
                                   alignment: Alignment.centerRight,
-                                  child: ElevatedButton(onPressed: (){},
+                                  child: ElevatedButton(onPressed: (){
+                                    context.read<MemberShipBloc>().add(BuySubscriptionEvent(productPurchaseModel:state.listDetails[index]));
+                                  },
                                     style: ButtonStyle(
                                       backgroundColor: MaterialStateProperty.all<Color>(colorBackground),
                                       shape: MaterialStatePropertyAll(RoundedRectangleBorder(
@@ -221,21 +222,21 @@ class _MembershipPageState extends State<MembershipPage> {
                                           style:  TextStyle(
                                               color: Colors.white,
                                               fontWeight: FontWeight.w500,
-                                              fontSize: 20)),),
+                                              fontSize: 18)),),
                                 )
                               ],
                             ),
                           ),
 
                       Visibility(
-                        visible:_sales[index].isNotEmpty,
+                        visible:state.listDetails[index].isSale,
                         child: Padding(
                           padding: const EdgeInsets.only(left: 20,top: 10),
                           child:  CornerBanner(
                             elevation: 10,
                           bannerPosition: CornerBannerPosition.topLeft,
                           bannerColor: colorRed,
-                          child: Text('Sale ${_sales[index]}',
+                          child: Text('Sale ${state.listDetails[index].priceSale}%',
                         style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w500,
@@ -253,4 +254,15 @@ class _MembershipPageState extends State<MembershipPage> {
       ),
     );
   }
+
+   String _getPrice(double rawPrice){
+    int p1=rawPrice.toInt();
+    String price='';
+    if(rawPrice>p1){
+      price=rawPrice.toString();
+    }else{
+      price=rawPrice.toInt().toString();
+    }
+    return price;
+   }
 }

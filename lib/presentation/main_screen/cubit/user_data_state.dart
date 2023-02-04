@@ -37,12 +37,14 @@ class UserdataState extends Equatable{
   UserdataState copyWith({
     UserData? userData,
     UserDataStatus? userDataStatus,
-    String? error
+    String? error,
+
   }) {
     return UserdataState(
       userData ?? this.userData,
       userDataStatus ?? this.userDataStatus,
-      error??this.error
+      error??this.error,
+
     );
   }
 }

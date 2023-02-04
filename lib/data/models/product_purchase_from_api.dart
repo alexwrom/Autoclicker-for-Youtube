@@ -16,12 +16,12 @@ class ProductPurchaseFromApi{
     final String currencyCode;
     final String currencySymbol;
     final bool isActive;
-    final String priceOneTransfer;
     final String titlePriceOneTransfer;
     final int limitTranslation;
     final String titleLimitTranslation;
     final String  titlePrice;
     final bool isSale;
+    final int priceSale;
 
     ProductPurchaseFromApi.fromApi({required QueryDocumentSnapshot documentSnapshot,required ProductDetails productDetails}):
      id=productDetails.id,
@@ -32,10 +32,10 @@ class ProductPurchaseFromApi{
      currencyCode=productDetails.currencyCode,
      currencySymbol=productDetails.currencySymbol,
      isActive=false,
-     priceOneTransfer=documentSnapshot.get('priceOneTransfer'),
      titlePriceOneTransfer=documentSnapshot.get('titlePriceOneTransfer'),
      limitTranslation=documentSnapshot.get('limitTranslation'),
      titleLimitTranslation=documentSnapshot.get('titleLimitTranslation'),
       titlePrice=documentSnapshot.get('titlePrice'),
-     isSale=documentSnapshot.get('isSale');
+     isSale=documentSnapshot.get('isSale'),
+     priceSale=documentSnapshot.get('priceSale');
 }

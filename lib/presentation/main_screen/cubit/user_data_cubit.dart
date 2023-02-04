@@ -24,11 +24,13 @@ class UserDataCubit extends Cubit<UserdataState>{
        if(_userData!.isActive){
          _userData=_userData!.copyWith(numberOfTrans: _userData!.numberOfTransActive);
        }
-      emit(state.copyWith(userDataStatus: UserDataStatus.success,userData: _userData));
+       emit(state.copyWith(userDataStatus: UserDataStatus.success,userData: _userData));
     }on Failure catch (e) {
       emit(state.copyWith(userDataStatus: UserDataStatus.error,error: e.message));
     }
   }
+
+
 
    //todo error
    clearBalance()async{

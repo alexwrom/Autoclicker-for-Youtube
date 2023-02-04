@@ -62,6 +62,7 @@ dependencies:
   ribbon_widget: ^1.0.3
   super_banners: ^0.0.1
   flutter_countdown_timer: ^4.1.0
+  auto_size_text: ^3.0.0
 
 
 

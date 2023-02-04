@@ -9,7 +9,7 @@ class UserDataMapper{
 
 
     static UserData fromApi({required UserDataFromApi userDataFromApi}){
-      return UserData(userDataFromApi.isActive, userDataFromApi.numberOfTrans,userDataFromApi.numberOfTransActive, userDataFromApi.timeStamp);
+      return UserData(userDataFromApi.isActive, userDataFromApi.numberOfTrans,userDataFromApi.numberOfTransActive, userDataFromApi.timeStamp,userDataFromApi.isSubscribe);
     }
 
   }

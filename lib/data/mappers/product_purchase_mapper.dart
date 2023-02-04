@@ -17,12 +17,12 @@ class ProductPurchaseMapper{
          currencyCode: productPurchaseFromApi.currencyCode,
          currencySymbol: productPurchaseFromApi.currencySymbol,
          isActive: productPurchaseFromApi.isActive,
-         priceOneTransfer: productPurchaseFromApi.priceOneTransfer,
          titlePriceOneTransfer: productPurchaseFromApi.titlePriceOneTransfer,
          limitTranslation: productPurchaseFromApi.limitTranslation,
          titleLimitTranslation: productPurchaseFromApi.titleLimitTranslation,
          titlePrice: productPurchaseFromApi.titlePrice,
-         isSale: productPurchaseFromApi.isSale);
+         isSale: productPurchaseFromApi.isSale,
+         priceSale:productPurchaseFromApi.priceSale);
    }
 
 

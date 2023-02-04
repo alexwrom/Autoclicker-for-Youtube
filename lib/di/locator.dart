@@ -19,6 +19,7 @@ import '../data/services/translate_api_service.dart';
 import '../data/services/user_api_service.dart';
 import '../data/services/youtube_api_service.dart';
 import '../data/utils/auth_api_util.dart';
+import '../data/utils/handle_subscription_util.dart';
 import '../data/utils/product_purchase_util.dart';
 import '../data/utils/translate_api_util.dart';
 import '../data/utils/user_data_api_util.dart';
@@ -72,6 +73,7 @@ import '../presentation/main_screen/cubit/user_data_cubit.dart';
     locator.registerLazySingleton(() => InAppPurchaseService());
     locator.registerLazySingleton(() => ProductPurchaseUtil());
     locator.registerFactory<InAppPurchaseRepository>(() => InAppPurchaseRepositoryImpl());
+    locator.registerLazySingleton(() => HandleSubscriptionUtil());
 
 
   }

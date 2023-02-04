@@ -131,6 +131,16 @@ class Dialoger {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     TextButton(
+                      child:  Text(textButtonAccept,style: TextStyle(
+                        color: textButtonColor,
+
+                      ),),
+                      onPressed: () {
+                        Navigator.pop(context);
+                        voidCallback();
+                      },
+                    ),
+                    TextButton(
                       child:  Text(textButtonCancel,style:const TextStyle(
                           color: Colors.white,
 
@@ -139,16 +149,7 @@ class Dialoger {
                            Navigator.pop(context);
                       },
                     ),
-                    TextButton(
-                      child:  Text(textButtonAccept,style: TextStyle(
-                          color: textButtonColor,
 
-                      ),),
-                      onPressed: () {
-                        Navigator.pop(context);
-                          voidCallback();
-                      },
-                    )
                   ],
                 )
               ],

@@ -61,10 +61,6 @@ class _TranslatePageState extends State<TranslatePage> {
           create: (context)=>_translateBloc,
           child: BlocConsumer<TranslateBloc,TranslateState>(
             listener: (_,stateLis){
-              if(stateLis.captionStatus.isEmpty){
-                Dialoger.showInfoDialog(context, 'Titles missing!',
-                    'There are no subtitles. Download basic subtitles in Youtube Studio if you need them',false);
-              }
 
 
             },
@@ -274,17 +270,17 @@ class _TranslatePageState extends State<TranslatePage> {
                               ),
 
                                 onPressed:()async{
-                                  if(state.translateStatus.isForbidden){
-                                    Dialoger.showNotSubscribed(context);
-                                    return;
-                                  }
                                  if(!state.captionStatus.isTranslating&&!state.translateStatus.isTranslating){
                                    if(_listCodeLanguage.isNotEmpty){
-                                     Dialoger.showGetStartedTranslate(context, () {
-                                       _translateBloc.add(StartTranslateEvent(
-                                           codeLanguage: _listCodeLanguage,
-                                           videoModel: widget.videoModel));
-                                     });
+                                     if(state.translateStatus.isForbidden){
+                                       Dialoger.showNotSubscribed(context);
+                                     }else{
+                                       Dialoger.showGetStartedTranslate(context, () {
+                                         _translateBloc.add(StartTranslateEvent(
+                                             codeLanguage: _listCodeLanguage,
+                                             videoModel: widget.videoModel));
+                                       });
+                                     }
                                    }else{
                                      Dialoger.showMessageSnackBar('No languages selected for translation', context);
                                    }

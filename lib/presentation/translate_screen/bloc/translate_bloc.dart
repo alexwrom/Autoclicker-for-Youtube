@@ -47,6 +47,9 @@ class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
 
      Future<void> _getCaption(GetSubtitlesEvent event,emit)async{
         idCap='';
+        if(_cubitUserData.state.userData.numberOfTrans==0){
+          emit(state.copyWith(translateStatus: TranslateStatus.forbidden));
+        }
         emit(state.copyWith(captionStatus: CaptionStatus.loading));
         try {
         idCap= await _youTubeRepository.loadCaptions(event.videoId);

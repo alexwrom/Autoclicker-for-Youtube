@@ -7,13 +7,24 @@ import 'package:youtube_clicker/data/models/list_translate_api.dart';
 void main() {
   test('unit',(){
 
-    final i=ListTranslate.langName(1, Local.ru);
-    final c=ListTranslate.langCode(1);
-    expect('50%', getProgress(20,40));
+     double price=123.00;
+     int t=price.toInt();
+     if(price>t){
+       print('Result 1 ${price}');
+     }else{
+       print('Result 2 ${price.toInt()}');
+     }
+
+
   });
 
 
 
+}
+String _getOnePriceTranslate(String price,int countTranslate){
+  double p=double.parse(price);
+  double r=p/countTranslate;
+  return r.toString().substring(0,4);
 }
 
 String getProgress(int op,int allOp){

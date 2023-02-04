@@ -1,6 +1,9 @@
 
 
-  import 'package:cloud_firestore/cloud_firestore.dart';
+  import 'dart:async';
+
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:youtube_clicker/data/models/product_purchase_from_api.dart';
@@ -10,11 +13,12 @@ import '../../utils/failure.dart';
 class InAppPurchaseService{
 
     final InAppPurchase _inAppPurchase = InAppPurchase.instance;
-    final Stream<List<PurchaseDetails>> _storeSubscription =
+    final Stream<List<PurchaseDetails>> storeSubscription =
         InAppPurchase.instance.purchaseStream;
 
     InAppPurchase get instance => _inAppPurchase;
     FirebaseFirestore? _firebaseFirestore;
+
 
 
 
@@ -59,4 +63,14 @@ class InAppPurchaseService{
 
     }
 
-  }
+    Future<bool> buyItemInStore(ProductDetails product) async {
+      final PurchaseParam purchaseParam = PurchaseParam(productDetails: product);
+      return InAppPurchase.instance.buyConsumable(purchaseParam: purchaseParam);
+    }
+
+    Future<void> completePurchase(PurchaseDetails purchaseDetails) async {
+      await InAppPurchase.instance.completePurchase(purchaseDetails);
+    }
+
+
+}
