@@ -12,7 +12,6 @@
           "package_name": "com.alex.youtube_clicker"
         }
       },
-
       "oauth_client": [
         {
           "client_id": "160062857426-idq2sfno0838lnqmbbum7np2dcmb6bso.apps.googleusercontent.com",
@@ -28,7 +27,14 @@
           "android_info": {
             "package_name": "com.alex.youtube_clicker",
             "certificate_hash": "05c8f26ee9436b79c38a2eee6e42d235936c7f8d"
-
+          }
+        },
+        {
+          "client_id": "160062857426-rol1a1fdmokettbjv0ulvh912fg28f75.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.alex.youtube_clicker",
+            "certificate_hash": "a0ec3ceab3d7a4df58fab43f7fdbdb8f3a31985b"
           }
         }
       ],
