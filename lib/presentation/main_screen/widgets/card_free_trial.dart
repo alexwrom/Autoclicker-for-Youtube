@@ -43,17 +43,19 @@ class CardFreeTrial extends StatelessWidget{
       create: (_)=>_cubitUserData,
       child: BlocBuilder<UserDataCubit,UserdataState>(
            builder: (context,state) {
-             print('Sub ${state.userData.isSubscribe}');
+
              if(state.userDataStatus==UserDataStatus.loading){
                return Container();
              }
-             if(state.userData.isSubscribe){
+             //todo корректно настроить
+             if(!state.isFreeTrial){
                return Container();
              }
 
              if(state.userData.isActive){
                return Container();
              }
+
 
              return Container(
                padding: const EdgeInsets.all(20),
@@ -72,9 +74,8 @@ class CardFreeTrial extends StatelessWidget{
                      fontSize: 18
                    ),),
                    const SizedBox(height: 15),
-
                    CountdownTimer(
-                     endTime: _timeEnd(state.userData.timeStamp),
+                     endTime: _timeEnd(state.userData.timeStampAuth),
                      widgetBuilder: (_, time) {
                        if (time == null) {
                          if(state.userData.numberOfTrans>0){

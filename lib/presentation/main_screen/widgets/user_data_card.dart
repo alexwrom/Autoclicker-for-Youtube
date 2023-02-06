@@ -26,7 +26,6 @@ class _UserDataCardState extends State<UserDataCard> {
   void initState() {
     super.initState();
     _cubitUserData.getDataUser();
-    print('Init User');
 
   }
 
@@ -36,7 +35,6 @@ class _UserDataCardState extends State<UserDataCard> {
 
   @override
   Widget build(BuildContext context) {
-    print('Build User');
     return BlocProvider(
       create: (_)=>_cubitUserData,
       child: BlocConsumer<UserDataCubit,UserdataState>(
@@ -46,7 +44,8 @@ class _UserDataCardState extends State<UserDataCard> {
         builder: (context,state) {
             return Badge(
               alignment:AlignmentDirectional.topStart,
-              label: Text('${state.userData.numberOfTrans}',style:
+              label: state.userDataStatus.isLoading?const SizedBox(width:10,height:10,
+                  child:  CircularProgressIndicator(color: Colors.white,strokeWidth: 1,)):Text('${state.userData.numberOfTrans}',style:
                 const TextStyle(
                   fontWeight: FontWeight.w700
                 ),),

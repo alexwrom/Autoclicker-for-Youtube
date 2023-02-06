@@ -10,6 +10,7 @@ import 'package:in_app_purchase_android/billing_client_wrappers.dart';
 import 'package:in_app_purchase_android/in_app_purchase_android.dart';
   import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 import 'package:youtube_clicker/data/models/product_purchase_from_api.dart';
+import 'package:youtube_clicker/utils/preferences_util.dart';
 
 import '../../utils/failure.dart';
 
@@ -37,8 +38,10 @@ class InAppPurchaseService{
         CollectionReference collectionRef= _firebaseFirestore!.collection('products');
         QuerySnapshot querySnapshot = await collectionRef.get();
         final listProdFromFirebase = querySnapshot.docs.map((doc) => doc).toList();
+
         for(int i=0;i<listProdFromFirebase.length;i++){
-          idsProd.add(listProdFromFirebase[i].id);
+          idsProd.add(listProdFromFirebase[i].id.trim());
+          print('List Id ${listProdFromFirebase[i].id}');
         }
         final ProductDetailsResponse productDetailResponse =
               await _inAppPurchase.queryProductDetails(idsProd);
@@ -48,9 +51,10 @@ class InAppPurchaseService{
         if (productDetailResponse.productDetails.isEmpty) {
                 return [];
         }
-        for(int i=0;i<listProdFromFirebase.length;i++){
+        print('Product ${ productDetailResponse.productDetails.length}');
+        for(int i=0;i<productDetailResponse.productDetails.length;i++){
           products.add(ProductPurchaseFromApi.fromApi(
-              documentSnapshot: listProdFromFirebase[i],
+              documentSnapshot: listProdFromFirebase.firstWhere((element) => productDetailResponse.productDetails[i].id==element.id),
               productDetails: productDetailResponse.productDetails[i]));
         }
       } on FirebaseException catch(error,stackTrace){
@@ -59,6 +63,8 @@ class InAppPurchaseService{
         Error.throwWithStackTrace(Failure(error.message), stackTrace);
       }on PlatformException catch(error,stackTrace){
         Error.throwWithStackTrace(Failure(error.message!), stackTrace);
+      }on RangeError catch(error,stackTrace){
+        Error.throwWithStackTrace(Failure(error.message), stackTrace);
       }
 
       return products;
@@ -66,12 +72,12 @@ class InAppPurchaseService{
 
     }
 
-    Future<void> buyItemInStore(ProductDetails product) async {
+    Future<void> buyItemInStore(ProductDetails product, String userEmail) async {
 
       await  clearTransactionsIos();
       var purchaseParam = PurchaseParam(
         productDetails: product,
-        applicationUserName: 'mr.borodachsanya@gmail.com',
+        applicationUserName: userEmail,
       );
       if (Platform.isAndroid) {
         final androidPurchaseParam =
@@ -84,12 +90,12 @@ class InAppPurchaseService{
         throw const Failure(
             'purchase request was not initially sent successfully');
       }
-      // final PurchaseParam purchaseParam = PurchaseParam(productDetails: product);
-      // return InAppPurchase.instance.buyConsumable(purchaseParam: purchaseParam);
     }
 
-    Future<void> completePurchase(PurchaseDetails purchaseDetails) async {
+    Future<void> completePurchase(PurchaseDetails purchaseDetails,int limitTranslation) async {
+      final uid=PreferencesUtil.getUid;
       await InAppPurchase.instance.completePurchase(purchaseDetails);
+      await _updateBalance(uid: uid,limitTranslation: limitTranslation);
     }
 
     Future<void> clearTransactionsIos() async {
@@ -109,6 +115,14 @@ class InAppPurchaseService{
           }
         }
       }
+    }
+
+    //todo отследить отмененную подписку
+    Future<void> checkSubStatus({required String currentSubId})async{
+      final androidAddition =
+      _inAppPurchase.getPlatformAddition<InAppPurchaseAndroidPlatformAddition>();
+      final oldPurchaseDetailsQuery = await androidAddition.launchPriceChangeConfirmationFlow(sku: sku)
+      
     }
 
 
@@ -151,6 +165,27 @@ class InAppPurchaseService{
         }
       }
       return oldPurchaseDetails;
+    }
+
+
+    Future<void> _updateBalance({required String uid,required int limitTranslation})async{
+      try {
+        //todo прибавить месяц, сейчас 5 минут
+        final ts=DateTime.now().millisecondsSinceEpoch+300000;
+        _firebaseFirestore=FirebaseFirestore.instance;
+        await _firebaseFirestore!.collection('users').doc(uid).update({
+          'timestampPurchase':ts,
+          'balance':limitTranslation
+        });
+      } on FirebaseException catch(error,stackTrace){
+        Error.throwWithStackTrace(Failure(error.message!), stackTrace);
+      } on Failure catch(error,stackTrace){
+        Error.throwWithStackTrace(Failure(error.message), stackTrace);
+      }on PlatformException catch(error,stackTrace){
+        Error.throwWithStackTrace(Failure(error.message!), stackTrace);
+      }
+
+
     }
 
 

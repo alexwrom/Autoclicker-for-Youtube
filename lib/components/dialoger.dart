@@ -177,7 +177,7 @@ class Dialoger {
     );
   }
 
-  static void showInfoDialog(BuildContext context,String title,String body,bool isError) {
+  static void showInfoDialog(BuildContext context,String title,String body,bool isError,VoidCallback voidCallback) {
     showCustomDialog(
       textButtonCancel: 'Ok',
       textButtonAccept: '',
@@ -190,7 +190,7 @@ class Dialoger {
         fontWeight: FontWeight.normal
       ),),
       voidCallback: (){
-
+        voidCallback();
       }
 
     );

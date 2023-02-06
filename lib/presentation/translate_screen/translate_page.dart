@@ -329,10 +329,10 @@ class _TranslatePageState extends State<TranslatePage> {
                                       Dialoger.showMessageSnackBar('The titles haven\'t loaded yet', context);
                                     }else if(state.captionStatus.isError){
                                       Dialoger.showInfoDialog(context, 'Error!',
-                                          'There were errors loading subtitles. Subtitle translation is not available. Try again later',true);
+                                          'There were errors loading subtitles. Subtitle translation is not available. Try again later',true,(){});
                                     }else if(state.captionStatus.isEmpty){
                                       Dialoger.showInfoDialog(context, 'Titles missing!',
-                                          'There are no subtitles. Download basic subtitles in Youtube Studio if you need them',false);
+                                          'There are no subtitles. Download basic subtitles in Youtube Studio if you need them',false,(){});
                                     }
                                   }
 

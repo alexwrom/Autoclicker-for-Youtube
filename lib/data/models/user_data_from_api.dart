@@ -8,13 +8,13 @@ class UserDataFromApi{
    final bool isActive;
    final int numberOfTrans;
    final int numberOfTransActive;
-   final int timeStamp;
-   final bool isSubscribe;
+   final int timeStampAuth;
+   final  int timeStampPurchase;
 
-  UserDataFromApi.fromApi({required DocumentSnapshot documentSnapshot,required bool isSub}):
+  UserDataFromApi.fromApi({required DocumentSnapshot documentSnapshot}):
         isActive=documentSnapshot.get('isActive'),
         numberOfTrans=documentSnapshot.get('balance'),
         numberOfTransActive=documentSnapshot.get('balanceActive'),
-        timeStamp=documentSnapshot.get('timeStamp'),
-        isSubscribe=isSub;
+        timeStampAuth=documentSnapshot.get('timeStampAuth'),
+        timeStampPurchase=documentSnapshot.get('timestampPurchase');
  }

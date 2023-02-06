@@ -24,7 +24,7 @@ class MembershipPage extends StatefulWidget{
 }
 
 class _MembershipPageState extends State<MembershipPage> {
- final List<int> _limit=[60,200,600];
+  int _currentLimit=0;
 
 
  final MemberShipBloc _memberShipBloc=MemberShipBloc();
@@ -48,6 +48,13 @@ class _MembershipPageState extends State<MembershipPage> {
             if(stateLis.memebStatus.isError){
               Dialoger.showError(stateLis.error, context);
             }
+
+            if(stateLis.memebStatus.isPurchased){
+              Dialoger.showInfoDialog(context, 'Subscribed successfully!',
+                'Transfers accrued - $_currentLimit', false, () {
+                      Navigator.pop(context);
+                  });
+          }
           },
           builder: (context,state) {
             if(state.memebStatus.isError||state.memebStatus.isEmpty){
@@ -210,6 +217,7 @@ class _MembershipPageState extends State<MembershipPage> {
                                 Align(
                                   alignment: Alignment.centerRight,
                                   child: ElevatedButton(onPressed: (){
+                                    _currentLimit=state.listDetails[index].limitTranslation;
                                     context.read<MemberShipBloc>().add(BuySubscriptionEvent(productPurchaseModel:state.listDetails[index]));
                                   },
                                     style: ButtonStyle(

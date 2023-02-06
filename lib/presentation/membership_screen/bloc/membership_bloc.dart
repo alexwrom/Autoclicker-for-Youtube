@@ -10,7 +10,9 @@ import 'package:youtube_clicker/di/locator.dart';
 import 'package:youtube_clicker/domain/models/product_purchase_model.dart';
 import 'package:youtube_clicker/domain/repository/in_app_purchase_repository.dart';
 import 'package:youtube_clicker/utils/failure.dart';
+import 'package:youtube_clicker/utils/preferences_util.dart';
 import '../../../data/utils/handle_subscription_util.dart';
+import '../../main_screen/cubit/user_data_cubit.dart';
 import 'membership_event.dart';
 import 'membership_state.dart';
 
@@ -18,6 +20,7 @@ class MemberShipBloc extends Bloc<MemberShipEvent,MemberShipState>{
 
 
   late final HandleSubscriptionUtil _purchasesSubscription;
+  final _cubitUserData=locator.get<UserDataCubit>();
   late final inAppPurchaseService=locator.get<InAppPurchaseService>();
 
 
@@ -29,13 +32,15 @@ class MemberShipBloc extends Bloc<MemberShipEvent,MemberShipState>{
         onError: (){
           add(OnErrorEvent());
         },
+        onComplete: (PurchaseDetails purchaseDetails)async{
+          final limitTranslate=state.listDetails.firstWhere((element) => purchaseDetails.productID==element.id).limitTranslation;
+          print('Balance ${limitTranslate}');
+          await inAppPurchaseService.completePurchase(purchaseDetails,limitTranslate);
+          await _cubitUserData.addBalance(limitTranslate);
+        },
         onPurchased: (PurchaseDetails purchaseDetails) async {
           try {
-            // тут мы проверяем наш платеж на стороне сервера передав данные о платеже ,
-            // и если все ок завершаем  покупку
-            //final bool res = await transactionRepository.createTransaction(purchaseDetails.verificationData.serverVerificationData);
             if (purchaseDetails.status==PurchaseStatus.purchased) {
-              await inAppPurchaseService.completePurchase(purchaseDetails);
               add(OnPurchasedEvent());
             }
           } catch (_, __) {
@@ -97,8 +102,9 @@ class MemberShipBloc extends Bloc<MemberShipEvent,MemberShipState>{
   }
 
    Future<void> _buySubscription(BuySubscriptionEvent event,emit)async{
+          final email=PreferencesUtil.getEmail;
           emit(state.copyWith(memebStatus: MemberShipStatus.loading));
-        final result= await inAppPurchaseService.buyItemInStore(ProductPurchaseModel.toApi(productPurchaseModel: event.productPurchaseModel));
+        await inAppPurchaseService.buyItemInStore(ProductPurchaseModel.toApi(productPurchaseModel: event.productPurchaseModel),email);
    }
 
 

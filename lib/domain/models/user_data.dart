@@ -5,37 +5,37 @@
     final bool isActive;
     final int numberOfTrans;
     final int numberOfTransActive;
-    final int timeStamp;
-    final bool isSubscribe;
+    final int timeStampAuth;
+    final  int timeStampPurchase;
 
     const UserData(
      this.isActive,
      this.numberOfTrans,
      this.numberOfTransActive,
-     this.timeStamp,
-        this.isSubscribe
+     this.timeStampAuth,
+        this.timeStampPurchase
   );
 
      UserData.unknown():
     isActive=false,
     numberOfTrans=0,
      numberOfTransActive=0,
-    timeStamp=0,
-     isSubscribe=false;
+    timeStampAuth=0,
+     timeStampPurchase=0;
 
     UserData copyWith({
     bool? isActive,
     int? numberOfTrans,
       int? numberOfTransActive,
-    int? timeStamp,
-      bool? isSubscribe
+    int? timeStampAuth,
+      int? timeStampPurchase
   }) {
     return UserData(
       isActive ?? this.isActive,
        numberOfTrans ?? this.numberOfTrans,
        numberOfTransActive??this.numberOfTransActive,
-       timeStamp ?? this.timeStamp,
-      isSubscribe??this.isSubscribe
+        timeStampAuth ?? this.timeStampAuth,
+        timeStampPurchase??this.timeStampPurchase
     );
   }
 }

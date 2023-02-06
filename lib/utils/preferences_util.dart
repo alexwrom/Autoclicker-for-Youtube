@@ -32,6 +32,10 @@ class PreferencesUtil{
     await _prefsInstance!.setString(prefsKeyUid, uid);
   }
 
+  static Future<void> setEmail(String email)async{
+    await _prefsInstance!.setString(prefsKeyEmail, email);
+  }
+
 
 
 
@@ -39,6 +43,7 @@ class PreferencesUtil{
   static String get getUrlAvatar=>_prefsInstance!.getString(prefsKeyUrlAvatar)??'';
   static String get getUserName=>_prefsInstance!.getString(prefsKeyUserName)??'';
   static String get getUid=>_prefsInstance!.getString(prefsKeyUid)??'';
+  static String get getEmail=>_prefsInstance!.getString(prefsKeyEmail)??'';
 
   static clear(){
     _prefsInstance!.clear();
@@ -53,3 +58,4 @@ class PreferencesUtil{
   const String prefsKeyUrlAvatar='avatar';
   const String prefsKeyUserName='name';
   const String prefsKeyUid='uid';
+  const String prefsKeyEmail='email';

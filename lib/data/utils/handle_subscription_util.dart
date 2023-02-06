@@ -15,6 +15,7 @@ class HandleSubscriptionUtil {
   final Function()? onError;
   final Function()? onRestored;
   final Function()? onCanceled;
+  final Function(PurchaseDetails purchaseDetails)? onComplete;
 
   StreamSubscription<List<PurchaseDetails>>? _streamSubscription;
   HandleSubscriptionUtil({
@@ -23,6 +24,7 @@ class HandleSubscriptionUtil {
     this.onError,
     this.onRestored,
     this.onCanceled,
+    this.onComplete
   });
 
   Future<void> init() async {
@@ -32,7 +34,7 @@ class HandleSubscriptionUtil {
           events,
               (PurchaseDetails purchaseDetails) async {
             if (purchaseDetails.pendingCompletePurchase) {
-              await inAppPurchaseService.completePurchase(purchaseDetails);
+             onComplete!.call(purchaseDetails);
             }
             switch (purchaseDetails.status) {
               case PurchaseStatus.pending:
@@ -50,6 +52,7 @@ class HandleSubscriptionUtil {
               case PurchaseStatus.canceled:
                 onCanceled?.call();
                 break;
+
             }
           },
         );

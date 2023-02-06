@@ -23,7 +23,7 @@ class UserApiService{
    try{
      DocumentSnapshot documentSnapshot=await _firebaseFirestore!.collection('users').doc(uid).get();
      //todo valid sub
-     return UserDataFromApi.fromApi(documentSnapshot: documentSnapshot,isSub: false);
+     return UserDataFromApi.fromApi(documentSnapshot: documentSnapshot);
    }on FirebaseException catch(error,stackTrace){
      Error.throwWithStackTrace(Failure(error.message!), stackTrace);
    } on Failure catch(error,stackTrace){

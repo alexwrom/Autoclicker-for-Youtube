@@ -84,7 +84,7 @@ class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
                  progressTranslate:
                  _getProgress(opTick, operationAll)));
              if(opTick==0){
-               _cubitUserData.updateBalance();
+               await _cubitUserData.updateBalance();
                emit(state.copyWith(translateStatus: TranslateStatus.success));
              }
 
@@ -199,7 +199,7 @@ class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
 
       if (_operationQueueAll == 0) {
         _clearVar();
-        _cubitUserData.updateBalance();
+        await _cubitUserData.updateBalance();
         emit(state.copyWith(translateStatus: TranslateStatus.success));
 
       }

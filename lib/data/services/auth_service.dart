@@ -82,6 +82,7 @@ class AuthService{
        await PreferencesUtil.setUrlAvatar(userCredential.user!.photoURL!);
        await PreferencesUtil.setUserNAmer(userCredential.user!.displayName!);
        await PreferencesUtil.setUserId(userCredential.user!.uid);
+       await PreferencesUtil.setEmail(userCredential.user!.email!);
       if(Platform.isIOS){
         final iosImei=await _deviceInfoPlugin.iosInfo;
          imei=iosImei.identifierForVendor!;
@@ -103,7 +104,8 @@ class AuthService{
           'description':userCredential.user!.displayName!.isNotEmpty?userCredential.user!.displayName!:'',
           'balance':6,
           'balanceActive':1000,
-          'timeStamp':ts
+          'timeStampAuth':ts,
+          'timestampPurchase':0
         });
       }
 
