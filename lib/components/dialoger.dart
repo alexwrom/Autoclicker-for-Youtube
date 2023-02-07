@@ -45,7 +45,7 @@ class Dialoger {
 
 
 
-  static void showGetStartedTranslate(BuildContext context,VoidCallback callback) {
+  static void showGetStartedTranslate(BuildContext context,int numberTranslate, VoidCallback callback) {
     showCustomDialog(
       textButtonCancel: 'Cancel',
       textButtonAccept: 'To begin',
@@ -53,8 +53,8 @@ class Dialoger {
       contextUp: context,
       title: 'Translate?',
       titleColor: Colors.white,
-      content: const Text('One transfer will be taken from your balance',
-        style: TextStyle(
+      content:  Text('Your transfer balance will be debited - $numberTranslate',
+        style: const TextStyle(
             color: Colors.grey
         ),),
       voidCallback: (){
@@ -64,12 +64,12 @@ class Dialoger {
     );
   }
 
-  static void showNotSubscribed(BuildContext context) {
+  static void showNotTranslate(BuildContext context,String title) {
     showCustomDialog(
       textButtonCancel: 'Close',
-      textButtonAccept: 'Subscribe',
+      textButtonAccept: 'To the store',
       contextUp: context,
-      title: 'The balance of active transfers is over',
+      title: title,
       titleColor: const Color.fromRGBO(212,32,60, 1),
       content: const Text(
         'Choose the appropriate offer for further work with translations',

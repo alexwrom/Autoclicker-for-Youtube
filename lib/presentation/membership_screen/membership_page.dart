@@ -118,7 +118,7 @@ class _MembershipPageState extends State<MembershipPage> {
                       children: [
                         Image.asset(almas,width: 30,height: 40,color: Colors.amber),
                         const SizedBox(width: 20),
-                       const Text('Monthly premium \nsubscription',
+                       const Text('Purchasing translation \npackages',
                           style: TextStyle(
                               color: Colors.amber,
                               fontWeight: FontWeight.w400,
@@ -133,7 +133,7 @@ class _MembershipPageState extends State<MembershipPage> {
                           Container(
                             padding: EdgeInsets.only(left: 30,right: 30,top:state.listDetails[index].isSale?60:40,bottom: 10),
                             margin:const EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-                            height: state.listDetails[index].isSale?235:220,
+                            height: state.listDetails[index].isSale?210:190,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(30),
                               color: colorPrimary,
@@ -141,27 +141,6 @@ class _MembershipPageState extends State<MembershipPage> {
                             ),
                             child: Column(
                               children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(bottom: 10),
-                                  child: Row(
-                                    children: [
-                                      Image.asset(item,width: 20,height: 20,color: Colors.amber,),
-                                      const SizedBox(width: 10),
-                                       Text(state.listDetails[index].titlePriceOneTransfer,
-                                        style:const TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w700,
-                                            fontSize: 16
-                                        ),),
-                                      const SizedBox(width: 10,),
-                                      Text('${state.priceOneTranslate[index]}${state.listDetails[index].currencySymbol}',style:const TextStyle(
-                                        color: Colors.amber,
-                                          fontWeight: FontWeight.w700,
-                                          fontSize: 20
-                                      ),)
-                                    ],
-                                  ),
-                                ),
                                 Padding(
                                   padding: const EdgeInsets.only(bottom: 10),
                                   child: Row(
@@ -271,6 +250,7 @@ class _MembershipPageState extends State<MembershipPage> {
     }else{
       price=rawPrice.toInt().toString();
     }
+
     return price;
    }
 }

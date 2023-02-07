@@ -10,6 +10,7 @@ import 'package:hive/hive.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:youtube_clicker/di/locator.dart';
 import 'package:youtube_clicker/domain/models/video_model.dart';
+import 'package:youtube_clicker/presentation/main_screen/cubit/user_data_cubit.dart';
 import 'package:youtube_clicker/resourses/colors_app.dart';
 
 import '../../components/dialoger.dart';
@@ -37,6 +38,7 @@ class _TranslatePageState extends State<TranslatePage> {
    late TranslateBloc _translateBloc;
    List<String> _listCodeLanguage=[];
    final boxVideo=Hive.box('video_box');
+   final _userCubit=locator.get<UserDataCubit>();
 
 
   @override
@@ -46,6 +48,7 @@ class _TranslatePageState extends State<TranslatePage> {
     if(widget.videoModel.description.isEmpty){
       _textButton='Translate title';
     }
+    final balance=_userCubit.state.userData.numberOfTrans;
     return Scaffold(
       backgroundColor: colorBackground,
       appBar: AppBar(
@@ -273,13 +276,18 @@ class _TranslatePageState extends State<TranslatePage> {
                                  if(!state.captionStatus.isTranslating&&!state.translateStatus.isTranslating){
                                    if(_listCodeLanguage.isNotEmpty){
                                      if(state.translateStatus.isForbidden){
-                                       Dialoger.showNotSubscribed(context);
+                                       Dialoger.showNotTranslate(context,'The balance of active transfers is over');
                                      }else{
-                                       Dialoger.showGetStartedTranslate(context, () {
-                                         _translateBloc.add(StartTranslateEvent(
-                                             codeLanguage: _listCodeLanguage,
-                                             videoModel: widget.videoModel));
-                                       });
+                                       if(balance<_listCodeLanguage.length){
+                                         Dialoger.showNotTranslate(context,'You don\'t have enough translations');
+                                       }else{
+                                         Dialoger.showGetStartedTranslate(context,_listCodeLanguage.length, () {
+                                           _translateBloc.add(StartTranslateEvent(
+                                               codeLanguage: _listCodeLanguage,
+                                               videoModel: widget.videoModel));
+                                         });
+                                       }
+
                                      }
                                    }else{
                                      Dialoger.showMessageSnackBar('No languages selected for translation', context);
@@ -310,17 +318,24 @@ class _TranslatePageState extends State<TranslatePage> {
 
                                 onPressed:()async{
 
-                                  if(state.translateStatus.isForbidden){
-                                    Dialoger.showNotSubscribed(context);
-                                    return;
-                                  }
+
                                   if(!state.captionStatus.isTranslating&&!state.translateStatus.isTranslating){
                                     if(state.captionStatus.isSuccess){
                                       if(_listCodeLanguage.isNotEmpty){
-                                        Dialoger.showGetStartedTranslate(context,(){
-                                          _translateBloc.add(InsertSubtitlesEvent(codesLang: _listCodeLanguage,
-                                              idVideo: widget.videoModel.idVideo));
-                                        });
+                                        if(state.translateStatus.isForbidden){
+                                          Dialoger.showNotTranslate(context,'The balance of active transfers is over');
+                                        }else{
+                                          if(balance<_listCodeLanguage.length){
+                                            Dialoger.showNotTranslate(context,'You don\'t have enough translations');
+                                          }else{
+                                            Dialoger.showGetStartedTranslate(context,_listCodeLanguage.length, () {
+                                              _translateBloc.add(StartTranslateEvent(
+                                                  codeLanguage: _listCodeLanguage,
+                                                  videoModel: widget.videoModel));
+                                            });
+                                          }
+
+                                        }
 
                                       }else{
                                         Dialoger.showMessageSnackBar('No languages selected for translation', context);

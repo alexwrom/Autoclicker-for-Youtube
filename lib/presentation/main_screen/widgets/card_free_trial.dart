@@ -109,7 +109,7 @@ class CardFreeTrial extends StatelessWidget{
                      alignment: Alignment.centerRight,
                      child: OutlinedButton(onPressed:(){
                          Navigator.push(context, MaterialPageRoute(builder: (_)=>MembershipPage()));
-                     }, child:const Text('Subscribe',style: TextStyle(
+                     }, child:const Text('Go to store',style: TextStyle(
                          color: Colors.grey,
                          fontWeight: FontWeight.w500,
                          fontSize: 16

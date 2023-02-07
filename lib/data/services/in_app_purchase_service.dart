@@ -41,7 +41,6 @@ class InAppPurchaseService{
 
         for(int i=0;i<listProdFromFirebase.length;i++){
           idsProd.add(listProdFromFirebase[i].id.trim());
-          print('List Id ${listProdFromFirebase[i].id}');
         }
         final ProductDetailsResponse productDetailResponse =
               await _inAppPurchase.queryProductDetails(idsProd);
@@ -51,7 +50,7 @@ class InAppPurchaseService{
         if (productDetailResponse.productDetails.isEmpty) {
                 return [];
         }
-        print('Product ${ productDetailResponse.productDetails.length}');
+
         for(int i=0;i<productDetailResponse.productDetails.length;i++){
           products.add(ProductPurchaseFromApi.fromApi(
               documentSnapshot: listProdFromFirebase.firstWhere((element) => productDetailResponse.productDetails[i].id==element.id),
@@ -79,13 +78,7 @@ class InAppPurchaseService{
         productDetails: product,
         applicationUserName: userEmail,
       );
-      if (Platform.isAndroid) {
-        final androidPurchaseParam =
-        await _getAndroidSubscriptionUpdatePurchaseParam(
-            product, product.id);
-        purchaseParam = androidPurchaseParam ?? purchaseParam;
-      }
-      final res = await _inAppPurchase.buyNonConsumable(purchaseParam: purchaseParam);
+      final res = await _inAppPurchase.buyConsumable(purchaseParam: purchaseParam,autoConsume: false);
       if (!res) {
         throw const Failure(
             'purchase request was not initially sent successfully');
@@ -117,61 +110,17 @@ class InAppPurchaseService{
       }
     }
 
-    //todo отследить отмененную подписку
-    Future<void> checkSubStatus({required String currentSubId})async{
-      final androidAddition =
-      _inAppPurchase.getPlatformAddition<InAppPurchaseAndroidPlatformAddition>();
-      final oldPurchaseDetailsQuery = await androidAddition.launchPriceChangeConfirmationFlow(sku: sku)
-      
-    }
 
 
-    Future<PurchaseParam?> _getAndroidSubscriptionUpdatePurchaseParam(
-        ProductDetails productDetails,
-        String? currentSubId,
-        ) async {
-      if (!Platform.isAndroid) return null;
 
-      final oldPurchaseDetails = await _getOldSubscriptionPurchaseDetails(currentSubId);
-      if (oldPurchaseDetails == null) return null;
 
-      return GooglePlayPurchaseParam(
-        productDetails: productDetails,
-        changeSubscriptionParam: ChangeSubscriptionParam(
-          oldPurchaseDetails: oldPurchaseDetails,
-          prorationMode: ProrationMode.immediateWithoutProration,
-        ),
-      );
-    }
 
-    Future<GooglePlayPurchaseDetails?> _getOldSubscriptionPurchaseDetails(
-        String? currentSubId,
-        ) async {
-      if (!Platform.isAndroid) return null;
-      GooglePlayPurchaseDetails? oldPurchaseDetails;
-      final androidAddition =
-      _inAppPurchase.getPlatformAddition<InAppPurchaseAndroidPlatformAddition>();
-      final oldPurchaseDetailsQuery = await androidAddition.queryPastPurchases();
-      print('past purchases old ${oldPurchaseDetailsQuery.pastPurchases}');
-      for (GooglePlayPurchaseDetails purchase in oldPurchaseDetailsQuery.pastPurchases) {
-        //TODO: subscribe in account create new account. got 2 active subs. can't switch between subs.
-        print('===Current subs===');
-        print(currentSubId);
-        print(purchase.productID);
-        print(purchase.status);
-        print('===Current subs===');
-        if (currentSubId == purchase.productID) {
-          oldPurchaseDetails = purchase;
-        }
-      }
-      return oldPurchaseDetails;
-    }
+
 
 
     Future<void> _updateBalance({required String uid,required int limitTranslation})async{
       try {
-        //todo прибавить месяц, сейчас 5 минут
-        final ts=DateTime.now().millisecondsSinceEpoch+300000;
+        final ts=DateTime.now().millisecondsSinceEpoch;
         _firebaseFirestore=FirebaseFirestore.instance;
         await _firebaseFirestore!.collection('users').doc(uid).update({
           'timestampPurchase':ts,

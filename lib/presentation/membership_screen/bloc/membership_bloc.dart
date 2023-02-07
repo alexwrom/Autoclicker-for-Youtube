@@ -33,10 +33,12 @@ class MemberShipBloc extends Bloc<MemberShipEvent,MemberShipState>{
           add(OnErrorEvent());
         },
         onComplete: (PurchaseDetails purchaseDetails)async{
+          final oldBalance=_cubitUserData.state.userData.numberOfTrans;
           final limitTranslate=state.listDetails.firstWhere((element) => purchaseDetails.productID==element.id).limitTranslation;
           print('Balance ${limitTranslate}');
-          await inAppPurchaseService.completePurchase(purchaseDetails,limitTranslate);
-          await _cubitUserData.addBalance(limitTranslate);
+          final resultBalance=oldBalance+limitTranslate;
+          await inAppPurchaseService.completePurchase(purchaseDetails,resultBalance);
+          await _cubitUserData.addBalance(resultBalance);
         },
         onPurchased: (PurchaseDetails purchaseDetails) async {
           try {
@@ -79,6 +81,7 @@ class MemberShipBloc extends Bloc<MemberShipEvent,MemberShipState>{
             List<String> listPriceOneTranslate=[];
             emit(state.copyWith(memebStatus: MemberShipStatus.loading));
             final listProd=await _purchaseRepository.getProducts();
+            listProd.sort((a, b) => a.rawPrice.compareTo(b.rawPrice));
             if(listProd.isEmpty){
               emit(state.copyWith(memebStatus: MemberShipStatus.empty));
             }else{
@@ -90,6 +93,8 @@ class MemberShipBloc extends Bloc<MemberShipEvent,MemberShipState>{
 
           }on Failure catch (error) {
             emit(state.copyWith(memebStatus: MemberShipStatus.error,error: error.message));
+          }catch (error){
+            emit(state.copyWith(memebStatus: MemberShipStatus.error,error: error.toString()));
           }
 
       }
@@ -98,7 +103,7 @@ class MemberShipBloc extends Bloc<MemberShipEvent,MemberShipState>{
   String _getOnePriceTranslate(double price,int countTranslate){
 
     double r=price/countTranslate;
-    return r.toString().substring(0,3);
+    return (r*100.0).toString().substring(0,3);
   }
 
    Future<void> _buySubscription(BuySubscriptionEvent event,emit)async{

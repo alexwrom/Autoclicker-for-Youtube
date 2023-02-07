@@ -5,6 +5,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:youtube_clicker/presentation/auth_screen/bloc/auth_bloc.dart';
 import 'package:youtube_clicker/presentation/main_screen/bloc/main_bloc.dart';
 import 'package:youtube_clicker/presentation/main_screen/channels_page.dart';
+import 'package:youtube_clicker/presentation/main_screen/cubit/user_data_cubit.dart';
 import 'package:youtube_clicker/presentation/membership_screen/membership_page.dart';
 import 'package:youtube_clicker/utils/preferences_util.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -15,6 +16,7 @@ import 'package:responsive_framework/responsive_wrapper.dart';
 import 'app_bloc/app_bloc.dart';
 import 'components/dialoger.dart';
 import 'data/models/hive_models/video.dart';
+import 'di/locator.dart';
 import 'presentation/auth_screen/auth_page.dart';
 import 'presentation/splash_screen/splash_page.dart';
 import 'utils/app_theme.dart';
@@ -46,7 +48,7 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider<AuthBloc>(create: (_)=>AuthBloc()),
         BlocProvider<AppBloc>(create: (_) => AppBloc()),
-        BlocProvider<MainBloc>(create: (_)=>MainBloc())
+        BlocProvider<MainBloc>(create: (_)=>MainBloc()),
       ],
       child: MaterialApp(
         theme: AppTheme.light,
@@ -114,6 +116,7 @@ class _AppState extends State<App> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     initLanguage();
+
 
   }
 
