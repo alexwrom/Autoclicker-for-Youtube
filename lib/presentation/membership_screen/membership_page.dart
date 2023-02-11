@@ -205,7 +205,7 @@ class _MembershipPageState extends State<MembershipPage> {
                                         borderRadius: BorderRadius.circular(20)
                                       ))
                                     ),
-                                      child: const Text('Subscribe',
+                                      child: const Text('Buy',
                                           style:  TextStyle(
                                               color: Colors.white,
                                               fontWeight: FontWeight.w500,

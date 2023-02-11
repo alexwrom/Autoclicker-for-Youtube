@@ -20,6 +20,7 @@ class UserDataCubit extends Cubit<UserdataState>{
   getDataUser()async{
     bool isSubscribe=false;
     bool isFreeTrial=true;
+    //todo исправить bad state
     emit(state.copyWith(userDataStatus: UserDataStatus.loading));
     try {
        _userData=await _repositoryUser.getDataUser(uid: _uid);
@@ -40,7 +41,7 @@ class UserDataCubit extends Cubit<UserdataState>{
 
 
 
-   //todo error
+
    clearBalance()async{
     _userData=_userData!.copyWith(numberOfTrans: 0);
     await _repositoryUser.updateBalance(balance: _userData!.numberOfTrans, uid: _uid, isActive: _userData!.isActive);
@@ -48,7 +49,7 @@ class UserDataCubit extends Cubit<UserdataState>{
    }
 
 
-   //todo error
+
    updateBalance(int numberTranslate)async{
     int balance=_userData!.numberOfTrans;
     if (balance>0){

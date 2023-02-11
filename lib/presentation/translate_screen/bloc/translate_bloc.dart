@@ -160,14 +160,14 @@ class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
       if (_operationQueueTitleTrans > 0) {
         final titleT =await _translateRepository.translate(codeLanguage[_indexTitle],videoModel.title);
         //await Future.delayed(Duration(seconds: 2));
-        _titleTranslate.add('titleT');
+        _titleTranslate.add(titleT);
         _indexTitle++;
         _operationQueueTitleTrans--;
       } else if (_operationQueueTitleTrans == 0) {
         if (_operationQueueDescTrans > 0) {
           //await Future.delayed(Duration(seconds: 2));
           final descT= await _translateRepository.translate(codeLanguage[_indexDesc],videoModel.description);
-          _descTranslate.add('descT');
+          _descTranslate.add(descT);
           _indexDesc++;
           _operationQueueDescTrans--;
         }
