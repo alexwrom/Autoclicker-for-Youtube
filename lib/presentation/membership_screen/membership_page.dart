@@ -131,9 +131,9 @@ class _MembershipPageState extends State<MembershipPage> {
                       return Stack(
                         children: [
                           Container(
-                            padding: EdgeInsets.only(left: 30,right: 30,top:state.listDetails[index].isSale?60:40,bottom: 10),
+                            padding: EdgeInsets.only(left: state.listDetails[index].isSale?35:25,right: 20,top:state.listDetails[index].isSale?60:40,bottom: 10),
                             margin:const EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-                            height: state.listDetails[index].isSale?210:190,
+                            height: state.listDetails[index].isSale?200:190,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(30),
                               color: colorPrimary,

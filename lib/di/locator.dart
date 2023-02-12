@@ -37,7 +37,6 @@ import '../presentation/main_screen/cubit/user_data_cubit.dart';
 
     //auth
       locator.registerLazySingleton(() => GoogleSignIn(
-          //clientId: '975260836202-auh4p2otnnbf3eta2il2tms67fpdgqct.apps.googleusercontent.com',
           scopes: [YouTubeApi.youtubeForceSslScope]
       ));
       locator.registerLazySingleton(() => AuthService());

@@ -29,6 +29,19 @@ class InAppPurchaseService{
     Future<List<ProductPurchaseFromApi>> getProducts() async {
       List<ProductPurchaseFromApi> products=[];
       Set<String> idsProd={};
+      _firebaseFirestore=FirebaseFirestore.instance;
+      final bool isAvailable = await _inAppPurchase.isAvailable();
+      if (!isAvailable) {
+        return [];
+      }
+      CollectionReference collectionRef= _firebaseFirestore!.collection('products');
+      QuerySnapshot querySnapshot = await collectionRef.get();
+      final listProdFromFirebase = querySnapshot.docs.map((doc) => doc).toList();
+
+      for(int i=0;i<listProdFromFirebase.length;i++){
+        idsProd.add(listProdFromFirebase[i].id.trim());
+      }
+
       try {
         _firebaseFirestore=FirebaseFirestore.instance;
         final bool isAvailable = await _inAppPurchase.isAvailable();

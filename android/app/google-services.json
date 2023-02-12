@@ -1,28 +1,29 @@
 {
   "project_info": {
-    "project_number": "160062857426",
-    "project_id": "youtube-clicker",
-    "storage_bucket": "youtube-clicker.appspot.com"
+    "project_number": "975260836202",
+    "firebase_url": "https://samasiuk-autoclicker-default-rtdb.firebaseio.com",
+    "project_id": "samasiuk-autoclicker",
+    "storage_bucket": "samasiuk-autoclicker.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:160062857426:android:1011bf8d6edb15297d8d0b",
+        "mobilesdk_app_id": "1:975260836202:android:5c8a492504cd47b952c513",
         "android_client_info": {
           "package_name": "com.alex.youtube_clicker"
         }
       },
       "oauth_client": [
         {
-          "client_id": "160062857426-idq2sfno0838lnqmbbum7np2dcmb6bso.apps.googleusercontent.com",
+          "client_id": "975260836202-c0a8n3hp5v81h839orf7js9hu08a71j2.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.alex.youtube_clicker",
-            "certificate_hash": "ee3fd008987090797fc6461a7baf76f93001d60d"
+            "certificate_hash": "a0ec3ceab3d7a4df58fab43f7fdbdb8f3a31985b"
           }
         },
         {
-          "client_id": "160062857426-nd47pb2qab54pkbd42oeac2aae7dda2k.apps.googleusercontent.com",
+          "client_id": "975260836202-hsebn7lesl4jgs85dvpg91j4cvtm49qq.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.alex.youtube_clicker",
@@ -30,30 +31,22 @@
           }
         },
         {
-          "client_id": "160062857426-rol1a1fdmokettbjv0ulvh912fg28f75.apps.googleusercontent.com",
+          "client_id": "975260836202-iskd17sng1cbclfo81qc28mmfmkbiii8.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.alex.youtube_clicker",
-            "certificate_hash": "a0ec3ceab3d7a4df58fab43f7fdbdb8f3a31985b"
+            "certificate_hash": "ee3fd008987090797fc6461a7baf76f93001d60d"
           }
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCGeEtnly7g5LstarASgdJ3DVmTbNH1bVI"
+          "current_key": "AIzaSyBGKt8Nd_XY6m-eEVdgHpZMNcG2WKwa6SA"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "160062857426-1q5nmqgvumhv01oe3mibe347gqob6lum.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.alex.youtubeClicker"
-              }
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

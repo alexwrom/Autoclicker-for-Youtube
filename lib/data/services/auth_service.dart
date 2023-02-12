@@ -1,6 +1,7 @@
 
 import 'dart:io';
 
+import 'package:googleapis_auth/auth_io.dart';
 import 'package:youtube_clicker/utils/preferences_util.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -10,6 +11,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import '../../di/locator.dart';
 import '../../utils/failure.dart';
 import '../http_client/dio_auth_client.dart';
+import 'package:http/http.dart' as http;
 
 
 class AuthService{
@@ -48,7 +50,7 @@ class AuthService{
     // final client = http.Client();
     // try {
     //  final result=  await obtainAccessCredentialsViaUserConsent(
-    //      ClientId('975260836202-auh4p2otnnbf3eta2il2tms67fpdgqct.apps.googleusercontent.com'),
+    //      ClientId('975260836202-fa131c4fk3dks8m6n4cisjf7pv7f8hul.apps.googleusercontent.com'),
     //     ['https://www.googleapis.com/auth/youtube.force-ssl'],
     //     client,
     //      (url){
@@ -110,11 +112,14 @@ class AuthService{
       }
 
     } on FirebaseAuthException catch(error,stackTrace){
+        print('Error Auth ${error.message}');
       Error.throwWithStackTrace(Failure.fromAuthApiError(error), stackTrace);
 
     } on Failure catch(error,stackTrace){
+        print('Error 2 Auth ${error.message}');
       Error.throwWithStackTrace(Failure(error.message), stackTrace);
     }on PlatformException catch(error,stackTrace){
+        print('Error 3 Auth ${error.message}');
       Error.throwWithStackTrace(Failure(error.message!), stackTrace);
     }
 
