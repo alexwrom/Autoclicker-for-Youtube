@@ -9,7 +9,8 @@ enum MainStatus{
   unknown,
   error,
   loading,
-  success
+  success,
+  empty
 }
 
   extension AuthStatusExt on MainStatus{
@@ -17,6 +18,7 @@ enum MainStatus{
      bool get isError=>this==MainStatus.error;
      bool get isLoading=>this==MainStatus.loading;
      bool get isSuccess=>this==MainStatus.success;
+     bool get isEmpty=>this==MainStatus.empty;
 
   }
 

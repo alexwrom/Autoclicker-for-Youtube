@@ -33,21 +33,25 @@ class MainBloc extends Bloc<MainEvent,MainState>{
        final result=await _googleApiRepository.getChannels(event.reload);
        final name= PreferencesUtil.getUserName;
        final avatar=PreferencesUtil.getUrlAvatar;
-      final videos= await _googleApiRepository.getVideoFromAccount(result![0].idUpload);
+       if(result!.isEmpty){
+         emit(state.copyWith(mainStatus: MainStatus.empty));
+       }else{
+        final videos =
+            await _googleApiRepository.getVideoFromAccount(result[0].idUpload);
+        allListVideoAccount = videos;
+        for (var item in videos) {
+          if (!item.isPublic) {
+            videoListNotPublished.add(item);
+          }
+        }
+        emit(state.copyWith(
+            mainStatus: MainStatus.success,
+            channelList: result,
+            userName: name,
+            urlAvatar: avatar,
+            videoNotPubList: videoListNotPublished));
+      }
 
-       allListVideoAccount=videos;
-       for(var item in videos){
-         if(!item.isPublic){
-           videoListNotPublished.add(item);
-         }
-       }
-
-       emit(state.copyWith(
-          mainStatus: MainStatus.success,
-          channelList: result,
-          userName: name,
-          urlAvatar: avatar,
-          videoNotPubList: videoListNotPublished));
     }on Failure catch(error){
        emit(state.copyWith(mainStatus: MainStatus.error,error: error.message));
      }

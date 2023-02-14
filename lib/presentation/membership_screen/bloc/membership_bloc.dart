@@ -77,37 +77,25 @@ class MemberShipBloc extends Bloc<MemberShipEvent,MemberShipState>{
 
   final _purchaseRepository=locator.get<InAppPurchaseRepository>();
         Future<void> _getProduct(event,emit)async{
-          List<String> listPriceOneTranslate=[];
-          emit(state.copyWith(memebStatus: MemberShipStatus.loading));
-          final listProd=await _purchaseRepository.getProducts();
-          listProd.sort((a, b) => a.rawPrice.compareTo(b.rawPrice));
-          if(listProd.isEmpty){
-            emit(state.copyWith(memebStatus: MemberShipStatus.empty));
-          }else{
-            for (var element in listProd) {
-              listPriceOneTranslate.add(_getOnePriceTranslate(element.rawPrice,element.limitTranslation));
+          try {
+            List<String> listPriceOneTranslate=[];
+            emit(state.copyWith(memebStatus: MemberShipStatus.loading));
+            final listProd=await _purchaseRepository.getProducts();
+            listProd.sort((a, b) => a.rawPrice.compareTo(b.rawPrice));
+            if(listProd.isEmpty){
+              emit(state.copyWith(memebStatus: MemberShipStatus.empty));
+            }else{
+              for (var element in listProd) {
+                 listPriceOneTranslate.add(_getOnePriceTranslate(element.rawPrice,element.limitTranslation));
+              }
+              emit(state.copyWith(memebStatus: MemberShipStatus.loaded,listDetails: listProd,priceOneTranslate: listPriceOneTranslate));
             }
-            emit(state.copyWith(memebStatus: MemberShipStatus.loaded,listDetails: listProd,priceOneTranslate: listPriceOneTranslate));
+
+          }on Failure catch (error) {
+            emit(state.copyWith(memebStatus: MemberShipStatus.error,error: error.message));
+          }catch (error){
+            emit(state.copyWith(memebStatus: MemberShipStatus.error,error: error.toString()));
           }
-          // try {
-          //   List<String> listPriceOneTranslate=[];
-          //   emit(state.copyWith(memebStatus: MemberShipStatus.loading));
-          //   final listProd=await _purchaseRepository.getProducts();
-          //   listProd.sort((a, b) => a.rawPrice.compareTo(b.rawPrice));
-          //   if(listProd.isEmpty){
-          //     emit(state.copyWith(memebStatus: MemberShipStatus.empty));
-          //   }else{
-          //     for (var element in listProd) {
-          //        listPriceOneTranslate.add(_getOnePriceTranslate(element.rawPrice,element.limitTranslation));
-          //     }
-          //     emit(state.copyWith(memebStatus: MemberShipStatus.loaded,listDetails: listProd,priceOneTranslate: listPriceOneTranslate));
-          //   }
-          //
-          // }on Failure catch (error) {
-          //   emit(state.copyWith(memebStatus: MemberShipStatus.error,error: error.message));
-          // }catch (error){
-          //   emit(state.copyWith(memebStatus: MemberShipStatus.error,error: error.toString()));
-          // }
 
       }
 

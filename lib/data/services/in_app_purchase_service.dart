@@ -51,7 +51,7 @@ class InAppPurchaseService{
         CollectionReference collectionRef= _firebaseFirestore!.collection('products');
         QuerySnapshot querySnapshot = await collectionRef.get();
         final listProdFromFirebase = querySnapshot.docs.map((doc) => doc).toList();
-
+         print('List ptod IDS ${listProdFromFirebase.length}');
         for(int i=0;i<listProdFromFirebase.length;i++){
           idsProd.add(listProdFromFirebase[i].id.trim());
         }
@@ -60,6 +60,7 @@ class InAppPurchaseService{
         if(productDetailResponse.error != null){
            throw Failure(productDetailResponse.error!.message);
         }
+        print('List ptod Det ${productDetailResponse.productDetails}');
         if (productDetailResponse.productDetails.isEmpty) {
                 return [];
         }

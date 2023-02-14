@@ -48,8 +48,10 @@ import '../models/video_model_from_api.dart';
         final data = YouTubeApi(httpClient!);
         final result = await data.channels.list(
             ['snippet,contentDetails,statistics'], mine: true);
-        return result.items!
-            .map((e) => ChannelModelFromApi.fromApi(channel: e))
+        if(result.items==null){
+          return [];
+        }
+        return result.items!.map((e) => ChannelModelFromApi.fromApi(channel: e))
             .toList();
       } on Failure catch (error, stackTrace) {
         Error.throwWithStackTrace(Failure(error.message), stackTrace);

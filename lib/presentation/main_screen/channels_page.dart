@@ -40,7 +40,6 @@ class _ChannelsPageState extends State<ChannelsPage> {
           }
         },
         builder: (context,state) {
-
           if(state.mainStatus.isLoading){
             return const Center(child: CircularProgressIndicator());
           }
@@ -72,7 +71,7 @@ class _ChannelsPageState extends State<ChannelsPage> {
             );
           }
 
-          if(state.mainStatus.isSuccess){
+          if(state.mainStatus.isSuccess||state.mainStatus.isEmpty){
             return Column(
               children: [
                 Container(
@@ -135,23 +134,26 @@ class _ChannelsPageState extends State<ChannelsPage> {
                       child: Column(
                         children: [
                           CardFreeTrial(),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Container(
-                              margin: const EdgeInsets.only(left: 30,top: 30),
-                              alignment: Alignment.center,
-                              height: 30,
-                              width: 120,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(30),
-                                  color: colorRed
+                          Visibility(
+                            visible: state.channelList.isNotEmpty,
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Container(
+                                margin: const EdgeInsets.only(left: 30,top: 30),
+                                alignment: Alignment.center,
+                                height: 30,
+                                width: 120,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(30),
+                                    color: colorRed
+                                ),
+                                child:const Text('My channels',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400
+                                  ),),
                               ),
-                              child:const Text('My channels',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400
-                                ),),
                             ),
                           ),
                           const SizedBox(height: 10),
@@ -196,23 +198,26 @@ class _ChannelsPageState extends State<ChannelsPage> {
                             })
                           ],)),
 
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Container(
-                              margin: const EdgeInsets.only(left: 30,top: 30),
-                              alignment: Alignment.center,
-                              height: 30,
-                              width: 200,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(30),
-                                  color: colorRed
+                          Visibility(
+                            visible: state.channelList.isNotEmpty,
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Container(
+                                margin: const EdgeInsets.only(left: 30,top: 30),
+                                alignment: Alignment.center,
+                                height: 30,
+                                width: 200,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(30),
+                                    color: colorRed
+                                ),
+                                child:const Text('Other videos of the account',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400
+                                  ),),
                               ),
-                              child:const Text('Other videos of the account',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400
-                                ),),
                             ),
                           ),
                           const SizedBox(height: 10),

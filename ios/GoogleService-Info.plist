@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>975260836202-o7scr8gn03erodt9n08gg8qjp7lbjrmk.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.975260836202-o7scr8gn03erodt9n08gg8qjp7lbjrmk</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>975260836202-c0a8n3hp5v81h839orf7js9hu08a71j2.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBMMLRiFINkqfmu0YR6kwZRHZ7do_O3VNs</string>
+	<key>GCM_SENDER_ID</key>
+	<string>975260836202</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.alex.youtubeClicker</string>
+	<key>PROJECT_ID</key>
+	<string>samasiuk-autoclicker</string>
+	<key>STORAGE_BUCKET</key>
+	<string>samasiuk-autoclicker.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:975260836202:ios:b3d55018e514d72752c513</string>
+	<key>DATABASE_URL</key>
+	<string>https://samasiuk-autoclicker-default-rtdb.firebaseio.com</string>
+</dict>
+</plist>

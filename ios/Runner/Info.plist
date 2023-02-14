@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Youtube Clicker</string>
+	<string>Youtube AutoClicker</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -29,15 +29,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.160062857426-3kdqljhag3t7nvf45nrchpfjq39mgkmm</string>
-			</array>
-		</dict>
-		<dict>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>com.googleusercontent.apps.160062857426-3kdqljhag3t7nvf45nrchpfjq39mgkmm</string>
+				<string>com.googleusercontent.apps.975260836202-o7scr8gn03erodt9n08gg8qjp7lbjrmk</string>
 			</array>
 		</dict>
 	</array>

@@ -28,10 +28,10 @@ class Dialoger {
       textButtonColor: Colors.white,
       contextUp: context,
       title: 'Sign out?',
-      titleColor: Colors.white,
-      content:const  Text('Your data is saved on the server',
+      titleColor: Platform.isIOS?colorPrimary:Colors.white,
+      content:  Text('Your data is saved on the server',
         style: TextStyle(
-            color: Colors.grey,
+            color: Platform.isIOS?colorPrimary:Colors.grey,
 
         ),),
       voidCallback: (){
@@ -52,10 +52,10 @@ class Dialoger {
       textButtonColor: Colors.white,
       contextUp: context,
       title: 'Translate?',
-      titleColor: Colors.white,
+      titleColor: Platform.isIOS?colorPrimary:Colors.white,
       content:  Text('Your transfer balance will be debited - $numberTranslate',
-        style: const TextStyle(
-            color: Colors.grey
+        style:  TextStyle(
+            color: Platform.isIOS?colorPrimary:Colors.grey
         ),),
       voidCallback: (){
           callback();
@@ -71,10 +71,10 @@ class Dialoger {
       contextUp: context,
       title: title,
       titleColor: const Color.fromRGBO(212,32,60, 1),
-      content: const Text(
+      content:  Text(
         'Choose the appropriate offer for further work with translations',
         style: TextStyle(
-          color: Colors.white
+          color: Platform.isIOS?colorPrimary:Colors.white
         ),
       ),
       voidCallback: (){
@@ -163,11 +163,14 @@ class Dialoger {
           actions: <Widget>[
             TextButton(
               child:  Text(textButtonCancel),
-              onPressed: (){},
+              onPressed: (){
+                Navigator.pop(context);
+              },
             ),
             TextButton(
               child:  Text(textButtonAccept),
               onPressed: () {
+                Navigator.pop(context);
                  voidCallback();
               },
             )
@@ -183,9 +186,9 @@ class Dialoger {
       textButtonAccept: '',
       contextUp: context,
       title: title,
-      titleColor: isError?colorRed:Colors.white,
-      content:  Text(body,style:const TextStyle(
-        color: Colors.white,
+      titleColor: isError?colorRed:Platform.isIOS?colorPrimary:Colors.white,
+      content:  Text(body,style: TextStyle(
+        color: Platform.isIOS?colorPrimary:Colors.white,
         fontSize: 16,
         fontWeight: FontWeight.normal
       ),),
