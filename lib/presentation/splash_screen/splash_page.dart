@@ -33,7 +33,7 @@ class SplashPage extends StatelessWidget{
              child: AnimatedTextKit(
                repeatForever: true,
                animatedTexts: [
-                 FlickerAnimatedText('YouTube',textStyle: TextStyle(
+                 FlickerAnimatedText('You',textStyle: TextStyle(
                  color: colorRed,
                  fontSize: 32,
                  fontWeight: FontWeight.w500

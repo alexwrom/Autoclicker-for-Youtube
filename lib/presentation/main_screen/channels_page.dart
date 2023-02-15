@@ -75,8 +75,8 @@ class _ChannelsPageState extends State<ChannelsPage> {
             return Column(
               children: [
                 Container(
-                  height: 100,
-                  padding: const EdgeInsets.only(top: 30,left: 20,right: 20),
+                  height: 120,
+                  padding: const EdgeInsets.only(top: 40,left: 20,right: 20),
                   decoration: BoxDecoration(
                       color: colorPrimary,
                       borderRadius: const BorderRadius.only(bottomRight: Radius.circular(20),
@@ -104,7 +104,7 @@ class _ChannelsPageState extends State<ChannelsPage> {
                                   imageUrl: state.urlAvatar),
                             ),
                           ),
-                          const SizedBox(width: 20),
+                          const SizedBox(width: 15),
                           Text(state.userName,style:const TextStyle(
                               color: Colors.white,
                               fontSize: 18,
@@ -251,7 +251,8 @@ class _ChannelsPageState extends State<ChannelsPage> {
   @override
   void initState() {
     super.initState();
-    context.read<MainBloc>().add(GetChannelEvent(reload: widget.reAuth));
+    print('INIT STATE');
+    context.read<MainBloc>().add(GetChannelEvent(reload: true));
 
   }
 

@@ -20,7 +20,7 @@ class MemberShipBloc extends Bloc<MemberShipEvent,MemberShipState>{
 
 
   late final HandleSubscriptionUtil _purchasesSubscription;
-  final _cubitUserData=locator.get<UserDataCubit>();
+  final _cubitUserData=UserDataCubit();
   late final inAppPurchaseService=locator.get<InAppPurchaseService>();
 
 

@@ -13,7 +13,6 @@ class UserDataCubit extends Cubit<UserdataState>{
   UserDataCubit():super(UserdataState.unknown());
 
   final _repositoryUser=locator.get<UserRepository>();
-  final _uid=PreferencesUtil.getUid;
    UserData? _userData;
 
 
@@ -23,7 +22,9 @@ class UserDataCubit extends Cubit<UserdataState>{
     //todo исправить bad state
     emit(state.copyWith(userDataStatus: UserDataStatus.loading));
     try {
-       _userData=await _repositoryUser.getDataUser(uid: _uid);
+      final uid=PreferencesUtil.getUid;
+      print('UID CUBIT $uid');
+       _userData=await _repositoryUser.getDataUser(uid: uid);
 
        if(_userData!.isActive){
          _userData=_userData!.copyWith(numberOfTrans: _userData!.numberOfTransActive);
@@ -40,21 +41,29 @@ class UserDataCubit extends Cubit<UserdataState>{
   }
 
 
+  setListCodeLanguage(List<String> list)async{
+    print('List Cubit ${list.length}');
+    emit(state.copyWith(choiceCodeLanguageList: list));
+  }
+
+
 
 
    clearBalance()async{
+     final uid=PreferencesUtil.getUid;
     _userData=_userData!.copyWith(numberOfTrans: 0);
-    await _repositoryUser.updateBalance(balance: _userData!.numberOfTrans, uid: _uid, isActive: _userData!.isActive);
+    await _repositoryUser.updateBalance(balance: _userData!.numberOfTrans, uid: uid, isActive: _userData!.isActive);
      emit(state.copyWith(userDataStatus: UserDataStatus.success,userData: _userData));
    }
 
 
 
    updateBalance(int numberTranslate)async{
+     final uid=PreferencesUtil.getUid;
     int balance=_userData!.numberOfTrans;
     if (balance>0){
      final res= balance-numberTranslate;
-      await _repositoryUser.updateBalance(balance: res, uid: _uid, isActive: _userData!.isActive);
+      await _repositoryUser.updateBalance(balance: res, uid: uid, isActive: _userData!.isActive);
       _userData=_userData!.copyWith(numberOfTrans: res);
       emit(state.copyWith(userDataStatus: UserDataStatus.success,userData: _userData));
     }

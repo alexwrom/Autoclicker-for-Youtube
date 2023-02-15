@@ -26,27 +26,29 @@ class UserdataState extends Equatable{
   final String error;
   final bool isSubscribe;
   final bool isFreeTrial;
+  final List<String> choiceCodeLanguageList;
 
 
-  const UserdataState(this.userData, this.userDataStatus,this.error,this.isSubscribe,this.isFreeTrial);
+  const UserdataState(this.userData, this.userDataStatus,this.error,this.isSubscribe,this.isFreeTrial,this.choiceCodeLanguageList);
 
 
  factory UserdataState.unknown(){
-   return UserdataState(UserData.unknown(), UserDataStatus.unknown,'',false,false);
+   return UserdataState(UserData.unknown(), UserDataStatus.unknown,'',false,false,[]);
  }
 
 
 
   @override
 
-  List<Object?> get props => [userDataStatus,userData,error,isSubscribe,isFreeTrial];
+  List<Object?> get props => [userDataStatus,userData,error,isSubscribe,isFreeTrial,choiceCodeLanguageList];
 
   UserdataState copyWith({
     UserData? userData,
     UserDataStatus? userDataStatus,
     String? error,
     bool? isSubscribe,
-    bool? isFreeTrial
+    bool? isFreeTrial,
+    List<String>? choiceCodeLanguageList
 
   }) {
     return UserdataState(
@@ -54,7 +56,8 @@ class UserdataState extends Equatable{
       userDataStatus ?? this.userDataStatus,
       error??this.error,
       isSubscribe??this.isSubscribe,
-      isFreeTrial??this.isFreeTrial
+      isFreeTrial??this.isFreeTrial,
+      choiceCodeLanguageList??this.choiceCodeLanguageList
 
     );
   }

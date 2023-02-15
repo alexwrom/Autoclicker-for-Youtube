@@ -20,13 +20,13 @@ class UserDataCard extends StatefulWidget{
 }
 
 class _UserDataCardState extends State<UserDataCard> {
-  final _cubitUserData=locator.get<UserDataCubit>();
+
 
 
   @override
   void initState() {
     super.initState();
-    _cubitUserData.getDataUser();
+    context.read<UserDataCubit>().getDataUser();
 
   }
 
@@ -36,45 +36,23 @@ class _UserDataCardState extends State<UserDataCard> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_)=>_cubitUserData,
-      child: BlocConsumer<UserDataCubit,UserdataState>(
-        listener: (_,stLis){
-          if (stLis.error != '') Dialoger.showError(stLis.error,context);
-        },
-        builder: (context,state) {
-            return Row(
-              children: [
-                Badge(
-                  alignment:AlignmentDirectional.topStart,
-                  label: state.userDataStatus.isLoading?const SizedBox(width:10,height:10,
-                      child:  CircularProgressIndicator(color: Colors.white,strokeWidth: 1,)):Text('${state.userData.numberOfTrans}',style:
-                    const TextStyle(
-                      fontWeight: FontWeight.w700
-                    ),),
-                  child: GestureDetector(
-                    onTap: (){
-
-                    },
-                    child: Container(
-                      alignment: Alignment.centerRight,
-                      width: _getWight(state.userData.numberOfTrans),
-                      height: 40,
-                      child: Container(
-                        width: 35,
-                        height: 35,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: colorBackground
-                        ),
-                        child:const Icon(Icons.translate,color: Colors.white),
-                      ),
-                    ),
-                  ),
-                ),
-                GestureDetector(
+    return BlocConsumer<UserDataCubit,UserdataState>(
+      listener: (_,stLis){
+        if (stLis.error != '') Dialoger.showError(stLis.error,context);
+      },
+      builder: (context,state) {
+          return Row(
+            children: [
+              Badge(
+                alignment:AlignmentDirectional.topStart,
+                label: state.userDataStatus.isLoading?const SizedBox(width:10,height:10,
+                    child:  CircularProgressIndicator(color: Colors.white,strokeWidth: 1,)):Text('${state.userData.numberOfTrans}',style:
+                  const TextStyle(
+                    fontWeight: FontWeight.w700
+                  ),),
+                child: GestureDetector(
                   onTap: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (_)=>MembershipPage()));
+
                   },
                   child: Container(
                     alignment: Alignment.centerRight,
@@ -84,18 +62,37 @@ class _UserDataCardState extends State<UserDataCard> {
                       width: 35,
                       height: 35,
                       decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: colorBackground
+                        shape: BoxShape.circle,
+                        color: colorBackground
                       ),
-                      child:const Icon(Icons.store_mall_directory_rounded,color: Colors.white),
+                      child:const Icon(Icons.translate,color: Colors.white),
                     ),
                   ),
                 ),
-                const SizedBox(width: 5)
-              ],
-            );
-        }
-      ),
+              ),
+              GestureDetector(
+                onTap: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (_)=>MembershipPage()));
+                },
+                child: Container(
+                  alignment: Alignment.centerRight,
+                  width: _getWight(state.userData.numberOfTrans),
+                  height: 40,
+                  child: Container(
+                    width: 35,
+                    height: 35,
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: colorBackground
+                    ),
+                    child:const Icon(Icons.store_mall_directory_rounded,color: Colors.white),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 5)
+            ],
+          );
+      }
     );
   }
 }

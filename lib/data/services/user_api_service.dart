@@ -21,6 +21,7 @@ class UserApiService{
     Future<UserDataFromApi> getDataUser({required String uid})async{
 
    try{
+     print('UID $uid');
      DocumentSnapshot documentSnapshot=await _firebaseFirestore!.collection('users').doc(uid).get();
      //todo valid sub
      return UserDataFromApi.fromApi(documentSnapshot: documentSnapshot);

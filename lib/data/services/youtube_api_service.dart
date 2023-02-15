@@ -42,7 +42,8 @@ import '../models/video_model_from_api.dart';
             throw const Failure('Error auth');
           }
           final authHeaders = await _googleSingIn.currentUser!.authHeaders;
-          await PreferencesUtil.setHeadersGoogleApi(authHeaders);
+          print('GET LIST USER ${_googleSingIn.currentUser!.email}');
+         // await PreferencesUtil.setHeadersGoogleApi(authHeaders);
           httpClient = GoogleHttpClient(authHeaders);
         }
         final data = YouTubeApi(httpClient!);

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:youtube_clicker/presentation/auth_screen/bloc/auth_bloc.dart';
@@ -49,6 +50,7 @@ class MyApp extends StatelessWidget {
         BlocProvider<AuthBloc>(create: (_)=>AuthBloc()),
         BlocProvider<AppBloc>(create: (_) => AppBloc()),
         BlocProvider<MainBloc>(create: (_)=>MainBloc()),
+        BlocProvider<UserDataCubit>(create: (_)=>UserDataCubit())
       ],
       child: MaterialApp(
         theme: AppTheme.light,
@@ -111,6 +113,12 @@ class _AppState extends State<App> {
 
   }
 
+
+  @override
+  void dispose() {
+    super.dispose();
+    notifiCodeList.dispose();
+  }
 
   @override
   void didChangeDependencies() {

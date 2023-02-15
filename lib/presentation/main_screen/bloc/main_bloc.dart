@@ -28,6 +28,9 @@ class MainBloc extends Bloc<MainEvent,MainState>{
 
 
    Future<void> _getChannel(GetChannelEvent event,emit)async{
+      videoListNotPublished.clear();
+      videoListFromChannel.clear();
+      allListVideoAccount.clear();
      emit(state.copyWith(mainStatus: MainStatus.loading));
      try{
        final result=await _googleApiRepository.getChannels(event.reload);
@@ -36,8 +39,7 @@ class MainBloc extends Bloc<MainEvent,MainState>{
        if(result!.isEmpty){
          emit(state.copyWith(mainStatus: MainStatus.empty));
        }else{
-        final videos =
-            await _googleApiRepository.getVideoFromAccount(result[0].idUpload);
+        final videos = await _googleApiRepository.getVideoFromAccount(result[0].idUpload);
         allListVideoAccount = videos;
         for (var item in videos) {
           if (!item.isPublic) {

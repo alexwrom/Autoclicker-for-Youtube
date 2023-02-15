@@ -23,7 +23,7 @@ class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
 
     final _translateRepository=locator.get<TranslateRepository>();
     final _youTubeRepository=locator.get<YouTubeRepository>();
-    final _cubitUserData=locator.get<UserDataCubit>();
+    final _cubitUserData=UserDataCubit();
     final Map<String,VideoLocalization> _mapUpdateLocalisation={};
     final List<String> _titleTranslate=[];
     final List<String> _descTranslate=[];

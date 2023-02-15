@@ -9,6 +9,7 @@ import 'package:youtube_clicker/domain/repository/auth_repository.dart';
 import 'package:bloc/bloc.dart';
 
 import 'package:equatable/equatable.dart';
+import 'package:youtube_clicker/utils/preferences_util.dart';
 
 import '../../../utils/failure.dart';
 

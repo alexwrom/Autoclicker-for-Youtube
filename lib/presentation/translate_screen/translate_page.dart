@@ -11,6 +11,7 @@ import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:youtube_clicker/di/locator.dart';
 import 'package:youtube_clicker/domain/models/video_model.dart';
 import 'package:youtube_clicker/presentation/main_screen/cubit/user_data_cubit.dart';
+import 'package:youtube_clicker/presentation/main_screen/cubit/user_data_state.dart';
 import 'package:youtube_clicker/resourses/colors_app.dart';
 
 import '../../components/dialoger.dart';
@@ -38,7 +39,8 @@ class _TranslatePageState extends State<TranslatePage> {
    late TranslateBloc _translateBloc;
    List<String> _listCodeLanguage=[];
    final boxVideo=Hive.box('video_box');
-   final _userCubit=locator.get<UserDataCubit>();
+
+
 
 
   @override
@@ -48,7 +50,7 @@ class _TranslatePageState extends State<TranslatePage> {
     if(widget.videoModel.description.isEmpty){
       _textButton='Translate title';
     }
-    final balance=_userCubit.state.userData.numberOfTrans;
+    final balance=context.read<UserDataCubit>().state.userData.numberOfTrans;
     return Scaffold(
       backgroundColor: colorBackground,
       appBar: AppBar(
@@ -146,12 +148,18 @@ class _TranslatePageState extends State<TranslatePage> {
                                           fontWeight: FontWeight.w400
                                       ),),
                                     const SizedBox(width: 10),
-                                    Text('${_listCodeLanguage.length}',
-                                      style:const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w700
-                                      ),),
+                                    ValueListenableBuilder<int>(
+                                      valueListenable: notifiCodeList,
+                                        builder: (context,value,child) {
+                                          print('State Code Lang ${value}');
+                                        return Text('${value}',
+                                          style:const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w700
+                                          ),);
+                                      }
+                                    ),
                                   ],
                                 ),
                               ),
@@ -164,17 +172,8 @@ class _TranslatePageState extends State<TranslatePage> {
                                   ),
 
                                   onPressed:()async{
-                                    final list=await Navigator.of(context).push(MaterialPageRoute(builder: (_)=> ChoiceLanguagePage(idVideo:widget.videoModel.idVideo)));
-                                    if(list!=null){
-                                      setState((){
-                                        _listCodeLanguage=list as List<String>;
-                                      });
-
-
-                                    }
-
-
-                                  },
+                                     Navigator.of(context).push(MaterialPageRoute(builder: (_)=> ChoiceLanguagePage(idVideo:widget.videoModel.idVideo)));
+                                     },
                                   child:const Icon(Icons.translate,color: Colors.white,)),
                             ],
                           ),
@@ -447,11 +446,9 @@ class _TranslatePageState extends State<TranslatePage> {
     _translateBloc.add(GetSubtitlesEvent(videoId: widget.videoModel.idVideo));
     boxVideo.keys.map((key) {
       final Video value = boxVideo.get(key);
-      if(widget.videoModel.idVideo==value.id){
-        _listCodeLanguage=value.codeLanguage;
-      }
+      _listCodeLanguage=value.codeLanguage;
     }).toList();
-
+   notifiCodeList.value=_listCodeLanguage.length;
   }
 
 

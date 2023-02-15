@@ -1,10 +1,14 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:youtube_clicker/data/models/hive_models/video.dart';
 import 'package:youtube_clicker/data/models/list_translate_api.dart';
+import 'package:youtube_clicker/di/locator.dart';
+import 'package:youtube_clicker/presentation/main_screen/cubit/user_data_cubit.dart';
 import 'package:youtube_clicker/resourses/colors_app.dart';
+import 'package:youtube_clicker/utils/preferences_util.dart';
 
 import '../../components/dialoger.dart';
 import '../../utils/failure.dart';
@@ -68,10 +72,8 @@ class _ChoiceLanguagePageState extends State<ChoiceLanguagePage> {
                                     callback: (i){
                                       if(i!['add']){
                                         _addChoiceCodeLanguage(ListTranslate.langCode(i['index']),widget.idVideo);
-                                        Dialoger.showMessageSnackBar('Language added successfully', context);
                                       }else{
                                         _removeChoiceCodeLanguage(ListTranslate.langCode(i['index']),widget.idVideo);
-                                        Dialoger.showMessageSnackBar('Language removed successfully', context);
                                       }
 
                                     },);
@@ -91,7 +93,7 @@ class _ChoiceLanguagePageState extends State<ChoiceLanguagePage> {
                            ),
 
                            onPressed:(){
-                            Navigator.pop(context,_choiceCodeLanguageList);
+                            Navigator.pop(context);
                            },
                            child:const Text('Back',
                              style: TextStyle(
@@ -111,29 +113,23 @@ class _ChoiceLanguagePageState extends State<ChoiceLanguagePage> {
        List<String> codesList=[];
        boxVideo.keys.map((key) {
          final Video value = boxVideo.get(key);
-          if(idVideo==value.id){
-            _keyHiveVideo=key;
             codesList=value.codeLanguage;
-          }
        }).toList();
        return codesList;
     }
 
 
     _addChoiceCodeLanguage(String code,String idVideo)async{
-      if(_choiceCodeLanguageList.isEmpty){
-       _keyHiveVideo=await boxVideo.add(Video(id: idVideo, codeLanguage: _choiceCodeLanguageList));
-      }else{
-        boxVideo.put(_keyHiveVideo, Video(id: idVideo, codeLanguage: _choiceCodeLanguageList));
-      }
+      boxVideo.put(_keyHiveVideo, Video(id: idVideo, codeLanguage: _choiceCodeLanguageList));
       _choiceCodeLanguageList.add(code);
-
+      notifiCodeList.value=_choiceCodeLanguageList.length;
     }
 
     _removeChoiceCodeLanguage(String code,String idVideo){
       _choiceCodeLanguageList.remove(code);
       try{
         boxVideo.put(_keyHiveVideo, Video(id: idVideo, codeLanguage: _choiceCodeLanguageList));
+        notifiCodeList.value=_choiceCodeLanguageList.length;
       }on HiveError catch(error,stackTrace){
          Dialoger.showError(error.message, context);
         Error.throwWithStackTrace(Failure(error.toString()), stackTrace);
@@ -141,13 +137,21 @@ class _ChoiceLanguagePageState extends State<ChoiceLanguagePage> {
 
 
 
+
+
     }
 
+
    @override
+  void dispose() {
+  super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
   _choiceCodeLanguageList=_getListChoiceCodeLanguage(widget.idVideo);
-
+    _keyHiveVideo=PreferencesUtil.getKey;
   }
 }
 

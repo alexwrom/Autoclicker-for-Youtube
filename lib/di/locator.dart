@@ -1,5 +1,6 @@
 
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:googleapis/youtube/v3.dart';
@@ -31,6 +32,8 @@ import '../domain/repository/youtube_repository.dart';
 import '../presentation/main_screen/cubit/user_data_cubit.dart';
   final locator=GetIt.instance;
 
+  final notifiCodeList=ValueNotifier<int>(0);
+
 
 
   void setup(){
@@ -57,6 +60,7 @@ import '../presentation/main_screen/cubit/user_data_cubit.dart';
     locator.registerLazySingleton(() => YouTubeApiUtil());
     locator.registerFactory<YouTubeRepository>(() => YouTubeRepositoryImpl());
 
+
     //api google translate
      locator.registerLazySingleton(() => TranslateApiService());
      locator.registerLazySingleton(() => TranslateApiUtil());
@@ -66,7 +70,7 @@ import '../presentation/main_screen/cubit/user_data_cubit.dart';
     locator.registerLazySingleton(() => UserApiService());
     locator.registerLazySingleton(() => UserDataApiUtil());
     locator.registerFactory<UserRepository>(() => UserRepositoryImpl());
-    locator.registerLazySingleton(() => UserDataCubit());
+
 
     //in app purchase
     locator.registerLazySingleton(() => InAppPurchaseService());

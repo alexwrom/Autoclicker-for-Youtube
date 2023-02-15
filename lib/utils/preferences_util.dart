@@ -24,6 +24,8 @@ class PreferencesUtil{
     await _prefsInstance!.setString(prefsKeyUrlAvatar, url);
   }
 
+
+
   static Future<void> setUserNAmer(String name)async{
     await _prefsInstance!.setString(prefsKeyUserName, name);
   }
@@ -36,6 +38,10 @@ class PreferencesUtil{
     await _prefsInstance!.setString(prefsKeyEmail, email);
   }
 
+  static Future<void> setKeyHave(int key)async{
+    await _prefsInstance!.setInt(prefsKeyVideoHave, key);
+  }
+
 
 
 
@@ -44,9 +50,16 @@ class PreferencesUtil{
   static String get getUserName=>_prefsInstance!.getString(prefsKeyUserName)??'';
   static String get getUid=>_prefsInstance!.getString(prefsKeyUid)??'';
   static String get getEmail=>_prefsInstance!.getString(prefsKeyEmail)??'';
+  static int get getKey=>_prefsInstance!.getInt(prefsKeyVideoHave)??0;
 
-  static clear(){
-    _prefsInstance!.clear();
+  static clear()async{
+   await _prefsInstance!.remove(prefsKeyVideoHave);
+   await _prefsInstance!.remove(prefsKeyGoogleToken);
+   await _prefsInstance!.remove(prefsKeyEmail);
+   await _prefsInstance!.remove(prefsKeyUid);
+   await _prefsInstance!.remove(prefsKeyUserName);
+   await _prefsInstance!.remove(prefsKeyUrlAvatar);
+
   }
 
 
@@ -59,3 +72,4 @@ class PreferencesUtil{
   const String prefsKeyUserName='name';
   const String prefsKeyUid='uid';
   const String prefsKeyEmail='email';
+  const String prefsKeyVideoHave='key_video';
