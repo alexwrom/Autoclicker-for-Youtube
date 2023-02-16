@@ -53,12 +53,7 @@ class PreferencesUtil{
   static int get getKey=>_prefsInstance!.getInt(prefsKeyVideoHave)??0;
 
   static clear()async{
-   await _prefsInstance!.remove(prefsKeyVideoHave);
-   await _prefsInstance!.remove(prefsKeyGoogleToken);
-   await _prefsInstance!.remove(prefsKeyEmail);
-   await _prefsInstance!.remove(prefsKeyUid);
-   await _prefsInstance!.remove(prefsKeyUserName);
-   await _prefsInstance!.remove(prefsKeyUrlAvatar);
+   await _prefsInstance!.clear();
 
   }
 

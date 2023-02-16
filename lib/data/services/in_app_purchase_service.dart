@@ -92,7 +92,7 @@ class InAppPurchaseService{
         productDetails: product,
         applicationUserName: userEmail,
       );
-      final res = await _inAppPurchase.buyConsumable(purchaseParam: purchaseParam,autoConsume: false);
+      final res = await _inAppPurchase.buyConsumable(purchaseParam: purchaseParam,autoConsume: true);
       if (!res) {
         throw const Failure(
             'purchase request was not initially sent successfully');

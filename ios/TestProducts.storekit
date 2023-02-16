@@ -1,0 +1,78 @@
+{
+  "identifier" : "B107887F",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+    {
+      "displayPrice" : "14.99",
+      "familyShareable" : false,
+      "internalID" : "4AB07D07",
+      "localizations" : [
+        {
+          "description" : "",
+          "displayName" : "",
+          "locale" : "en_US"
+        },
+        {
+          "description" : "Базовый набор",
+          "displayName" : "Переводы",
+          "locale" : "ru"
+        }
+      ],
+      "productID" : "basic_buy",
+      "referenceName" : "Basic",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "3.49",
+      "familyShareable" : false,
+      "internalID" : "5B50D51D",
+      "localizations" : [
+        {
+          "description" : "",
+          "displayName" : "",
+          "locale" : "en_US"
+        },
+        {
+          "description" : "Маленький пакет",
+          "displayName" : "Переводы",
+          "locale" : "ru"
+        }
+      ],
+      "productID" : "little",
+      "referenceName" : "Little",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "49.99",
+      "familyShareable" : false,
+      "internalID" : "86D7E9AB",
+      "localizations" : [
+        {
+          "description" : "",
+          "displayName" : "",
+          "locale" : "en_US"
+        },
+        {
+          "description" : "Средний пакет",
+          "displayName" : "Переводы",
+          "locale" : "ru"
+        }
+      ],
+      "productID" : "medium_buy",
+      "referenceName" : "Medium",
+      "type" : "Consumable"
+    }
+  ],
+  "settings" : {
+
+  },
+  "subscriptionGroups" : [
+
+  ],
+  "version" : {
+    "major" : 1,
+    "minor" : 2
+  }
+}
