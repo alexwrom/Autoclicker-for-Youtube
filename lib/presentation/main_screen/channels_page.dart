@@ -135,7 +135,7 @@ class _ChannelsPageState extends State<ChannelsPage> {
                         children: [
                           CardFreeTrial(),
                           Visibility(
-                            visible: state.channelList.isNotEmpty,
+                            visible: !state.mainStatus.isEmpty,
                             child: Align(
                               alignment: Alignment.centerLeft,
                               child: Container(
@@ -158,7 +158,7 @@ class _ChannelsPageState extends State<ChannelsPage> {
                           ),
                           const SizedBox(height: 10),
                           Visibility(
-                            visible: state.channelList.isEmpty,
+                            visible: state.mainStatus.isEmpty,
                             child: Column(
                               children: [
                                 const SizedBox(height: 150),
@@ -191,7 +191,7 @@ class _ChannelsPageState extends State<ChannelsPage> {
                           ),
 
                           Visibility(
-                            visible: state.channelList.isNotEmpty,
+                            visible: !state.mainStatus.isEmpty,
                               child: Column(children: [
                             ...List.generate(state.channelList.length, (index){
                               return  ItemChannel(channelModel: state.channelList[index]);
@@ -199,7 +199,7 @@ class _ChannelsPageState extends State<ChannelsPage> {
                           ],)),
 
                           Visibility(
-                            visible: state.channelList.isNotEmpty,
+                            visible: !state.mainStatus.isEmpty,
                             child: Align(
                               alignment: Alignment.centerLeft,
                               child: Container(
@@ -252,7 +252,7 @@ class _ChannelsPageState extends State<ChannelsPage> {
   void initState() {
     super.initState();
     print('INIT STATE');
-    context.read<MainBloc>().add(GetChannelEvent(reload: true));
+    context.read<MainBloc>().add(GetChannelEvent(reload: widget.reAuth));
 
   }
 

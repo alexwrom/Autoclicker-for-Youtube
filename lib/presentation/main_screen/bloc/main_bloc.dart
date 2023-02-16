@@ -37,7 +37,7 @@ class MainBloc extends Bloc<MainEvent,MainState>{
        final name= PreferencesUtil.getUserName;
        final avatar=PreferencesUtil.getUrlAvatar;
        if(result!.isEmpty){
-         emit(state.copyWith(mainStatus: MainStatus.empty));
+         emit(state.copyWith(mainStatus: MainStatus.empty, userName: name, urlAvatar: avatar));
        }else{
         final videos = await _googleApiRepository.getVideoFromAccount(result[0].idUpload);
         allListVideoAccount = videos;

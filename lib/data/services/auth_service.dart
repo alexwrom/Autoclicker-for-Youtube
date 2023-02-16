@@ -32,7 +32,6 @@ class AuthService{
 
   Future<void> logOut()async{
     try{
-      await PreferencesUtil.clear();
       await _auth!.signOut();
       await _googleSingIn.signOut();
       print('SING OUT');
@@ -62,15 +61,15 @@ class AuthService{
         accessToken: googleSignInAuthentication.accessToken,
         idToken: googleSignInAuthentication.idToken,
       );
-      print('Cred User Google 1 ${credential}');
+
       final UserCredential userCredential =
       await _auth!.signInWithCredential(credential);
-      print('Cred User Google 2 ${userCredential}');
+
        await PreferencesUtil.setUrlAvatar(userCredential.user!.photoURL!);
        await PreferencesUtil.setUserNAmer(userCredential.user!.displayName!);
        await PreferencesUtil.setUserId(userCredential.user!.uid);
        await PreferencesUtil.setEmail(userCredential.user!.email!);
-      print('Cred User Google 4 ${userCredential.user!.uid}');
+
       if(Platform.isIOS){
         final iosImei=await _deviceInfoPlugin.iosInfo;
          imei=iosImei.identifierForVendor!;
@@ -78,7 +77,6 @@ class AuthService{
         final androidImei=await _deviceInfoPlugin.androidInfo;
         imei=androidImei.androidId!;
       }
-      print('Cred User Google 3 ${userCredential.user!.uid}');
       DocumentSnapshot userDoc=await _firebaseFirestore!.collection('users').doc(userCredential.user!.uid).get();
       if(userDoc.exists){
         await _firebaseFirestore!.collection('users').doc(userCredential.user!.uid).update({

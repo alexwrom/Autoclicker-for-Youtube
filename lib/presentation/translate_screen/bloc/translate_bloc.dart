@@ -23,7 +23,7 @@ class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
 
     final _translateRepository=locator.get<TranslateRepository>();
     final _youTubeRepository=locator.get<YouTubeRepository>();
-    final _cubitUserData=UserDataCubit();
+    final cubitUserData;
     final Map<String,VideoLocalization> _mapUpdateLocalisation={};
     final List<String> _titleTranslate=[];
     final List<String> _descTranslate=[];
@@ -36,7 +36,7 @@ class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
     int _indexDesc=0;
     String? idCap;
 
-     TranslateBloc():super(TranslateState.unknown()){
+     TranslateBloc({required this.cubitUserData}):super(TranslateState.unknown()){
         on<StartTranslateEvent>(_initTranslate,transformer: droppable());
         on<GetSubtitlesEvent>(_getCaption,transformer: droppable());
         on<InsertSubtitlesEvent>(_insertCaption,transformer: droppable());
@@ -47,7 +47,8 @@ class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
 
      Future<void> _getCaption(GetSubtitlesEvent event,emit)async{
         idCap='';
-        if(_cubitUserData.state.userData.numberOfTrans==0){
+
+        if(cubitUserData.state.userData.numberOfTrans==0){
           emit(state.copyWith(translateStatus: TranslateStatus.forbidden));
         }
         emit(state.copyWith(captionStatus: CaptionStatus.loading));
@@ -65,7 +66,7 @@ class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
      }
 
      Future<void> _insertCaption(InsertSubtitlesEvent event,emit)async{
-       if(_cubitUserData.state.userData.numberOfTrans==0){
+       if(cubitUserData.state.userData.numberOfTrans==0){
          emit(state.copyWith(translateStatus: TranslateStatus.forbidden));
        }else{
          emit(state.copyWith(translateStatus: TranslateStatus.translating,progressTranslate: '0%',progressTranslateDouble: 0.0));
@@ -84,7 +85,7 @@ class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
                  progressTranslate:
                  _getProgress(opTick, operationAll)));
              if(opTick==0){
-               await _cubitUserData.updateBalance(listCode.length);
+               await cubitUserData.updateBalance(listCode.length);
                emit(state.copyWith(translateStatus: TranslateStatus.success));
              }
 
@@ -101,7 +102,7 @@ class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
 
      Future<void> _initTranslate(StartTranslateEvent event,emit)async{
        _clearVar();
-       if(_cubitUserData.state.userData.numberOfTrans==0){
+       if(cubitUserData.state.userData.numberOfTrans==0){
          emit(state.copyWith(translateStatus: TranslateStatus.forbidden));
        }else{
          final num=event.videoModel.description.isEmpty?1:2;
@@ -198,7 +199,7 @@ class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
 
       if (_operationQueueAll == 0) {
         _clearVar();
-        await _cubitUserData.updateBalance(codeLanguage.length);
+        await cubitUserData.updateBalance(codeLanguage.length);
         emit(state.copyWith(translateStatus: TranslateStatus.success));
 
       }

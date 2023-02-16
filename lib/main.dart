@@ -117,7 +117,7 @@ class _AppState extends State<App> {
   @override
   void dispose() {
     super.dispose();
-    notifiCodeList.dispose();
+
   }
 
   @override

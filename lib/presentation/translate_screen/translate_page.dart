@@ -51,6 +51,7 @@ class _TranslatePageState extends State<TranslatePage> {
       _textButton='Translate title';
     }
     final balance=context.read<UserDataCubit>().state.userData.numberOfTrans;
+    print('BALAnce ${balance}');
     return Scaffold(
       backgroundColor: colorBackground,
       appBar: AppBar(
@@ -442,7 +443,7 @@ class _TranslatePageState extends State<TranslatePage> {
   @override
   void initState() {
     super.initState();
-    _translateBloc=TranslateBloc();
+    _translateBloc=TranslateBloc(cubitUserData: context.read<UserDataCubit>());
     _translateBloc.add(GetSubtitlesEvent(videoId: widget.videoModel.idVideo));
     boxVideo.keys.map((key) {
       final Video value = boxVideo.get(key);

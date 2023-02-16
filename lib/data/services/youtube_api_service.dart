@@ -25,13 +25,6 @@ import '../models/video_model_from_api.dart';
     final _dio = locator.get<DioClientInsertCaption>();
 
 
-    YouTubeApiService() {
-      final authHeaderString = PreferencesUtil.getHeaderApiGoogle;
-      final authHeaders = json.decode(authHeaderString);
-      final header = Map<String, String>.from(authHeaders);
-      httpClient = GoogleHttpClient(header);
-      
-    }
 
 
     Future<List<ChannelModelFromApi>> getListChanel(bool reload) async {
@@ -41,10 +34,13 @@ import '../models/video_model_from_api.dart';
           if (_googleSingIn.currentUser == null) {
             throw const Failure('Error auth');
           }
-          final authHeaders = await _googleSingIn.currentUser!.authHeaders;
-          print('GET LIST USER ${_googleSingIn.currentUser!.email}');
-         // await PreferencesUtil.setHeadersGoogleApi(authHeaders);
+         final  authHeaders = await _googleSingIn.currentUser!.authHeaders;
           httpClient = GoogleHttpClient(authHeaders);
+        }else{
+          final authHeaderString = PreferencesUtil.getHeaderApiGoogle;
+          final authHeaders = json.decode(authHeaderString);
+          final header = Map<String, String>.from(authHeaders);
+          httpClient = GoogleHttpClient(header);
         }
         final data = YouTubeApi(httpClient!);
         final result = await data.channels.list(
