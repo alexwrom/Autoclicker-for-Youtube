@@ -20,11 +20,11 @@ class MemberShipBloc extends Bloc<MemberShipEvent,MemberShipState>{
 
 
   late final HandleSubscriptionUtil _purchasesSubscription;
-  final _cubitUserData=UserDataCubit();
+  final cubitUserData;
   late final inAppPurchaseService=locator.get<InAppPurchaseService>();
 
 
-  MemberShipBloc():super(MemberShipState.unknown()){
+  MemberShipBloc({required this.cubitUserData}):super(MemberShipState.unknown()){
       _purchasesSubscription=HandleSubscriptionUtil(
         onCanceled: (){
           add(OnCanceledEvent());
@@ -33,12 +33,12 @@ class MemberShipBloc extends Bloc<MemberShipEvent,MemberShipState>{
           add(OnErrorEvent());
         },
         onComplete: (PurchaseDetails purchaseDetails)async{
-          final oldBalance=_cubitUserData.state.userData.numberOfTrans;
+          final oldBalance=cubitUserData.state.userData.numberOfTrans;
           final limitTranslate=state.listDetails.firstWhere((element) => purchaseDetails.productID==element.id).limitTranslation;
           print('Balance ${limitTranslate}');
           final resultBalance=oldBalance+limitTranslate;
           await inAppPurchaseService.completePurchase(purchaseDetails,resultBalance);
-          await _cubitUserData.addBalance(resultBalance);
+          await cubitUserData.addBalance(resultBalance);
         },
         onPurchased: (PurchaseDetails purchaseDetails) async {
           try {

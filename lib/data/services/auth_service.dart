@@ -54,6 +54,7 @@ class AuthService{
       if(_googleSingIn.currentUser==null){
         throw const Failure('Error auth');
       }
+
       final authHeaders =await googleSignInAccount!.authHeaders;
       final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
       await PreferencesUtil.setHeadersGoogleApi(authHeaders);
@@ -61,10 +62,10 @@ class AuthService{
         accessToken: googleSignInAuthentication.accessToken,
         idToken: googleSignInAuthentication.idToken,
       );
-
+      print('Cred 1 ${credential}');
       final UserCredential userCredential =
       await _auth!.signInWithCredential(credential);
-
+      print('Cred 2 ${userCredential}');
        await PreferencesUtil.setUrlAvatar(userCredential.user!.photoURL!);
        await PreferencesUtil.setUserNAmer(userCredential.user!.displayName!);
        await PreferencesUtil.setUserId(userCredential.user!.uid);

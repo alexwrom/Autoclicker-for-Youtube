@@ -118,7 +118,7 @@ class _ChannelsPageState extends State<ChannelsPage> {
                           const UserDataCard(),
                           IconButton(onPressed: (){
                            Dialoger.showLogOut(context: context);
-                          },
+                           },
                               icon: Icon(Icons.logout,color: colorRed))
                         ],
                       ),
@@ -199,7 +199,7 @@ class _ChannelsPageState extends State<ChannelsPage> {
                           ],)),
 
                           Visibility(
-                            visible: !state.mainStatus.isEmpty,
+                            visible: state.videoNotPubList.isNotEmpty,
                             child: Align(
                               alignment: Alignment.centerLeft,
                               child: Container(

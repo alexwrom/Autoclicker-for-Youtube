@@ -8,6 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:super_banners/super_banners.dart';
+import 'package:youtube_clicker/presentation/main_screen/cubit/user_data_cubit.dart';
 import 'package:youtube_clicker/presentation/membership_screen/bloc/membership_bloc.dart';
 import 'package:youtube_clicker/presentation/membership_screen/bloc/membership_event.dart';
 import 'package:youtube_clicker/presentation/membership_screen/bloc/membership_state.dart';
@@ -27,13 +28,15 @@ class _MembershipPageState extends State<MembershipPage> {
   int _currentLimit=0;
 
 
- final MemberShipBloc _memberShipBloc=MemberShipBloc();
+ late MemberShipBloc _memberShipBloc;
 
 
  @override
   void initState() {
     super.initState();
+    _memberShipBloc=MemberShipBloc(cubitUserData: context.read<UserDataCubit>());
     _memberShipBloc.add(GetProductEvent());
+
 
   }
 
@@ -133,7 +136,7 @@ class _MembershipPageState extends State<MembershipPage> {
                           Container(
                             padding: EdgeInsets.only(left: state.listDetails[index].isSale?35:25,right: 20,top:state.listDetails[index].isSale?60:40,bottom: 10),
                             margin:const EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-                            height: state.listDetails[index].isSale?200:190,
+                            height: state.listDetails[index].isSale?205:190,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(30),
                               color: colorPrimary,

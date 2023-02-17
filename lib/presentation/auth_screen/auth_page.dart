@@ -83,20 +83,17 @@ class AuthPage extends StatelessWidget{
                               fontSize: 22,
                               fontWeight: FontWeight.w700
                           ),),
-                          const Text('Tube',style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 22,
-                              fontWeight: FontWeight.w700
-                          ),),
                           const SizedBox(width: 10,),
-                          const Text('Auto Clicker',style: TextStyle(
+                          const Text('Clicker',style: TextStyle(
                               color: Colors.white,
                               fontSize: 22,
                               fontWeight: FontWeight.w700
                           ),),
                         ],
                       ),
-                      const SizedBox(height: 160),
+                      const SizedBox(height: 40),
+                      Image.asset(banner),
+                      const SizedBox(height: 40),
                       Stack(
                         children: [
                           Center(
@@ -111,7 +108,7 @@ class AuthPage extends StatelessWidget{
                                   ),
                                   onPressed: (){
 
-                                      context.read<AuthBloc>().add( SingInEvent());
+                                      context.read<AuthBloc>().add(const SingInEvent());
                                   },
                                   child:  const Text('Login with google',style: TextStyle(
                                       color: Colors.white,

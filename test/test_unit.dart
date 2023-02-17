@@ -7,14 +7,16 @@ import 'package:youtube_clicker/data/models/list_translate_api.dart';
 void main() {
   test('unit',(){
 
-     double price=123.00;
-     int t=price.toInt();
-     if(price>t){
-       print('Result 1 ${price}');
-     }else{
-       print('Result 2 ${price.toInt()}');
-     }
+     String text='''Много людей, стараемся работать в быстром темпе. Вызываю заявителя, подходит девушка: Здравствуйте, мне надо заменить паспорт.
+     Вместо того, чтобы как нормальный человек уточнить, я пытаюсь угадать причину (Мамкин Шерлок, блин): Добрый день, в связи с достижением 45 лет?
+    Её лицо становится таким, о котором мечтали бы все игроки в покер. Эмоции не читаются. Ледяной голос отвечает:
+    В связи с заключением брака. Мне 27.''';
+    final t= text.replaceAll('\n','*');
+     print("Translate 1 $t");
 
+    final t1=t.replaceAll('*', '\n');
+
+     print("Translate 2 $t1");
 
   });
 

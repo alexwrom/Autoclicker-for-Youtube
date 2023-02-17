@@ -155,8 +155,7 @@ class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
        _mapUpdateLocalisation.clear();
      }
 
-  Future<void> _cycleTranslate(
-      VideoModel videoModel, List<String> codeLanguage) async {
+  Future<void> _cycleTranslate(VideoModel videoModel, List<String> codeLanguage) async {
     if (_operationQueueAll > 0) {
       if (_operationQueueTitleTrans > 0) {
         final titleT =await _translateRepository.translate(codeLanguage[_indexTitle],videoModel.title);

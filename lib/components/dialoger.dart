@@ -167,13 +167,15 @@ class Dialoger {
                 Navigator.pop(context);
               },
             ),
-            TextButton(
-              child:  Text(textButtonAccept),
-              onPressed: () {
-                Navigator.pop(context);
-                 voidCallback();
-              },
-            )
+            if(textButtonAccept.isNotEmpty)...{
+              TextButton(
+                child:  Text(textButtonAccept),
+                onPressed: () {
+                  Navigator.pop(context);
+                  voidCallback();
+                },
+              )
+            }
           ],
         ),
       ),
