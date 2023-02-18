@@ -29,6 +29,7 @@ class _MembershipPageState extends State<MembershipPage> {
 
 
  late MemberShipBloc _memberShipBloc;
+ double? sizeText;
 
 
  @override
@@ -42,6 +43,7 @@ class _MembershipPageState extends State<MembershipPage> {
 
   @override
   Widget build(BuildContext context) {
+   sizeText=MediaQuery.of(context).size.width/25.0;
     return Scaffold(
       backgroundColor: colorBackground,
       body: BlocProvider(
@@ -54,7 +56,7 @@ class _MembershipPageState extends State<MembershipPage> {
 
             if(stateLis.memebStatus.isPurchased){
               Dialoger.showInfoDialog(context, 'Subscribed successfully!',
-                'Transfers accrued - $_currentLimit', false, () {
+                'Transfers accrued $_currentLimit', false, () {
                       Navigator.pop(context);
                   });
           }
@@ -143,6 +145,7 @@ class _MembershipPageState extends State<MembershipPage> {
                               image: DecorationImage(image: AssetImage(bgCart),fit: BoxFit.fill)
                             ),
                             child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Padding(
                                   padding: const EdgeInsets.only(bottom: 10),
@@ -150,7 +153,7 @@ class _MembershipPageState extends State<MembershipPage> {
                                     children: [
                                       Image.asset(item,width: 20,height: 20,color: Colors.amber),
                                       const SizedBox(width: 10),
-                                       Text('${state.listDetails[index].titleLimitTranslation} ',
+                                       Text(state.listDetails[index].titleLimitTranslation,
                                         style:const TextStyle(
                                             color: Colors.white,
                                             fontWeight: FontWeight.w700,
@@ -166,7 +169,7 @@ class _MembershipPageState extends State<MembershipPage> {
                                         child: Text('${state.listDetails[index].limitTranslation}',style: TextStyle(
                                             color: colorPrimary,
                                             fontWeight: FontWeight.w800,
-                                            fontSize: 20
+                                            fontSize: sizeText
                                         ),),
                                       )
                                     ],

@@ -66,10 +66,6 @@ class AuthService{
       final UserCredential userCredential =
       await _auth!.signInWithCredential(credential);
       print('Cred 2 ${userCredential}');
-       await PreferencesUtil.setUrlAvatar(userCredential.user!.photoURL!);
-       await PreferencesUtil.setUserNAmer(userCredential.user!.displayName!);
-       await PreferencesUtil.setUserId(userCredential.user!.uid);
-       await PreferencesUtil.setEmail(userCredential.user!.email!);
 
       if(Platform.isIOS){
         final iosImei=await _deviceInfoPlugin.iosInfo;
@@ -78,14 +74,18 @@ class AuthService{
         final androidImei=await _deviceInfoPlugin.androidInfo;
         imei=androidImei.androidId!;
       }
-      DocumentSnapshot userDoc=await _firebaseFirestore!.collection('users').doc(userCredential.user!.uid).get();
+      await PreferencesUtil.setUrlAvatar(userCredential.user!.photoURL!);
+      await PreferencesUtil.setUserNAmer(userCredential.user!.displayName!);
+      await PreferencesUtil.setUserId(imei);
+      await PreferencesUtil.setEmail(userCredential.user!.email!);
+      DocumentSnapshot userDoc=await _firebaseFirestore!.collection('users').doc(imei).get();
       if(userDoc.exists){
-        await _firebaseFirestore!.collection('users').doc(userCredential.user!.uid).update({
+        await _firebaseFirestore!.collection('users').doc(imei).update({
           'imei':imei
         });
       }else{
         final ts=DateTime.now().millisecondsSinceEpoch;
-        await _firebaseFirestore!.collection('users').doc(userCredential.user!.uid).set({
+        await _firebaseFirestore!.collection('users').doc(imei).set({
           'imei':imei,
           'isActive':false,
           'description':userCredential.user!.displayName!.isNotEmpty?userCredential.user!.displayName!:'',

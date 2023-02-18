@@ -1,7 +1,10 @@
 
 
 
-  import 'package:flutter_bloc/flutter_bloc.dart';
+  import 'dart:io';
+
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:youtube_clicker/domain/models/user_data.dart';
 import 'package:youtube_clicker/presentation/main_screen/cubit/user_data_state.dart';
   import 'package:youtube_clicker/utils/preferences_util.dart';
@@ -13,16 +16,29 @@ class UserDataCubit extends Cubit<UserdataState>{
   UserDataCubit():super(UserdataState.unknown());
 
   final _repositoryUser=locator.get<UserRepository>();
+  final  _deviceInfoPlugin = locator.get<DeviceInfoPlugin>();
    UserData? _userData;
 
 
   getDataUser()async{
     bool isSubscribe=false;
     bool isFreeTrial=true;
+    String uid='';
     //todo исправить bad state
     emit(state.copyWith(userDataStatus: UserDataStatus.loading));
     try {
-      final uid=PreferencesUtil.getUid;
+       uid=PreferencesUtil.getUid;
+      if(uid.isEmpty){
+        if(Platform.isIOS){
+          final iosImei=await _deviceInfoPlugin.iosInfo;
+          uid=iosImei.identifierForVendor!;
+          await PreferencesUtil.setUserId(uid);
+        }else if(Platform.isAndroid){
+          final androidImei=await _deviceInfoPlugin.androidInfo;
+          uid=androidImei.androidId!;
+          await PreferencesUtil.setUserId(uid);
+        }
+      }
       print('UID CUBIT $uid');
        _userData=await _repositoryUser.getDataUser(uid: uid);
 

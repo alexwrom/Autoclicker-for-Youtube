@@ -46,13 +46,14 @@ class AuthPage extends StatelessWidget{
                   ),
                 ),
                 Container(
-                  constraints: const BoxConstraints(maxWidth: 300),
+                  constraints: const BoxConstraints(maxWidth: 320),
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      const SizedBox(height: 90),
                       Container(
                         alignment: Alignment.center,
                         height: 150,
@@ -83,7 +84,6 @@ class AuthPage extends StatelessWidget{
                               fontSize: 22,
                               fontWeight: FontWeight.w700
                           ),),
-                          const SizedBox(width: 10,),
                           const Text('Clicker',style: TextStyle(
                               color: Colors.white,
                               fontSize: 22,
@@ -91,34 +91,37 @@ class AuthPage extends StatelessWidget{
                           ),),
                         ],
                       ),
-                      const SizedBox(height: 40),
-                      Image.asset(banner),
-                      const SizedBox(height: 40),
+                      const SizedBox(height: 140),
                       Stack(
                         children: [
-                          Center(
-                            child: SizedBox(
-                              height: 55,
-                              child: ElevatedButton(
-                                  style: ButtonStyle(
-                                    padding: MaterialStateProperty.all(const EdgeInsets.only(left: 70,right: 30)),
-                                    backgroundColor: MaterialStateProperty.all(colorRed),
-                                    shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)))
+                          Row(
+                            children: [
+                              SizedBox(width: 30),
+                              Center(
+                                child: SizedBox(
+                                  height: 55,
+                                  child: ElevatedButton(
+                                      style: ButtonStyle(
+                                        padding: MaterialStateProperty.all(const EdgeInsets.only(left: 60,right: 20)),
+                                        backgroundColor: MaterialStateProperty.all(colorRed),
+                                        shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)))
 
-                                  ),
-                                  onPressed: (){
+                                      ),
+                                      onPressed: (){
 
-                                      context.read<AuthBloc>().add(const SingInEvent());
-                                  },
-                                  child:  const Text('Login with google',style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w400
-                                  ),)),
-                            ),
+                                          context.read<AuthBloc>().add(const SingInEvent());
+                                      },
+                                      child:  const Text('Login with Youtube account',style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w400
+                                      ),)),
+                                ),
+                              ),
+                            ],
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(left: 10),
+                            padding: const EdgeInsets.only(left: 5),
                             child: Container(
                               decoration:const BoxDecoration(
                                   color: Colors.white,
@@ -127,10 +130,14 @@ class AuthPage extends StatelessWidget{
                               child: Image.asset(logoGoogle,width: 70,height: 70)),
                           )
                         ],
-                      )
+                      ),
+
                     ],
                   ),
                 ),
+                Positioned(
+                  bottom: 0.0,
+                    child: Image.asset(banner,width: 300,)),
               ],
             ),
           );
