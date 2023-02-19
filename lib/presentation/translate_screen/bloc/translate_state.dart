@@ -43,32 +43,35 @@ class TranslateState extends Equatable{
     final String progressTranslate;
     final double progressTranslateDouble;
     final String error;
+    final String messageStatus;
 
 
-   const TranslateState(this.translateStatus,this.captionStatus, this.progressTranslate,this.error,this.progressTranslateDouble);
+   const TranslateState(this.translateStatus,this.captionStatus, this.progressTranslate,this.error,this.progressTranslateDouble,this.messageStatus);
 
     factory TranslateState.unknown(){
-        return const TranslateState(TranslateStatus.unknown,CaptionStatus.unknown,'0%','',0.0);
+        return const TranslateState(TranslateStatus.unknown,CaptionStatus.unknown,'0%','',0.0,'---');
     }
 
 
 
   @override
-  List<Object?> get props => [translateStatus,captionStatus,progressTranslate,error,progressTranslateDouble];
+  List<Object?> get props => [translateStatus,captionStatus,progressTranslate,error,progressTranslateDouble,messageStatus];
 
     TranslateState copyWith({
     TranslateStatus? translateStatus,
       CaptionStatus? captionStatus,
     String? progressTranslate,
     String? error,
-      double? progressTranslateDouble
+      double? progressTranslateDouble,
+      String? messageStatus
   }) {
     return TranslateState(
     translateStatus ?? this.translateStatus,
        captionStatus??this.captionStatus,
        progressTranslate ?? this.progressTranslate,
        error ?? this.error,
-        progressTranslateDouble ?? this.progressTranslateDouble
+        progressTranslateDouble ?? this.progressTranslateDouble,
+      messageStatus??this.messageStatus
     );
   }
 }

@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/io_client.dart';
@@ -23,6 +24,11 @@ import '../models/video_model_from_api.dart';
     IOClient? httpClient;
     final _googleSingIn = locator.get<GoogleSignIn>();
     final _dio = locator.get<DioClientInsertCaption>();
+    FirebaseAuth? _auth;
+
+    YouTubeApiService(){
+      _auth=FirebaseAuth.instance;
+    }
 
 
 
@@ -30,11 +36,22 @@ import '../models/video_model_from_api.dart';
     Future<List<ChannelModelFromApi>> getListChanel(bool reload) async {
       try {
         if (reload) {
-          await _googleSingIn.signIn();
+        final googleSignInAccount=  await _googleSingIn.signIn();
           if (_googleSingIn.currentUser == null) {
             throw const Failure('Error auth');
           }
-         final  authHeaders = await _googleSingIn.currentUser!.authHeaders;
+          final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount!.authentication;
+          final AuthCredential credential = GoogleAuthProvider.credential(
+            accessToken: googleSignInAuthentication.accessToken,
+            idToken: googleSignInAuthentication.idToken,
+          );
+          final UserCredential userCredential =
+          await _auth!.signInWithCredential(credential);
+          await PreferencesUtil.setUrlAvatar(userCredential.user!.photoURL!);
+          await PreferencesUtil.setUserNAmer(userCredential.user!.displayName!);
+          await PreferencesUtil.setEmail(userCredential.user!.email!);
+          final  authHeaders = await _googleSingIn.currentUser!.authHeaders;
+          await PreferencesUtil.setHeadersGoogleApi(authHeaders);
           httpClient = GoogleHttpClient(authHeaders);
         }else{
           final authHeaderString = PreferencesUtil.getHeaderApiGoogle;
@@ -86,7 +103,7 @@ import '../models/video_model_from_api.dart';
     }
 
 
-    Future<void> updateLocalization(VideoModel videoModel,
+    Future<int> updateLocalization(VideoModel videoModel,
         Map<String, VideoLocalization> map) async {
       try {
         final data = YouTubeApi(httpClient!);
@@ -100,7 +117,15 @@ import '../models/video_model_from_api.dart';
             ),
             localizations: map
         ), ['localizations,snippet,status']);
-        print('Response ${res.localizations}');
+
+        if(res.localizations==null){
+          return 1;
+        }
+        if(res.localizations!.isNotEmpty){
+          return 2;
+        }else{
+          return 3;
+        }
       } on Failure catch (error, stackTrace) {
         Error.throwWithStackTrace(Failure(error.message), stackTrace);
       } on PlatformException catch (error, stackTrace) {
@@ -108,6 +133,7 @@ import '../models/video_model_from_api.dart';
       } catch (error, stackTrace) {
         Error.throwWithStackTrace(Failure(error.toString()), stackTrace);
       }
+
     }
 
 
@@ -133,10 +159,15 @@ import '../models/video_model_from_api.dart';
 
     Future<void> insertCaption({required String idCap, required String idVideo, required String codeLang}) async {
       try {
+        final authHeaderString = PreferencesUtil.getHeaderApiGoogle;
+        final authHeaders = json.decode(authHeaderString);
+        final header = Map<String, String>.from(authHeaders);
+        httpClient = GoogleHttpClient(header);
         final api = YouTubeApi(httpClient!);
         final caption = await _dio.init().get('/$idCap', queryParameters: {
           'tlang': codeLang, 'tfmt': 'sbv'
         });
+        print('Load Caption ${caption.data}');
         String dir = (await getTemporaryDirectory()).path;
         final f1 = '$dir/captions.sbv';
         final f = await File(f1).create();
@@ -153,12 +184,16 @@ import '../models/video_model_from_api.dart';
             uploadMedia: media);
         print('Res ${res}');
       } on Failure catch (error, stackTrace) {
+        print('ERRRRROR 1 ${error.message}');
         Error.throwWithStackTrace(Failure(error.message), stackTrace);
       } on PlatformException catch (error, stackTrace) {
+        print('ERRRRROR 2 ${error.message}');
         Error.throwWithStackTrace(Failure(error.message!), stackTrace);
       } on DioError catch (error, stackTrace) {
+        print('ERRRRROR 3 ${error.message}');
         Error.throwWithStackTrace(Failure.fromDioError(error), stackTrace);
       } catch (error, stackTrace) {
+        print('ERRRRROR 4 $error');
         Error.throwWithStackTrace(Failure(error.toString()), stackTrace);
       }
     }

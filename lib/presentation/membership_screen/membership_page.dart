@@ -43,7 +43,6 @@ class _MembershipPageState extends State<MembershipPage> {
 
   @override
   Widget build(BuildContext context) {
-   sizeText=MediaQuery.of(context).size.width/25.0;
     return Scaffold(
       backgroundColor: colorBackground,
       body: BlocProvider(
@@ -137,7 +136,7 @@ class _MembershipPageState extends State<MembershipPage> {
                         children: [
                           Container(
                             padding: EdgeInsets.only(left: state.listDetails[index].isSale?35:25,right: 20,top:state.listDetails[index].isSale?60:40,bottom: 10),
-                            margin:const EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                            margin:const EdgeInsets.symmetric(horizontal: 10,vertical: 10),
                             height: state.listDetails[index].isSale?205:190,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(30),
@@ -166,10 +165,10 @@ class _MembershipPageState extends State<MembershipPage> {
                                           color: Colors.amber
                                         ),
                                         padding:const EdgeInsets.only(left: 5,right: 5),
-                                        child: Text('${state.listDetails[index].limitTranslation}',style: TextStyle(
+                                        child: AutoSizeText('${state.listDetails[index].limitTranslation}',style: TextStyle(
                                             color: colorPrimary,
                                             fontWeight: FontWeight.w800,
-                                            fontSize: sizeText
+
                                         ),),
                                       )
                                     ],

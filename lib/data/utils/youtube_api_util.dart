@@ -42,7 +42,7 @@ class YouTubeApiUtil{
 
     }
 
-    Future<void> updateLocalization(VideoModel videoModel,Map<String,VideoLocalization> map)async{
+    Future<int> updateLocalization(VideoModel videoModel,Map<String,VideoLocalization> map)async{
       return await _youTubeApi.updateLocalization(videoModel, map);
 
     }

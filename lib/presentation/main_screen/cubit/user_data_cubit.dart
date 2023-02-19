@@ -3,6 +3,7 @@
 
   import 'dart:io';
 
+
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:youtube_clicker/domain/models/user_data.dart';
@@ -24,19 +25,16 @@ class UserDataCubit extends Cubit<UserdataState>{
     bool isSubscribe=false;
     bool isFreeTrial=true;
     String uid='';
-    //todo исправить bad state
     emit(state.copyWith(userDataStatus: UserDataStatus.loading));
     try {
        uid=PreferencesUtil.getUid;
       if(uid.isEmpty){
         if(Platform.isIOS){
-          final iosImei=await _deviceInfoPlugin.iosInfo;
-          uid=iosImei.identifierForVendor!;
-          await PreferencesUtil.setUserId(uid);
+          final data=await _deviceInfoPlugin.iosInfo;
+          uid=data.identifierForVendor!;
         }else if(Platform.isAndroid){
-          final androidImei=await _deviceInfoPlugin.androidInfo;
-          uid=androidImei.androidId!;
-          await PreferencesUtil.setUserId(uid);
+          final data=await _deviceInfoPlugin.androidInfo;
+          uid=data.id!;
         }
       }
       print('UID CUBIT $uid');

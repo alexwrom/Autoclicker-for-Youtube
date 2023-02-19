@@ -67,7 +67,7 @@ class _TranslatePageState extends State<TranslatePage> {
           create: (context)=>_translateBloc,
           child: BlocConsumer<TranslateBloc,TranslateState>(
             listener: (_,stateLis){
-
+             Dialoger.showMessage(stateLis.messageStatus);
 
             },
             builder: (context,state) {
@@ -329,9 +329,9 @@ class _TranslatePageState extends State<TranslatePage> {
                                             Dialoger.showNotTranslate(context,'You don\'t have enough translations');
                                           }else{
                                             Dialoger.showGetStartedTranslate(context,_listCodeLanguage.length, () {
-                                              _translateBloc.add(StartTranslateEvent(
-                                                  codeLanguage: _listCodeLanguage,
-                                                  videoModel: widget.videoModel));
+                                              _translateBloc.add(InsertSubtitlesEvent(
+                                                  codesLang: _listCodeLanguage,
+                                                  idVideo: widget.videoModel.idVideo));
                                             });
                                           }
 

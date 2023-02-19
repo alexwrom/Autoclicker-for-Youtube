@@ -1,6 +1,8 @@
 
 import 'dart:io';
 
+
+
 import 'package:googleapis_auth/auth_io.dart';
 import 'package:youtube_clicker/utils/preferences_util.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -66,13 +68,12 @@ class AuthService{
       final UserCredential userCredential =
       await _auth!.signInWithCredential(credential);
       print('Cred 2 ${userCredential}');
-
       if(Platform.isIOS){
-        final iosImei=await _deviceInfoPlugin.iosInfo;
-         imei=iosImei.identifierForVendor!;
+        final data=await _deviceInfoPlugin.iosInfo;
+        imei=data.identifierForVendor!;
       }else if(Platform.isAndroid){
-        final androidImei=await _deviceInfoPlugin.androidInfo;
-        imei=androidImei.androidId!;
+        final data=await _deviceInfoPlugin.androidInfo;
+        imei=data.id!;
       }
       await PreferencesUtil.setUrlAvatar(userCredential.user!.photoURL!);
       await PreferencesUtil.setUserNAmer(userCredential.user!.displayName!);

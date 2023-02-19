@@ -66,6 +66,7 @@ class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
      }
 
      Future<void> _insertCaption(InsertSubtitlesEvent event,emit)async{
+       print('_insertCaption');
        if(cubitUserData.state.userData.numberOfTrans==0){
          emit(state.copyWith(translateStatus: TranslateStatus.forbidden));
        }else{
@@ -76,21 +77,23 @@ class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
          try {
            for(int i=0;i<operationAll;i++){
              opTick--;
-             await _youTubeRepository.insertCaption(idCap: idCap!, idVideo: event.idVideo, codeLang:listCode[i]);
-             //await Future.delayed(Duration(seconds: 2));
+             print('IDCAP $idCap IDVIDEO ${event.idVideo} Codes ${listCode[i]}');
+            await _youTubeRepository.insertCaption(idCap: idCap!, idVideo: event.idVideo, codeLang:listCode[i]);
+            // await Future.delayed(Duration(seconds: 2));
              emit(state.copyWith(
                  translateStatus: TranslateStatus.translating,
                  progressTranslateDouble:
                  _getProgressDouble(opTick, operationAll),
                  progressTranslate:
-                 _getProgress(opTick, operationAll)));
+                 _getProgress(opTick, operationAll),messageStatus: 'Status CAP $i'));
              if(opTick==0){
                await cubitUserData.updateBalance(listCode.length);
-               emit(state.copyWith(translateStatus: TranslateStatus.success));
+               emit(state.copyWith(translateStatus: TranslateStatus.success,messageStatus: 'Status CAP $i'));
              }
 
            }
          }on Failure catch (e) {
+           print('Error ${e.message}');
            emit(state.copyWith(translateStatus: TranslateStatus.error,error: e.message));
          }
        }
@@ -101,6 +104,7 @@ class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
 
 
      Future<void> _initTranslate(StartTranslateEvent event,emit)async{
+       print('_initTranslate');
        _clearVar();
        if(cubitUserData.state.userData.numberOfTrans==0){
          emit(state.copyWith(translateStatus: TranslateStatus.forbidden));
@@ -156,13 +160,18 @@ class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
      }
 
   Future<void> _cycleTranslate(VideoModel videoModel, List<String> codeLanguage) async {
+       int codeState=-1;
     if (_operationQueueAll > 0) {
       if (_operationQueueTitleTrans > 0) {
-        final titleT =await _translateRepository.translate(codeLanguage[_indexTitle],videoModel.title);
+        try {
+          final titleT =await _translateRepository.translate(codeLanguage[_indexTitle],videoModel.title);
+          _titleTranslate.add(titleT);
+          _indexTitle++;
+          _operationQueueTitleTrans--;
+        } on Failure catch (e) {
+          throw Failure(e.message);
+        }
         //await Future.delayed(Duration(seconds: 2));
-        _titleTranslate.add(titleT);
-        _indexTitle++;
-        _operationQueueTitleTrans--;
       } else if (_operationQueueTitleTrans == 0) {
         if (_operationQueueDescTrans > 0) {
           //await Future.delayed(Duration(seconds: 2));
@@ -182,7 +191,9 @@ class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
             });
 
         }
-        await _youTubeRepository.updateLocalization(videoModel,_mapUpdateLocalisation);
+
+        codeState= await _youTubeRepository.updateLocalization(videoModel,_mapUpdateLocalisation);
+
         //await Future.delayed(Duration(seconds: 2));
       }
 
@@ -194,15 +205,17 @@ class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
           progressTranslateDouble:
               _getProgressDouble(_operationQueueAll, _operationQueueTotal),
           progressTranslate:
-              _getProgress(_operationQueueAll, _operationQueueTotal)));
+              _getProgress(_operationQueueAll, _operationQueueTotal),messageStatus: 'Status TD $_operationQueueAll Code $codeState'));
 
       if (_operationQueueAll == 0) {
         _clearVar();
         await cubitUserData.updateBalance(codeLanguage.length);
-        emit(state.copyWith(translateStatus: TranslateStatus.success));
+        emit(state.copyWith(translateStatus: TranslateStatus.success,messageStatus: 'Status TD $_operationQueueAll Code $codeState'));
 
       }
     }
+
+
   }
 
 

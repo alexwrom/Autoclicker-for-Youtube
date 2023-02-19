@@ -2,7 +2,8 @@
 
 
 
-  import 'package:googleapis/youtube/v3.dart';
+  import 'package:flutter/material.dart';
+import 'package:googleapis/youtube/v3.dart';
 import 'package:youtube_clicker/domain/models/channel_model.dart';
 import 'package:youtube_clicker/domain/repository/youtube_repository.dart';
 
@@ -25,7 +26,7 @@ class YouTubeRepositoryImpl extends YouTubeRepository{
   }
 
   @override
-  Future<void> updateLocalization(VideoModel videoModel, Map<String, VideoLocalization> map)async {
+  Future<int> updateLocalization(VideoModel videoModel, Map<String, VideoLocalization> map)async {
    return await _youTubeApi.updateLocalization(videoModel, map);
   }
 
