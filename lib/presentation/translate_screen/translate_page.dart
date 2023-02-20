@@ -67,7 +67,12 @@ class _TranslatePageState extends State<TranslatePage> {
           create: (context)=>_translateBloc,
           child: BlocConsumer<TranslateBloc,TranslateState>(
             listener: (_,stateLis){
-             Dialoger.showMessage(stateLis.messageStatus);
+              if(stateLis.translateStatus.isError){
+                Dialoger.showError(stateLis.error, context);
+              }else{
+                Dialoger.showMessage(stateLis.messageStatus);
+              }
+
 
             },
             builder: (context,state) {

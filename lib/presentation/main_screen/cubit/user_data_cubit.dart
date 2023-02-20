@@ -50,7 +50,7 @@ class UserDataCubit extends Cubit<UserdataState>{
        }
        emit(state.copyWith(userDataStatus: UserDataStatus.success,userData: _userData,isSubscribe: isSubscribe,isFreeTrial:isFreeTrial));
     }on Failure catch (e) {
-      emit(state.copyWith(userDataStatus: UserDataStatus.error,error: e.message));
+      emit(state.copyWith(userDataStatus: UserDataStatus.error,error: "${e.message} Code 2"));
     }
   }
 

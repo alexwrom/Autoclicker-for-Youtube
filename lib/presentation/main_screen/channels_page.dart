@@ -251,7 +251,6 @@ class _ChannelsPageState extends State<ChannelsPage> {
   @override
   void initState() {
     super.initState();
-    print('INIT STATE');
     context.read<MainBloc>().add(GetChannelEvent(reload: widget.reAuth));
 
   }
