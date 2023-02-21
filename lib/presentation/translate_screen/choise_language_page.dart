@@ -25,7 +25,7 @@ class _ChoiceLanguagePageState extends State<ChoiceLanguagePage> {
 
 
 
-    dynamic _choiceCodeLanguageList;
+    List<String> _choiceCodeLanguageList=[];
    final boxVideo=Hive.box('video_box');
    dynamic _keyHiveVideo;
   @override

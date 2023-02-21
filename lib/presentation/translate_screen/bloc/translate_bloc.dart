@@ -183,12 +183,14 @@ class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
       }
 
       if (_operationQueueAll == 1) {
-        for (int i = 0; i < _titleTranslate.length; i++) {
+        if(_titleTranslate.isEmpty){
+          emit(state.copyWith(translateStatus: TranslateStatus.error,error:'List code empty...'));
+        }else{
+          for (int i = 0; i < _titleTranslate.length; i++) {
             _mapUpdateLocalisation.addAll({
               codeLanguage[i]: VideoLocalization(
                   description: _descTranslate.isNotEmpty?_descTranslate[i]:'', title: _titleTranslate[i])
             });
-            print('I = $i L= ${_titleTranslate.length}');
             if(i==_titleTranslate.length-1){
               if(_mapUpdateLocalisation.isNotEmpty){
                 codeState= await _youTubeRepository.updateLocalization(videoModel,_mapUpdateLocalisation);
@@ -197,10 +199,8 @@ class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
               }
 
             }
+          }
         }
-
-
-
         //await Future.delayed(Duration(seconds: 2));
       }
 
