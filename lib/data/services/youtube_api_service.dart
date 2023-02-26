@@ -80,17 +80,15 @@ import '../models/video_model_from_api.dart';
     Future<List<AllVideoModelFromApi>> getVideoFromAccount(
         String idUpload) async {
       List<String> idsVideo = [];
+
       try {
         final data = YouTubeApi(httpClient!);
-        final result = await data.search.list(
-            ['snippet'], forMine: true, maxResults: 20, type: ['video']);
+        final result = await data.search.list(['snippet'], forMine: true, maxResults: 20, type: ['video']);
         for (var item in result.items!) {
           idsVideo.add(item.id!.videoId!);
         }
-        final ids = idsVideo.toString().split('[')[1].split(']')[0].replaceAll(
-            ' ', '');
-        final listVideo = await data.videos.list(
-            ['snippet,contentDetails,statistics,status'], id: [ids]);
+        final ids = idsVideo.toString().split('[')[1].split(']')[0].replaceAll(' ', '');
+        final listVideo = await data.videos.list(['snippet,contentDetails,statistics,status'], id: [ids]);
         return listVideo.items!.map((e) =>
             AllVideoModelFromApi.fromApi(video: e)).toList();
       } on Failure catch (error, stackTrace) {
@@ -137,16 +135,12 @@ import '../models/video_model_from_api.dart';
     }
 
 
-    Future<String> loadCaptions(String idVideo) async {
-      String idCap = '';
+    Future<List<Caption>> loadCaptions(String idVideo) async {
+
       try {
         final api = YouTubeApi(httpClient!);
-        final cap = await api.captions.list(['id'], idVideo);
-        if (cap.items!.isNotEmpty) {
-          idCap = cap.items![0].id!;
-        }
-
-        return idCap;
+        final cap = await api.captions.list(['id','snippet'], idVideo);
+        return cap.items!;
       } on Failure catch (error, stackTrace) {
         Error.throwWithStackTrace(Failure(error.message), stackTrace);
       } on PlatformException catch (error, stackTrace) {
@@ -155,6 +149,22 @@ import '../models/video_model_from_api.dart';
         Error.throwWithStackTrace(Failure(error.toString()), stackTrace);
       }
     }
+
+    Future<void> removeCaptions(String idCap) async {
+
+      try {
+        final api = YouTubeApi(httpClient!);
+         await api.captions.delete(idCap);
+
+      } on Failure catch (error, stackTrace) {
+        Error.throwWithStackTrace(Failure(error.message), stackTrace);
+      } on PlatformException catch (error, stackTrace) {
+        Error.throwWithStackTrace(Failure(error.message!), stackTrace);
+      } catch (error, stackTrace) {
+        Error.throwWithStackTrace(Failure(error.toString()), stackTrace);
+      }
+    }
+
 
 
     Future<void> insertCaption({required String idCap, required String idVideo, required String codeLang}) async {

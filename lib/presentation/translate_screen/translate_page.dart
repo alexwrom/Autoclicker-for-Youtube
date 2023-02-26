@@ -51,7 +51,6 @@ class _TranslatePageState extends State<TranslatePage> {
       _textButton='Translate title';
     }
     final balance=context.read<UserDataCubit>().state.userData.numberOfTrans;
-    print('BALAnce ${balance}');
     return Scaffold(
       backgroundColor: colorBackground,
       appBar: AppBar(

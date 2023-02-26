@@ -35,6 +35,7 @@ class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
     int _indexTitle=0;
     int _indexDesc=0;
     String? idCap;
+    List<Caption> _listCap=[];
 
      TranslateBloc({required this.cubitUserData}):super(TranslateState.unknown()){
         on<StartTranslateEvent>(_initTranslate,transformer: droppable());
@@ -53,10 +54,11 @@ class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
         }
         emit(state.copyWith(captionStatus: CaptionStatus.loading));
         try {
-        idCap= await _youTubeRepository.loadCaptions(event.videoId);
-        if(idCap!.isEmpty){
+        _listCap= await _youTubeRepository.loadCaptions(event.videoId);
+        if(_listCap.isEmpty){
           emit(state.copyWith(captionStatus: CaptionStatus.empty));
         }else{
+          idCap=_listCap[0].id;
           emit(state.copyWith(captionStatus: CaptionStatus.success));
         }
 
@@ -74,10 +76,19 @@ class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
          final listCode=event.codesLang;
          int operationAll=listCode.length;
          int opTick=operationAll;
+
          try {
+           for (var element in _listCap) {
+             if(listCode.contains(element.snippet!.language)){
+                 await _youTubeRepository.removeCaptions(element.id!);
+
+             }
+
+           }
+
+
            for(int i=0;i<operationAll;i++){
              opTick--;
-             print('IDCAP $idCap IDVIDEO ${event.idVideo} Codes ${listCode[i]}');
             await _youTubeRepository.insertCaption(idCap: idCap!, idVideo: event.idVideo, codeLang:listCode[i]);
             // await Future.delayed(Duration(seconds: 2));
              emit(state.copyWith(
@@ -212,12 +223,12 @@ class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
           progressTranslateDouble:
               _getProgressDouble(_operationQueueAll, _operationQueueTotal),
           progressTranslate:
-              _getProgress(_operationQueueAll, _operationQueueTotal),messageStatus: 'Status TD $_operationQueueAll Code $codeState'));
+              _getProgress(_operationQueueAll, _operationQueueTotal),messageStatus: 'Status TD $_operationQueueAll Code $codeState CL = ${videoModel.defaultLanguage}'));
 
       if (_operationQueueAll == 0) {
         _clearVar();
         await cubitUserData.updateBalance(codeLanguage.length);
-        emit(state.copyWith(translateStatus: TranslateStatus.success,messageStatus: 'Status TD $_operationQueueAll Code $codeState'));
+        emit(state.copyWith(translateStatus: TranslateStatus.success,messageStatus: 'Status TD $_operationQueueAll Code $codeState CL = ${videoModel.defaultLanguage}'));
 
       }
     }

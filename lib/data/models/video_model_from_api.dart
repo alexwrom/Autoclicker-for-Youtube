@@ -21,21 +21,21 @@ class AllVideoModelFromApi{
 
 
       AllVideoModelFromApi.fromApi({required Video video}):
-            categoryId=video.snippet!.categoryId!,
-            defaultLanguage=video.snippet!.defaultLanguage??'en',
-         idVideo=video.id!,
-          idChannel=video.snippet!.channelId!,
-         title=video.snippet!.title!,
-           description=video.snippet!.description!,
-           urlBanner=video.snippet!.thumbnails!.medium!.url!,
-           urlBannerMax=video.snippet!.thumbnails!.standard!.url!,
-           videoPublishedAt=video.snippet!.publishedAt!.toString(),
-           channelTitle=video.snippet!.channelTitle!,
-           duration=video.contentDetails!.duration!,
-            viewCount=video.statistics!.viewCount!,
-            likeCount=video.statistics!.likeCount!,
-            commentCount=video.statistics!.commentCount!,
-            status=video.status!.privacyStatus!;
+            categoryId=video.snippet!.categoryId??'',
+            defaultLanguage=video.snippet!.defaultLanguage??'',
+         idVideo=video.id??'',
+          idChannel=video.snippet!.channelId??'',
+         title=video.snippet!.title??'',
+           description=video.snippet!.description??'',
+           urlBanner=video.snippet!.thumbnails!.medium!.url??'',
+           urlBannerMax=video.snippet!.thumbnails!.standard!.url??'',
+           videoPublishedAt=video.snippet!.publishedAt.toString(),
+           channelTitle=video.snippet!.channelTitle??'',
+           duration=video.contentDetails!.duration??'',
+            viewCount=video.statistics!.viewCount??'',
+            likeCount=video.statistics!.likeCount??'',
+            commentCount=video.statistics!.commentCount??'',
+            status=video.status!.privacyStatus??'';
 
 }
 

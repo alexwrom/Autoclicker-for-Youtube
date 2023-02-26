@@ -5,6 +5,9 @@
       location = "group:TestProducts.storekit">
    </FileRef>
    <FileRef
+      location = "group:StoreKitTestCertificate.cer">
+   </FileRef>
+   <FileRef
       location = "group:Runner.xcodeproj">
    </FileRef>
    <FileRef

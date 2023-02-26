@@ -223,7 +223,7 @@ class _MembershipPageState extends State<MembershipPage> {
                       Visibility(
                         visible:state.listDetails[index].isSale,
                         child: Padding(
-                          padding: const EdgeInsets.only(left: 20,top: 10),
+                          padding: const EdgeInsets.only(left: 10,top: 10),
                           child:  CornerBanner(
                             elevation: 10,
                           bannerPosition: CornerBannerPosition.topLeft,
