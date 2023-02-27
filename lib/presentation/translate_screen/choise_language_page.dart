@@ -70,10 +70,11 @@ class _ChoiceLanguagePageState extends State<ChoiceLanguagePage> {
                                     title: ListTranslate.langName(index, Local.en),
                                     index: index,
                                     callback: (i){
-                                      if(i!['add']){
-                                        _addChoiceCodeLanguage(ListTranslate.langCode(i['index']),widget.idVideo);
+                                      var code=ListTranslate.langCode(i!['index']);
+                                      if(i['add']){
+                                        _addChoiceCodeLanguage(code,widget.idVideo);
                                       }else{
-                                        _removeChoiceCodeLanguage(ListTranslate.langCode(i['index']),widget.idVideo);
+                                        _removeChoiceCodeLanguage(code,widget.idVideo);
                                       }
 
                                     },);
