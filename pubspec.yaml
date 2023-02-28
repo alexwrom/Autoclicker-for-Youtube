@@ -64,6 +64,7 @@ dependencies:
   super_banners: ^0.0.1
   flutter_countdown_timer: ^4.1.0
   auto_size_text: ^3.0.0
+  flutter_signin_button: ^2.0.0
 
 
 

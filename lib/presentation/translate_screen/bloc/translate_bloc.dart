@@ -176,7 +176,8 @@ class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
       if (_operationQueueTitleTrans > 0) {
         try {
           final titleT =await _translateRepository.translate(codeLanguage[_indexTitle],videoModel.title);
-          _titleTranslate.add(titleT);
+          final textTitleLimit=titleT.substring(0,100);
+          _titleTranslate.add(textTitleLimit);
           _indexTitle++;
           _operationQueueTitleTrans--;
         } on Failure catch (e) {

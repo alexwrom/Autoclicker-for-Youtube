@@ -2,6 +2,7 @@
 
 
 
+import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:youtube_clicker/presentation/auth_screen/bloc/auth_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -92,52 +93,20 @@ class AuthPage extends StatelessWidget{
                         ],
                       ),
                       const SizedBox(height: 140),
-                      Stack(
-                        children: [
-                          Row(
-                            children: [
-                              SizedBox(width: 30),
-                              Center(
-                                child: SizedBox(
-                                  height: 55,
-                                  child: ElevatedButton(
-                                      style: ButtonStyle(
-                                        padding: MaterialStateProperty.all(const EdgeInsets.only(left: 60,right: 20)),
-                                        backgroundColor: MaterialStateProperty.all(colorRed),
-                                        shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)))
-
-                                      ),
-                                      onPressed: (){
-
-                                          context.read<AuthBloc>().add(const SingInEvent());
-                                      },
-                                      child:  const Text('Login with Youtube account',style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w400
-                                      ),)),
-                                ),
-                              ),
-                            ],
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 5),
-                            child: Container(
-                              decoration:const BoxDecoration(
-                                  color: Colors.white,
-                                  shape: BoxShape.circle
-                              ),
-                              child: Image.asset(logoGoogle,width: 70,height: 70)),
-                          )
-                        ],
+                      Image.asset(banner,width: 300,),
+                      Center(
+                        child: SignInButton(
+                          Buttons.Google,
+                          text: "Sign in with Google",
+                          onPressed: () {
+                            context.read<AuthBloc>().add(const SingInEvent());
+                          },
+                        ),
                       ),
 
                     ],
                   ),
                 ),
-                Positioned(
-                  bottom: 0.0,
-                    child: Image.asset(banner,width: 300,)),
               ],
             ),
           );

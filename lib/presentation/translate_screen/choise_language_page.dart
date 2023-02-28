@@ -25,7 +25,7 @@ class _ChoiceLanguagePageState extends State<ChoiceLanguagePage> {
 
 
 
-    List<String> _choiceCodeLanguageList=[];
+   late List<String> _choiceCodeLanguageList;
    final boxVideo=Hive.box('video_box');
    dynamic _keyHiveVideo;
   @override
@@ -113,7 +113,7 @@ class _ChoiceLanguagePageState extends State<ChoiceLanguagePage> {
    List<String> _getListChoiceCodeLanguage(String idVideo){
        List<String> codesList=[];
        boxVideo.keys.map((key) {
-         final Video value = boxVideo.get(key);
+          Video value = boxVideo.get(key);
             codesList=value.codeLanguage;
        }).toList();
        return codesList;
@@ -151,7 +151,7 @@ class _ChoiceLanguagePageState extends State<ChoiceLanguagePage> {
   @override
   void initState() {
     super.initState();
-  _choiceCodeLanguageList=_getListChoiceCodeLanguage(widget.idVideo);
+   _choiceCodeLanguageList=_getListChoiceCodeLanguage(widget.idVideo);
     _keyHiveVideo=PreferencesUtil.getKey;
   }
 }
