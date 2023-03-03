@@ -68,8 +68,6 @@ class _TranslatePageState extends State<TranslatePage> {
             listener: (_,stateLis){
               if(stateLis.translateStatus.isError){
                 Dialoger.showError(stateLis.error, context);
-              }else{
-                Dialoger.showMessage(stateLis.messageStatus);
               }
 
 

@@ -13,7 +13,7 @@ part 'video.g.dart';
   @HiveField(1)
    final List<String> codeLanguage;
 
-   const Video({
+    Video({
     required this.id,
     required this.codeLanguage,
   });

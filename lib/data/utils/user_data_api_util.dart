@@ -19,9 +19,8 @@ class UserDataApiUtil{
     Future<UserData> getDataUser({required String uid})async{
       final data=await _api.getDataUser(uid: uid);
       if(boxVideo.isEmpty){
-       final key= await boxVideo.add(const Video(id: '', codeLanguage: []));
+       final key= await boxVideo.add(Video(id: '', codeLanguage: []));
         await PreferencesUtil.setKeyHave(key);
-        print('Create Have $key');
       }
       return UserDataMapper.fromApi(userDataFromApi: data);
     }

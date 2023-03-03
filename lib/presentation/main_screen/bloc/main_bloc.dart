@@ -28,35 +28,35 @@ class MainBloc extends Bloc<MainEvent,MainState>{
 
 
    Future<void> _getChannel(GetChannelEvent event,emit)async{
-     String position='Init';
+
       videoListNotPublished.clear();
       videoListFromChannel.clear();
       allListVideoAccount.clear();
      emit(state.copyWith(mainStatus: MainStatus.loading));
      try{
-       position='P1';
+
        final result=await _googleApiRepository.getChannels(event.reload);
-       position='P2';
+
        final name= PreferencesUtil.getUserName;
-       position='P3';
+
        final avatar=PreferencesUtil.getUrlAvatar;
-       position='P4';
+
        if(result!.isEmpty){
-         position='P5';
+
          emit(state.copyWith(mainStatus: MainStatus.empty, userName: name, urlAvatar: avatar));
        }else{
-         position='P6';
+
         final videos = await _googleApiRepository.getVideoFromAccount(result[0].idUpload);
-         position='P7';
+
         allListVideoAccount = videos;
         for (var item in videos) {
-          position='P8';
+
           if (!item.isPublic) {
-            position='P9';
+
             videoListNotPublished.add(item);
           }
         }
-         position='P10';
+
         emit(state.copyWith(
             mainStatus: MainStatus.success,
             channelList: result,
@@ -66,7 +66,7 @@ class MainBloc extends Bloc<MainEvent,MainState>{
       }
 
     }on Failure catch(error){
-       emit(state.copyWith(mainStatus: MainStatus.error,error: "${error.message} point $position"));
+       emit(state.copyWith(mainStatus: MainStatus.error,error: error.message));
      }
 
    }

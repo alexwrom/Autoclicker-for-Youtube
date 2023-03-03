@@ -80,23 +80,27 @@ import '../models/video_model_from_api.dart';
     Future<List<AllVideoModelFromApi>> getVideoFromAccount(
         String idUpload) async {
       List<String> idsVideo = [];
-
+     String p='Init';
       try {
+        p='G1';
         final data = YouTubeApi(httpClient!);
+        p='G2';
         final result = await data.search.list(['snippet'], forMine: true, maxResults: 20, type: ['video']);
+        p='G3';
         for (var item in result.items!) {
           idsVideo.add(item.id!.videoId!);
         }
+        p='G4';
         final ids = idsVideo.toString().split('[')[1].split(']')[0].replaceAll(' ', '');
         final listVideo = await data.videos.list(['snippet,contentDetails,statistics,status'], id: [ids]);
-        return listVideo.items!.map((e) =>
-            AllVideoModelFromApi.fromApi(video: e)).toList();
+        p='G5';
+        return listVideo.items!.map((e) => AllVideoModelFromApi.fromApi(video: e)).toList();
       } on Failure catch (error, stackTrace) {
-        Error.throwWithStackTrace(Failure(error.message), stackTrace);
+        Error.throwWithStackTrace(Failure('${error.message} RESULT 1 $p'), stackTrace);
       } on PlatformException catch (error, stackTrace) {
-        Error.throwWithStackTrace(Failure(error.message!), stackTrace);
+        Error.throwWithStackTrace(Failure('${error.message} RESULT 2 $p'), stackTrace);
       } catch (error, stackTrace) {
-        Error.throwWithStackTrace(Failure(error.toString()), stackTrace);
+        Error.throwWithStackTrace(Failure('$error RESULT 3 $p'), stackTrace);
       }
     }
 
