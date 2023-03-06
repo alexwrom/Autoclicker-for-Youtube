@@ -93,7 +93,12 @@ import '../models/video_model_from_api.dart';
         p='G4';
         final ids = idsVideo.toString().split('[')[1].split(']')[0].replaceAll(' ', '');
         final listVideo = await data.videos.list(['snippet,contentDetails,statistics,status'], id: [ids]);
-        p='G5';
+         if(listVideo.items==null){
+           p='G4.5 ${listVideo}';
+           return [];
+         }
+
+        p='G5!';
         return listVideo.items!.map((e) => AllVideoModelFromApi.fromApi(video: e)).toList();
       } on Failure catch (error, stackTrace) {
         Error.throwWithStackTrace(Failure('${error.message} RESULT 1 $p'), stackTrace);

@@ -95,10 +95,27 @@ class AuthPage extends StatelessWidget{
                       const SizedBox(height: 140),
                       Image.asset(banner,width: 300,),
                       Center(
-                        child: SignInButton(
-                          Buttons.Google,
-                          text: "Sign in with Google",
-                          onPressed: () {
+                        child: GestureDetector(
+                          child: Container(
+                            width: 200,
+                            padding: const EdgeInsets.only(top: 10,bottom: 10),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              color: Colors.grey[400]
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset(logoGoogle,width: 30,height: 30),
+                               const SizedBox(width: 10),
+                               const Text('Sign in with Google',style:TextStyle(
+                                  color: Colors.white,
+                                 fontSize: 16
+                                ))
+                              ],
+                            ),
+                          ),
+                          onTap: (){
                             context.read<AuthBloc>().add(const SingInEvent());
                           },
                         ),
