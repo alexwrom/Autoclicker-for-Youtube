@@ -37,7 +37,7 @@ class UserDataCubit extends Cubit<UserdataState>{
           uid=data.id!;
         }
       }
-      print('UID CUBIT $uid');
+
        _userData=await _repositoryUser.getDataUser(uid: uid);
 
        if(_userData!.isActive){
@@ -50,7 +50,7 @@ class UserDataCubit extends Cubit<UserdataState>{
        }
        emit(state.copyWith(userDataStatus: UserDataStatus.success,userData: _userData,isSubscribe: isSubscribe,isFreeTrial:isFreeTrial));
     }on Failure catch (e) {
-      emit(state.copyWith(userDataStatus: UserDataStatus.error,error: "${e.message} Code 2"));
+      emit(state.copyWith(userDataStatus: UserDataStatus.error,error: e.message));
     }
   }
 
@@ -64,7 +64,18 @@ class UserDataCubit extends Cubit<UserdataState>{
 
 
    clearBalance()async{
-     final uid=PreferencesUtil.getUid;
+     String uid='';
+      uid=PreferencesUtil.getUid;
+     if(uid.isEmpty){
+       if(Platform.isIOS){
+         final data=await _deviceInfoPlugin.iosInfo;
+         uid=data.identifierForVendor!;
+       }else if(Platform.isAndroid){
+         final data=await _deviceInfoPlugin.androidInfo;
+         uid=data.id!;
+       }
+       await PreferencesUtil.setUserId(uid);
+     }
     _userData=_userData!.copyWith(numberOfTrans: 0);
     await _repositoryUser.updateBalance(balance: _userData!.numberOfTrans, uid: uid, isActive: _userData!.isActive);
      emit(state.copyWith(userDataStatus: UserDataStatus.success,userData: _userData));
@@ -73,7 +84,18 @@ class UserDataCubit extends Cubit<UserdataState>{
 
 
    updateBalance(int numberTranslate)async{
-     final uid=PreferencesUtil.getUid;
+     String uid='';
+      uid=PreferencesUtil.getUid;
+     if(uid.isEmpty){
+       if(Platform.isIOS){
+         final data=await _deviceInfoPlugin.iosInfo;
+         uid=data.identifierForVendor!;
+       }else if(Platform.isAndroid){
+         final data=await _deviceInfoPlugin.androidInfo;
+         uid=data.id!;
+       }
+      await PreferencesUtil.setUserId(uid);
+     }
     int balance=_userData!.numberOfTrans;
     if (balance>0){
      final res= balance-numberTranslate;

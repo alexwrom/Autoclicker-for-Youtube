@@ -14,6 +14,7 @@ import 'package:youtube_clicker/presentation/main_screen/widgets/item_notpub_vid
 import 'package:youtube_clicker/presentation/main_screen/widgets/user_data_card.dart';
 import '../../components/dialoger.dart';
 import '../../resourses/colors_app.dart';
+import '../../utils/preferences_util.dart';
 import '../auth_screen/bloc/auth_bloc.dart';
 import 'cubit/user_data_cubit.dart';
 
@@ -95,13 +96,19 @@ class _ChannelsPageState extends State<ChannelsPage> {
                                 shape: BoxShape.circle,
                                 color: Colors.white
                             ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(25.0),
-                              child: CachedNetworkImage(
-                                  fit: BoxFit.cover,
-                                  placeholder: (context, url) => CircularProgressIndicator(color: colorBackground),
-                                  errorWidget: (context, url, error) =>const Icon(Icons.error),
-                                  imageUrl: state.urlAvatar),
+                            child: GestureDetector(
+                              onTap:(){
+                                final uid=PreferencesUtil.getUid;
+                                  Dialoger.showInfoDialog(context, 'Your id', uid, false, () { });
+                              },
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(25.0),
+                                child: CachedNetworkImage(
+                                    fit: BoxFit.cover,
+                                    placeholder: (context, url) => CircularProgressIndicator(color: colorBackground),
+                                    errorWidget: (context, url, error) =>const Icon(Icons.error),
+                                    imageUrl: state.urlAvatar),
+                              ),
                             ),
                           ),
                           const SizedBox(width: 15),

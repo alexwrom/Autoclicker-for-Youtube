@@ -21,22 +21,45 @@ class AllVideoModelFromApi{
 
 
       AllVideoModelFromApi.fromApi({required Video video}):
-           categoryId=video.snippet==null?'':video.snippet!.categoryId??'',
-            defaultLanguage=video.snippet==null?'':video.snippet!.defaultLanguage??'',
-           idVideo=video.snippet==null?'':video.id??'',
-          idChannel=video.snippet==null?'':video.snippet!.channelId??'',
-         title=video.snippet==null?'':video.snippet!.title??'',
-           description=video.snippet==null?'':video.snippet!.description??'',
-           urlBanner=video.snippet==null?'':video.snippet!.thumbnails!.medium!.url??'',
-           urlBannerMax=video.snippet==null?'':video.snippet!.thumbnails!.standard!.url??'',
-           videoPublishedAt=video.snippet==null?'':video.snippet!.publishedAt.toString(),
-           channelTitle=video.snippet==null?'':video.snippet!.channelTitle??'',
-           duration=video.contentDetails==null?'':video.contentDetails!.duration??'',
-            viewCount=video.statistics==null?'':video.statistics!.viewCount??'',
-            likeCount=video.statistics==null?'':video.statistics!.likeCount??'',
-            commentCount=video.statistics==null?'':video.statistics!.commentCount??'',
-            status=video.status==null?'':video.status!.privacyStatus??'';
-
+            categoryId =
+            video.snippet == null ? '' : video.snippet!.categoryId ?? '',
+        defaultLanguage =
+            video.snippet == null ? '' : video.snippet!.defaultLanguage ?? '',
+        idVideo = video.snippet == null ? '' : video.id ?? '',
+        idChannel = video.snippet == null ? '' : video.snippet!.channelId ?? '',
+        title = video.snippet == null ? '' : video.snippet!.title ?? '',
+        description =
+            video.snippet == null ? '' : video.snippet!.description ?? '',
+        urlBanner = video.snippet == null
+            ? ''
+            : video.snippet!.thumbnails == null
+                ? ''
+                : video.snippet!.thumbnails!.medium == null
+                    ? ''
+                    : video.snippet!.thumbnails!.medium!.url ?? '',
+        urlBannerMax = video.snippet == null
+            ? ''
+            : video.snippet!.thumbnails == null
+                ? ''
+                : video.snippet!.thumbnails!.standard == null
+                    ? ''
+                    : video.snippet!.thumbnails!.standard!.url ?? '',
+        videoPublishedAt = video.snippet == null
+            ? ''
+            : video.snippet!.publishedAt.toString() ?? '',
+        channelTitle =
+            video.snippet == null ? '' : video.snippet!.channelTitle ?? '',
+        duration = video.contentDetails == null
+            ? ''
+            : video.contentDetails!.duration ?? '',
+        viewCount =
+            video.statistics == null ? '' : video.statistics!.viewCount ?? '',
+        likeCount =
+            video.statistics == null ? '' : video.statistics!.likeCount ?? '',
+        commentCount = video.statistics == null
+            ? ''
+            : video.statistics!.commentCount ?? '',
+        status = video.status == null ? '' : video.status!.privacyStatus ?? '';
 }
 
 

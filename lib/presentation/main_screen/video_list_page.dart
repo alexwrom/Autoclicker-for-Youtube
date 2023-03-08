@@ -7,26 +7,32 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:youtube_clicker/presentation/main_screen/bloc/main_bloc.dart';
 import 'package:youtube_clicker/presentation/main_screen/bloc/main_event.dart';
 import 'package:youtube_clicker/presentation/main_screen/bloc/main_state.dart';
 import 'package:youtube_clicker/presentation/main_screen/widgets/item_video.dart';
-
+import 'package:http/io_client.dart';
+import '../../data/http_client/http_client.dart';
+import '../../di/locator.dart';
 import '../../domain/models/channel_model.dart';
 import '../../resourses/colors_app.dart';
+import '../../utils/preferences_util.dart';
 
 class VideoListPage extends StatefulWidget{
   const VideoListPage({super.key,required this.channelModel});
 
   final ChannelModel channelModel;
 
+
   @override
   State<VideoListPage> createState() => _VideoListPageState();
 }
 
-class _VideoListPageState extends State<VideoListPage> {
+class _VideoListPageState extends State<VideoListPage> with WidgetsBindingObserver{
 
-
+  final _googleSingIn = locator.get<GoogleSignIn>();
+  IOClient? httpClient;
 
 
   @override
@@ -146,8 +152,28 @@ class _VideoListPageState extends State<VideoListPage> {
 
   @override
   void initState() {
+    WidgetsBinding.instance.addObserver(this);
     super.initState();
     context.read<MainBloc>().add(GetListVideoFromChannelEvent(idChannel: widget.channelModel.idChannel));
 
   }
+
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+
+
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+   if (state == AppLifecycleState.resumed) {
+      await _googleSingIn.currentUser!.clearAuthCache();
+      final  authHeaders = await _googleSingIn.currentUser!.authHeaders;
+      await PreferencesUtil.setHeadersGoogleApi(authHeaders);
+    }
+  }
+
 }

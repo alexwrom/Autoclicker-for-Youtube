@@ -80,32 +80,25 @@ import '../models/video_model_from_api.dart';
     Future<List<AllVideoModelFromApi>> getVideoFromAccount(
         String idUpload) async {
       List<String> idsVideo = [];
-     String p='Init';
+
       try {
-        p='G1';
         final data = YouTubeApi(httpClient!);
-        p='G2';
         final result = await data.search.list(['snippet'], forMine: true, maxResults: 20, type: ['video']);
-        p='G3';
         for (var item in result.items!) {
           idsVideo.add(item.id!.videoId!);
         }
-        p='G4';
         final ids = idsVideo.toString().split('[')[1].split(']')[0].replaceAll(' ', '');
         final listVideo = await data.videos.list(['snippet,contentDetails,statistics,status'], id: [ids]);
          if(listVideo.items==null){
-           p='G4.5 ${listVideo}';
            return [];
          }
-
-        p='G5!';
-        return listVideo.items!.map((e) => AllVideoModelFromApi.fromApi(video: e)).toList();
+         return listVideo.items!.map((e) => AllVideoModelFromApi.fromApi(video: e)).toList();
       } on Failure catch (error, stackTrace) {
-        Error.throwWithStackTrace(Failure('${error.message} RESULT 1 $p'), stackTrace);
+        Error.throwWithStackTrace(Failure(error.message), stackTrace);
       } on PlatformException catch (error, stackTrace) {
-        Error.throwWithStackTrace(Failure('${error.message} RESULT 2 $p'), stackTrace);
+        Error.throwWithStackTrace(Failure('${error.message}'), stackTrace);
       } catch (error, stackTrace) {
-        Error.throwWithStackTrace(Failure('$error RESULT 3 $p'), stackTrace);
+        Error.throwWithStackTrace(Failure('$error'), stackTrace);
       }
     }
 
@@ -113,6 +106,10 @@ import '../models/video_model_from_api.dart';
     Future<int> updateLocalization(VideoModel videoModel,
         Map<String, VideoLocalization> map) async {
       try {
+        final authHeaderString = PreferencesUtil.getHeaderApiGoogle;
+        final authHeaders = json.decode(authHeaderString);
+        final header = Map<String, String>.from(authHeaders);
+        httpClient = GoogleHttpClient(header);
         final data = YouTubeApi(httpClient!);
         final res = await data.videos.update(Video(
             id: videoModel.idVideo,
@@ -133,7 +130,9 @@ import '../models/video_model_from_api.dart';
         }else{
           return 3;
         }
-      } on Failure catch (error, stackTrace) {
+      } on  DetailedApiRequestError catch(error,stackTrace){
+        Error.throwWithStackTrace(Failure(error.message!),stackTrace);
+      }on Failure catch (error, stackTrace) {
         Error.throwWithStackTrace(Failure(error.message), stackTrace);
       } on PlatformException catch (error, stackTrace) {
         Error.throwWithStackTrace(Failure(error.message!), stackTrace);
@@ -147,6 +146,10 @@ import '../models/video_model_from_api.dart';
     Future<List<Caption>> loadCaptions(String idVideo) async {
 
       try {
+        final authHeaderString = PreferencesUtil.getHeaderApiGoogle;
+        final authHeaders = json.decode(authHeaderString);
+        final header = Map<String, String>.from(authHeaders);
+        httpClient = GoogleHttpClient(header);
         final api = YouTubeApi(httpClient!);
         final cap = await api.captions.list(['id','snippet'], idVideo);
         return cap.items!;

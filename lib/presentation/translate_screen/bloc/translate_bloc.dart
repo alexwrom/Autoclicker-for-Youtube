@@ -210,7 +210,12 @@ class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
             });
             if(i==_titleTranslate.length-1){
               if(_mapUpdateLocalisation.isNotEmpty){
-                codeState= await _youTubeRepository.updateLocalization(videoModel,_mapUpdateLocalisation);
+                try {
+                  codeState= await _youTubeRepository.updateLocalization(videoModel,_mapUpdateLocalisation);
+                } on Failure catch (e) {
+                  emit(state.copyWith(translateStatus: TranslateStatus.error,error:e.message));
+                  return;
+                }
               }else{
                 emit(state.copyWith(translateStatus: TranslateStatus.error,error:'List empty'));
               }

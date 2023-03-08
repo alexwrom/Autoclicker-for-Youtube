@@ -21,9 +21,10 @@ class UserApiService{
     Future<UserDataFromApi> getDataUser({required String uid})async{
 
    try{
-     print('UID $uid');
      DocumentSnapshot documentSnapshot=await _firebaseFirestore!.collection('users').doc(uid).get();
-     //todo valid sub
+     if(!documentSnapshot.exists){
+         throw const Failure('User is not found');
+     }
      return UserDataFromApi.fromApi(documentSnapshot: documentSnapshot);
    }on FirebaseException catch(error,stackTrace){
      Error.throwWithStackTrace(Failure(error.message!), stackTrace);

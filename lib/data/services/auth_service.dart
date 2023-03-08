@@ -3,6 +3,8 @@ import 'dart:io';
 
 
 
+
+
 import 'package:googleapis_auth/auth_io.dart';
 import 'package:youtube_clicker/utils/preferences_util.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -64,13 +66,12 @@ class AuthService{
         accessToken: googleSignInAuthentication.accessToken,
         idToken: googleSignInAuthentication.idToken,
       );
-      print('Cred 1 ${credential}');
+
       final UserCredential userCredential =
       await _auth!.signInWithCredential(credential);
-      print('Cred 2 ${userCredential}');
       if(Platform.isIOS){
         final data=await _deviceInfoPlugin.iosInfo;
-        imei=data.identifierForVendor!;
+        imei =data.identifierForVendor!;
       }else if(Platform.isAndroid){
         final data=await _deviceInfoPlugin.androidInfo;
         imei=data.id!;
@@ -90,7 +91,7 @@ class AuthService{
           'imei':imei,
           'isActive':false,
           'description':userCredential.user!.displayName!.isNotEmpty?userCredential.user!.displayName!:'',
-          'balance':6,
+          'balance':300,
           'balanceActive':1000,
           'timeStampAuth':ts,
           'timestampPurchase':0

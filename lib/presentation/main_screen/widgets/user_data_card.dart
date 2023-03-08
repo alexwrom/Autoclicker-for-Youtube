@@ -9,6 +9,7 @@ import 'package:youtube_clicker/resourses/colors_app.dart';
 
 
 import '../../../components/dialoger.dart';
+import '../../auth_screen/auth_page.dart';
 import '../cubit/user_data_cubit.dart';
 import '../cubit/user_data_state.dart';
 
@@ -38,6 +39,9 @@ class _UserDataCardState extends State<UserDataCard> {
   Widget build(BuildContext context) {
     return BlocConsumer<UserDataCubit,UserdataState>(
       listener: (_,stLis){
+        if(stLis.error=='User is not found'){
+          Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_)=>const AuthPage()));
+        }
         if (stLis.error != '') Dialoger.showError(stLis.error,context);
       },
       builder: (context,state) {
