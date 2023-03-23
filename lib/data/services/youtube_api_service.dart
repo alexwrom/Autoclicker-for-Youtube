@@ -189,14 +189,14 @@ import '../models/video_model_from_api.dart';
         final caption = await _dio.init().get('/$idCap', queryParameters: {
           'tlang': codeLang, 'tfmt': 'sbv'
         });
-        print('Load Caption ${caption.data}');
+
         String dir = (await getTemporaryDirectory()).path;
         final f1 = '$dir/captions.sbv';
         final f = await File(f1).create();
         final file = await f.writeAsString(caption.data);
         Stream<List<int>> stream = file.openRead();
         final media = Media(stream, (await file.length()));
-        final res = await api.captions.insert(Caption(
+        await api.captions.insert(Caption(
           snippet: CaptionSnippet(
               videoId: idVideo,
               language: codeLang,
@@ -204,18 +204,18 @@ import '../models/video_model_from_api.dart';
           ),
         ), ['snippet'],
             uploadMedia: media);
-        print('Res ${res}');
+
       } on Failure catch (error, stackTrace) {
-        print('ERRRRROR 1 ${error.message}');
+
         Error.throwWithStackTrace(Failure(error.message), stackTrace);
       } on PlatformException catch (error, stackTrace) {
-        print('ERRRRROR 2 ${error.message}');
+
         Error.throwWithStackTrace(Failure(error.message!), stackTrace);
       } on DioError catch (error, stackTrace) {
-        print('ERRRRROR 3 ${error.message}');
+
         Error.throwWithStackTrace(Failure.fromDioError(error), stackTrace);
       } catch (error, stackTrace) {
-        print('ERRRRROR 4 $error');
+
         Error.throwWithStackTrace(Failure(error.toString()), stackTrace);
       }
     }

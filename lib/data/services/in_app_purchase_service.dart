@@ -90,7 +90,7 @@ class InAppPurchaseService{
       await  clearTransactionsIos();
       var purchaseParam = PurchaseParam(
         productDetails: product,
-        applicationUserName: userEmail,
+        //applicationUserName: userEmail,
       );
       final res = await _inAppPurchase.buyConsumable(purchaseParam: purchaseParam,autoConsume: true);
       if (!res) {
