@@ -3,6 +3,7 @@
 import 'package:equatable/equatable.dart';
 
 import '../../../domain/models/channel_model.dart';
+import '../../../domain/models/channel_model_cred.dart';
 import '../../../domain/models/video_model.dart';
 
 enum MainStatus{
@@ -28,25 +29,27 @@ enum MainStatus{
    final List<ChannelModel> channelList;
    final List<VideoModel> videoNotPubList;
    final List<VideoModel> videoFromChannel;
+   final List<ChannelModelCred> listCredChannels;
    final String error;
    final String userName;
    final String urlAvatar;
 
 
-   const MainState(this.mainStatus, this.channelList,this.error,this.userName,this.urlAvatar,this.videoNotPubList,this.videoFromChannel);
+   const MainState(this.listCredChannels,this.mainStatus, this.channelList,this.error,this.userName,this.urlAvatar,this.videoNotPubList,this.videoFromChannel);
 
 
    factory MainState.unknown(){
-     return const MainState(MainStatus.unknown, [],'','','',[],[]);
+     return const MainState([],MainStatus.unknown, [],'','','',[],[]);
    }
 
 
 
   @override
 
-  List<Object?> get props => [mainStatus,channelList,error,userName,urlAvatar,videoNotPubList,videoFromChannel];
+  List<Object?> get props => [listCredChannels,mainStatus,channelList,error,userName,urlAvatar,videoNotPubList,videoFromChannel];
 
    MainState copyWith({
+     List<ChannelModelCred>? listCredChannels,
     MainStatus? mainStatus,
     List<ChannelModel>? channelList,
     String? error,
@@ -56,6 +59,7 @@ enum MainStatus{
      List<VideoModel>? videoFromChannel
   }) {
     return MainState(
+      listCredChannels??this.listCredChannels,
       mainStatus?? this.mainStatus,
       channelList ?? this.channelList,
       error?? this.error,

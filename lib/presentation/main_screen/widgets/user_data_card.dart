@@ -9,7 +9,7 @@ import 'package:youtube_clicker/resourses/colors_app.dart';
 
 
 import '../../../components/dialoger.dart';
-import '../../auth_screen/auth_page.dart';
+import '../../auth_screen/auth_page_google.dart';
 import '../cubit/user_data_cubit.dart';
 import '../cubit/user_data_state.dart';
 
@@ -40,7 +40,7 @@ class _UserDataCardState extends State<UserDataCard> {
     return BlocConsumer<UserDataCubit,UserdataState>(
       listener: (_,stLis){
         if(stLis.error=='User is not found'){
-          Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_)=>const AuthPage()));
+          Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_)=>const AuthPageGoogle()));
         }
         if (stLis.error != '') Dialoger.showError(stLis.error,context);
       },

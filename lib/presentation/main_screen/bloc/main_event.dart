@@ -12,14 +12,7 @@ class MainEvent extends Equatable{
 
  }
 
- class GetChannelEvent extends MainEvent{
-   final bool reload;
-
-   GetChannelEvent({
-    required this.reload,
-
-  });
-}
+ class GetChannelEvent extends MainEvent{}
 
  class GetListVideoFromChannelEvent extends MainEvent{
     final String idChannel;

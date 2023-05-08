@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:youtube_clicker/di/locator.dart';
-import 'package:youtube_clicker/presentation/auth_screen/auth_page.dart';
+import 'package:youtube_clicker/presentation/auth_screen/auth_page_google.dart';
 import 'package:youtube_clicker/presentation/main_screen/bloc/main_bloc.dart';
 import 'package:youtube_clicker/presentation/main_screen/bloc/main_event.dart';
 import 'package:youtube_clicker/presentation/main_screen/bloc/main_state.dart';
@@ -15,6 +15,7 @@ import 'package:youtube_clicker/presentation/main_screen/widgets/user_data_card.
 import '../../components/dialoger.dart';
 import '../../resourses/colors_app.dart';
 import '../../utils/preferences_util.dart';
+import '../auth_screen/auth_page.dart';
 import '../auth_screen/bloc/auth_bloc.dart';
 import 'cubit/user_data_cubit.dart';
 
@@ -64,7 +65,7 @@ class _ChannelsPageState extends State<ChannelsPage> {
                        backgroundColor: MaterialStateProperty.all(colorRed)
                      ),
                      onPressed: (){
-                       context.read<MainBloc>().add(GetChannelEvent(reload: widget.reAuth));
+                       context.read<MainBloc>().add(GetChannelEvent());
                      },
                      child:const Text('Reload page'))
                 ],
@@ -258,7 +259,7 @@ class _ChannelsPageState extends State<ChannelsPage> {
   @override
   void initState() {
     super.initState();
-    context.read<MainBloc>().add(GetChannelEvent(reload: widget.reAuth));
+    context.read<MainBloc>().add(GetChannelEvent());
 
   }
 

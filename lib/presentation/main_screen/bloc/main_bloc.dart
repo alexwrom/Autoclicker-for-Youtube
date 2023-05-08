@@ -8,6 +8,7 @@ import 'package:youtube_clicker/domain/repository/youtube_repository.dart';
 import 'package:youtube_clicker/utils/failure.dart';
 import 'package:youtube_clicker/utils/preferences_util.dart';
 
+import '../../../domain/models/channel_model_cred.dart';
 import '../../../domain/models/video_model.dart';
 import 'main_event.dart';
 import 'main_state.dart';
@@ -20,8 +21,31 @@ class MainBloc extends Bloc<MainEvent,MainState>{
   List<VideoModel> allListVideoAccount=[];
 
   MainBloc():super(MainState.unknown()){
-     on<GetChannelEvent>(_getChannel);
+     on<GetChannelEvent>(_getListCredChannel);
      on<GetListVideoFromChannelEvent>(_getListVideoFromChannel);
+  }
+
+
+  Future<void> _getListCredChannel(GetChannelEvent event,emit)async{
+    emit(state.copyWith(mainStatus: MainStatus.loading));
+
+    List<ChannelModelCred> dataCreds=[ChannelModelCred(nameChannel: 'Alia Mu',
+        imgBanner: 'https://yt3.googleusercontent.com/ytc/AGIKgqN3ybpQh8M80MF01i-iuNB44QMtu1UGy0GLpfGPxg=s176-c-k-c0x00ffffff-no-rj',
+        accountName: ',mwefjklwhk@asdka;l'),
+      ChannelModelCred(nameChannel: 'Alia Mu',
+          imgBanner: 'https://yt3.googleusercontent.com/ytc/AGIKgqN3ybpQh8M80MF01i-iuNB44QMtu1UGy0GLpfGPxg=s176-c-k-c0x00ffffff-no-rj',
+          accountName: ',mwefjklwhk@asdka;l'),
+      ChannelModelCred(nameChannel: 'Alia Mu',
+          imgBanner: 'https://yt3.googleusercontent.com/ytc/AGIKgqN3ybpQh8M80MF01i-iuNB44QMtu1UGy0GLpfGPxg=s176-c-k-c0x00ffffff-no-rj',
+          accountName: ',mwefjklwhk@asdka;l')];
+   await Future.delayed(Duration(seconds: 3));
+    //emit(state.copyWith(mainStatus: MainStatus.empty, userName: 'betly@mail.ru', urlAvatar: ''));
+    emit(state.copyWith(
+        mainStatus: MainStatus.success,
+        listCredChannels: dataCreds,
+        userName: 'betly@mail.ru',
+        urlAvatar: ''));
+
   }
 
 
@@ -29,18 +53,15 @@ class MainBloc extends Bloc<MainEvent,MainState>{
 
    Future<void> _getChannel(GetChannelEvent event,emit)async{
 
-      videoListNotPublished.clear();
+    videoListNotPublished.clear();
       videoListFromChannel.clear();
       allListVideoAccount.clear();
      emit(state.copyWith(mainStatus: MainStatus.loading));
      try{
 
-       final result=await _googleApiRepository.getChannels(event.reload);
-
+       final result=await _googleApiRepository.getChannels(true);
        final name= PreferencesUtil.getUserName;
-
        final avatar=PreferencesUtil.getUrlAvatar;
-
        if(result!.isEmpty){
 
          emit(state.copyWith(mainStatus: MainStatus.empty, userName: name, urlAvatar: avatar));

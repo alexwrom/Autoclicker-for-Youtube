@@ -48,7 +48,7 @@ import '../models/video_model_from_api.dart';
           final UserCredential userCredential =
           await _auth!.signInWithCredential(credential);
           await PreferencesUtil.setUrlAvatar(userCredential.user!.photoURL!);
-          await PreferencesUtil.setUserNAmer(userCredential.user!.displayName!);
+          await PreferencesUtil.setUserName(userCredential.user!.displayName!);
           await PreferencesUtil.setEmail(userCredential.user!.email!);
           final  authHeaders = await _googleSingIn.currentUser!.authHeaders;
           await PreferencesUtil.setHeadersGoogleApi(authHeaders);

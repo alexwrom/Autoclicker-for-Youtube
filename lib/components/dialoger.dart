@@ -12,6 +12,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:youtube_clicker/presentation/membership_screen/membership_page.dart';
 
 import '../presentation/auth_screen/auth_page.dart';
+import '../presentation/auth_screen/auth_page_google.dart';
 import '../presentation/auth_screen/bloc/auth_bloc.dart';
 import '../resourses/colors_app.dart';
 

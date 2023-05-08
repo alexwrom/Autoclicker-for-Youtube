@@ -2,77 +2,109 @@
 
 
 
-import 'package:flutter_signin_button/flutter_signin_button.dart';
-import 'package:youtube_clicker/presentation/auth_screen/bloc/auth_bloc.dart';
+
+
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:youtube_clicker/resourses/colors_app.dart';
-import 'package:youtube_clicker/resourses/images.dart';
+import 'package:youtube_clicker/presentation/auth_screen/singin_page.dart';
 
 import '../../components/dialoger.dart';
+import '../../resourses/colors_app.dart';
+import '../../resourses/images.dart';
 import '../main_screen/channels_page.dart';
+import '../main_screen/list_channel_add_page.dart';
+import 'bloc/auth_bloc.dart';
+import 'login_page.dart';
 
-class AuthPage extends StatelessWidget{
-  const AuthPage({super.key});
+class AuthPage extends StatefulWidget {
+  const AuthPage({ super.key });
+
+  @override
+  State  createState() => _AuthPageState();
+}
+
+class _AuthPageState extends State  with TickerProviderStateMixin{
+
+  late TabController _tabControllerMain;
+
+
+  @override
+  void initState() {
+    super.initState();
+    _tabControllerMain=TabController(length: 2, vsync: this);
+  }
+
+
+  @override
+  void dispose() {
+    super.dispose();
+    _tabControllerMain.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    _tabControllerMain.addListener(() {
+      FocusScope.of(context).unfocus();
+    });
+    super.didChangeDependencies();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: colorBackground,
       body: BlocConsumer<AuthBloc,AuthState>(
-        listener: (_,s){
-          if(s.authStatus==AuthStatus.error){
-            Dialoger.showError(s.error, context);
-          }
+          listener: (_,s){
+            if(s.authStatus==AuthStatus.error){
+              Dialoger.showError(s.error, context);
+            }
 
-          if(s.authStatus==AuthStatus.authenticated){
-             Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_)=>const ChannelsPage(reAuth:false)));
+            if(s.authStatus==AuthStatus.authenticated){
+              Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_)=>const ListChannelAdd()));
+            }
+          },
+          builder: (context,state) {
 
-          }
-        },
-        builder: (context,state) {
-
-          if(state.authStatus==AuthStatus.processSingIn){
-            return const Center(child: CircularProgressIndicator());
-          }
-          return Center(
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                Container(
-                  margin: const EdgeInsets.only(top: 100,left: 20,right: 20),
+            if(state.authStatus==AuthStatus.processSingIn){
+              return const Center(child: CircularProgressIndicator());
+            }
+            return Center(
+              child: Container(
+                padding: const EdgeInsets.only(left: 25,right: 25),
+                alignment: Alignment.center,
+                constraints: const BoxConstraints(maxWidth: 420),
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                  margin: const EdgeInsets.only(top: 100,left: 30,right: 30),
                   decoration: BoxDecoration(
-                    color: colorPrimary,
-                    borderRadius: const BorderRadius.only(topLeft: Radius.circular(100),topRight: Radius.circular(60))
+                      color: colorPrimary,
+                      borderRadius: const BorderRadius.only(topLeft: Radius.circular(100),topRight: Radius.circular(60))
                   ),
-                ),
-                Container(
-                  constraints: const BoxConstraints(maxWidth: 320),
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height,
+                child: SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const SizedBox(height: 90),
                       Container(
+                        padding:const EdgeInsets.all(3.0),
                         alignment: Alignment.center,
                         height: 150,
                         width: 150,
                         decoration: BoxDecoration(
                           color: colorRed,
                           borderRadius:const BorderRadius.only(
-                            topLeft: Radius.circular(50),
-                            topRight: Radius.circular(30),
-                            bottomLeft: Radius.circular(50),
-                            bottomRight: Radius.circular(50)),
+                              topLeft: Radius.circular(50),
+                              topRight: Radius.circular(30),
+                              bottomLeft: Radius.circular(50),
+                              bottomRight: Radius.circular(50)),
                         ),
                         child: ClipRRect(
-                            borderRadius:const BorderRadius.only(
-                                topLeft: Radius.circular(50),
-                                topRight: Radius.circular(30),
-                                bottomLeft: Radius.circular(50),
-                                bottomRight: Radius.circular(50)),
+                          borderRadius:const BorderRadius.only(
+                              topLeft: Radius.circular(50),
+                              topRight: Radius.circular(30),
+                              bottomLeft: Radius.circular(50),
+                              bottomRight: Radius.circular(50)),
                           child: Image.asset(logoApp),
                         ),
                       ),
@@ -85,55 +117,67 @@ class AuthPage extends StatelessWidget{
                               fontSize: 22,
                               fontWeight: FontWeight.w700
                           ),),
-                          const Text('Clicker',style: TextStyle(
+                          const Text('Pay Desktop',style: TextStyle(
                               color: Colors.white,
                               fontSize: 22,
                               fontWeight: FontWeight.w700
                           ),),
                         ],
                       ),
-                      const SizedBox(height: 140),
-                      Image.asset(banner,width: 300,),
-                      Center(
-                        child: GestureDetector(
-                          child: Container(
-                            width: 200,
-                            padding: const EdgeInsets.only(top: 10,bottom: 10),
+                      const SizedBox(height: 50),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: 300,
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(15),
-                              color: Colors.grey[400]
+                                color: colorBackground,
+                                borderRadius: BorderRadius.circular(50)
                             ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Image.asset(logoGoogle,width: 30,height: 30),
-                               const SizedBox(width: 10),
-                               const Text('Sign in with Google',style:TextStyle(
-                                  color: Colors.white,
-                                 fontSize: 16
-                                ))
+                            child: TabBar(
+                              controller: _tabControllerMain,
+                              labelStyle: TextStyle(
+                                  fontWeight: FontWeight.w700
+                              ),
+                              labelColor: Colors.white,
+                              unselectedLabelColor: colorGrey,
+                              indicator: BoxDecoration(
+                                  color: colorRed,
+                                  borderRadius: BorderRadius.circular(50)
+                              ),
+                              tabs: [
+                                Tab(
+                                  text: 'LogIn',
+                                ),
+                                Tab(
+                                  text: 'SingIn',
+                                ),
                               ],
+
                             ),
                           ),
-                          onTap: (){
-                            context.read<AuthBloc>().add(const SingInEvent());
-                          },
-                        ),
+                          const SizedBox(height: 40),
+                          SizedBox(
+                            height: 350,
+                            child: TabBarView(
+                                controller: _tabControllerMain,
+                                children: const[
+                                  LogInPage(),
+                                  SingInPage()
+                                ]),
+                          )
+                        ],
                       ),
+
 
                     ],
                   ),
-                ),
-              ],
-            ),
-          );
-        }
+                )
+              ),
+            );
+          }
       ),
     );
   }
-
-
-
-
-
 }
+

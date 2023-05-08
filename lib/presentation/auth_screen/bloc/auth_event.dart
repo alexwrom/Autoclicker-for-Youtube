@@ -19,13 +19,18 @@ class LogInEvent extends AuthEvent {
 }
 class SingInEvent extends AuthEvent{
 
-  const SingInEvent();
+  final String email;
+  final String password;
+  final String repPass;
+  const SingInEvent({required this.email,required this.password,required this.repPass});
 
 }
+class Unknown extends AuthEvent{}
 class LogOutEvent extends AuthEvent{}
 class ForgotEvent extends AuthEvent{
   final String email;
-  const ForgotEvent({required this.email});
+  final String newPass;
+  const ForgotEvent({required this.email,required this.newPass});
 
 
 }

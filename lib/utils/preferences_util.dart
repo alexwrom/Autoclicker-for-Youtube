@@ -26,7 +26,7 @@ class PreferencesUtil{
 
 
 
-  static Future<void> setUserNAmer(String name)async{
+  static Future<void> setUserName(String name)async{
     await _prefsInstance!.setString(prefsKeyUserName, name);
   }
 

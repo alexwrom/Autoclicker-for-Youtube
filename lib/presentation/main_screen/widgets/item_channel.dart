@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:youtube_clicker/domain/models/channel_model.dart';
 
 import '../../../components/dialoger.dart';
+import '../../../domain/models/channel_model_cred.dart';
 import '../../../resourses/colors_app.dart';
 import '../video_list_page.dart';
 
@@ -24,11 +25,11 @@ class ItemChannel extends StatelessWidget{
   Widget build(BuildContext context) {
    return GestureDetector(
      onTap: (){
-       if(int.parse(channelModel.videoCount)>0){
-         Navigator.push(context, MaterialPageRoute(builder: (_)=> VideoListPage(channelModel: channelModel)));
-       }else{
-         Dialoger.showMessageSnackBar('There are no videos on the channel',context);
-       }
+       // if(int.parse(channelModel.videoCount)>0){
+       //   Navigator.push(context, MaterialPageRoute(builder: (_)=> VideoListPage(channelModel: channelModel)));
+       // }else{
+       //   Dialoger.showMessageSnackBar('There are no videos on the channel',context);
+       // }
 
      },
      child: Container(
