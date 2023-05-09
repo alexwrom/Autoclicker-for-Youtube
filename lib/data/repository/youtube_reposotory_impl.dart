@@ -22,8 +22,8 @@ class YouTubeRepositoryImpl extends YouTubeRepository{
   }
 
   @override
-  Future<List<VideoModel>> getVideoFromAccount(String idUpload) async{
-    return await _youTubeApi.getVideoFromAccount(idUpload);
+  Future<List<VideoModel>> getVideoFromAccount(ChannelModelCred cred) async{
+    return await _youTubeApi.getVideoFromAccount(cred);
   }
 
   @override

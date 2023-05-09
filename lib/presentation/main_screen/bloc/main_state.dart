@@ -14,6 +14,16 @@ enum MainStatus{
   empty
 }
 
+enum VideoListStatus{
+  unknown,
+  error,
+  loading,
+  success,
+  empty
+}
+
+
+
 enum AddCredStatus{
   unknown,
   error,
@@ -30,6 +40,15 @@ extension AddCredStatusExt on AddCredStatus{
 
 }
 
+extension VideoListStatusExt on VideoListStatus{
+  bool get isUnknown=>this==VideoListStatus.unknown;
+  bool get isError=>this==VideoListStatus.error;
+  bool get isLoading=>this==VideoListStatus.loading;
+  bool get isSuccess=>this==VideoListStatus.success;
+  bool get isEmpty=>this==VideoListStatus.empty;
+
+}
+
   extension AuthStatusExt on MainStatus{
      bool get isUnknown=>this==MainStatus.unknown;
      bool get isError=>this==MainStatus.error;
@@ -43,6 +62,7 @@ extension AddCredStatusExt on AddCredStatus{
 
    final MainStatus mainStatus;
    final AddCredStatus addCredStatus;
+   final VideoListStatus videoListStatus;
    final List<ChannelModel> channelList;
    final List<VideoModel> videoNotPubList;
    final List<VideoModel> videoFromChannel;
@@ -52,20 +72,21 @@ extension AddCredStatusExt on AddCredStatus{
    final String urlAvatar;
 
 
-   const MainState(this.listCredChannels,this.mainStatus,this.addCredStatus, this.channelList,this.error,this.userName,this.urlAvatar,this.videoNotPubList,this.videoFromChannel);
+   const MainState(this.videoListStatus,this.listCredChannels,this.mainStatus,this.addCredStatus, this.channelList,this.error,this.userName,this.urlAvatar,this.videoNotPubList,this.videoFromChannel);
 
 
    factory MainState.unknown(){
-     return const MainState([],MainStatus.unknown,AddCredStatus.unknown, [],'','','',[],[]);
+     return const MainState(VideoListStatus.unknown,[],MainStatus.unknown,AddCredStatus.unknown, [],'','','',[],[]);
    }
 
 
 
   @override
 
-  List<Object?> get props => [listCredChannels,mainStatus,addCredStatus,channelList,error,userName,urlAvatar,videoNotPubList,videoFromChannel];
+  List<Object?> get props => [videoListStatus,listCredChannels,mainStatus,addCredStatus,channelList,error,userName,urlAvatar,videoNotPubList,videoFromChannel];
 
    MainState copyWith({
+     VideoListStatus? videoListStatus,
      List<ChannelModelCred>? listCredChannels,
     MainStatus? mainStatus,
      AddCredStatus? addCredStatus,
@@ -77,6 +98,7 @@ extension AddCredStatusExt on AddCredStatus{
      List<VideoModel>? videoFromChannel
   }) {
     return MainState(
+      videoListStatus??this.videoListStatus,
       listCredChannels??this.listCredChannels,
       mainStatus?? this.mainStatus,
       addCredStatus??this.addCredStatus,

@@ -9,17 +9,17 @@ import '../../../resourses/colors_app.dart';
 import '../video_list_page.dart';
 
 class ItemChannelCred extends StatelessWidget{
-  const ItemChannelCred({super.key,required this.channelModel});
+  const ItemChannelCred({super.key,required this.channelModelCred});
 
 
-  final ChannelModelCred channelModel;
+  final ChannelModelCred channelModelCred;
 
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: (){
-        //Navigator.push(context, MaterialPageRoute(builder: (_)=> VideoListPage(channelModel: channelModel)));
+        Navigator.push(context, MaterialPageRoute(builder: (_)=> VideoListPage(channelModelCred: channelModelCred)));
         // if(int.parse(channelModel.videoCount)>0){
         //   Navigator.push(context, MaterialPageRoute(builder: (_)=> VideoListPage(channelModel: channelModel)));
         // }else{
@@ -42,7 +42,7 @@ class ItemChannelCred extends StatelessWidget{
               child: CachedNetworkImage(
                   placeholder: (context, url) => const Icon(Icons.image_outlined,color: Colors.grey,size: 100),
                   errorWidget: (context, url, error) =>const Icon(Icons.error,color: Colors.grey,size: 60),
-                  imageUrl: channelModel.imgBanner, fit: BoxFit.cover,
+                  imageUrl: channelModelCred.imgBanner, fit: BoxFit.cover,
                   width: 100,
                   height: 100),
             ),
@@ -54,7 +54,7 @@ class ItemChannelCred extends StatelessWidget{
                 children: [
                   SizedBox(
                     width: 270,
-                    child: Text(channelModel.nameChannel,
+                    child: Text(channelModelCred.nameChannel,
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
                       style:const TextStyle(
@@ -67,7 +67,7 @@ class ItemChannelCred extends StatelessWidget{
                   SizedBox(
                     width: 270,
                     height: 35,
-                    child: Text(channelModel.accountName,
+                    child: Text(channelModelCred.accountName,
                       overflow: TextOverflow.ellipsis,
                       maxLines: 2,
                       style:const TextStyle(

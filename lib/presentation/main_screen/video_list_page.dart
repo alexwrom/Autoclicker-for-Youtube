@@ -13,16 +13,18 @@ import 'package:youtube_clicker/presentation/main_screen/bloc/main_event.dart';
 import 'package:youtube_clicker/presentation/main_screen/bloc/main_state.dart';
 import 'package:youtube_clicker/presentation/main_screen/widgets/item_video.dart';
 import 'package:http/io_client.dart';
+import '../../components/dialoger.dart';
 import '../../data/http_client/http_client.dart';
 import '../../di/locator.dart';
 import '../../domain/models/channel_model.dart';
+import '../../domain/models/channel_model_cred.dart';
 import '../../resourses/colors_app.dart';
 import '../../utils/preferences_util.dart';
 
 class VideoListPage extends StatefulWidget{
-  const VideoListPage({super.key,required this.channelModel});
+  const VideoListPage({super.key,required this.channelModelCred});
 
-  final ChannelModel channelModel;
+  final ChannelModelCred channelModelCred;
 
 
   @override
@@ -73,11 +75,11 @@ class _VideoListPageState extends State<VideoListPage> with WidgetsBindingObserv
                             fit: BoxFit.cover,
                             placeholder: (context, url) => CircularProgressIndicator(color: colorBackground),
                             errorWidget: (context, url, error) =>const Icon(Icons.error),
-                            imageUrl: widget.channelModel.urlBanner),
+                            imageUrl: widget.channelModelCred.imgBanner),
                       ),
                     ),
                     const SizedBox(width: 20),
-                    Text(widget.channelModel.title,style:const TextStyle(
+                    Text(widget.channelModelCred.nameChannel,style:const TextStyle(
                         color: Colors.white,
                         fontSize: 18,
                         fontWeight: FontWeight.w700
@@ -92,53 +94,48 @@ class _VideoListPageState extends State<VideoListPage> with WidgetsBindingObserv
                 child: SingleChildScrollView(
                 child: Container(
                   margin:const EdgeInsets.symmetric(horizontal: 20),
-                  child: Column(
-                    children: [
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Container(
-                          margin: const EdgeInsets.only(left: 30,top: 30),
-                          alignment: Alignment.center,
-                          height: 30,
-                          width: 120,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(30),
-                              color: colorRed
+                  child: BlocConsumer<MainBloc,MainState>(
+                      listener: (context,stateListener){
+                        if(stateListener.videoListStatus.isError){
+                          Dialoger.showError(stateListener.error, context);
+                        }
+                      },
+                    builder: (_,state){
+                        if(state.videoListStatus.isLoading){
+                          return  Padding(
+                            padding:  EdgeInsets.only(top:center),
+                            child: const Center(child: CircularProgressIndicator()),
+                          );
+                        }
+                       if(state.videoListStatus.isSuccess){
+                        return Column(children: [
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Container(
+                              margin: const EdgeInsets.only(left: 30,top: 30),
+                              alignment: Alignment.center,
+                              height: 30,
+                              width: 120,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(30),
+                                  color: colorRed
+                              ),
+                              child:const Text('Channel video',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400
+                                ),),
+                            ),
                           ),
-                          child:const Text('Channel video',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400
-                            ),),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      BlocConsumer<MainBloc,MainState>(
-                          listener: (context,stateListener){
-
-                          },
-                        builder: (_,state){
-                            if(state.mainStatus.isLoading){
-                              return  Padding(
-                                padding:  EdgeInsets.only(top:center),
-                                child: const Center(child: CircularProgressIndicator()),
-                              );
-                            }
-                           if(state.mainStatus.isSuccess){
-                            return Column(children: [
-                              ...List.generate(state.videoFromChannel.length, (index){
-                                return  ItemVideo(videoModel: state.videoFromChannel[index]);
-                              })
-                            ],);
-                           }
-                          return Container();
-                      },)
-
-
-
-                    ],
-                  ),
+                          const SizedBox(height: 10),
+                          ...List.generate(state.videoFromChannel.length, (index){
+                            return  ItemVideo(videoModel: state.videoFromChannel[index]);
+                          })
+                        ],);
+                       }
+                      return Container();
+                  },),
                 ),
 
 
@@ -154,8 +151,7 @@ class _VideoListPageState extends State<VideoListPage> with WidgetsBindingObserv
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     super.initState();
-    context.read<MainBloc>().add(GetListVideoFromChannelEvent(idChannel: widget.channelModel.idChannel));
-
+    context.read<MainBloc>().add(GetListVideoFromChannelEvent(cred: widget.channelModelCred));
   }
 
 

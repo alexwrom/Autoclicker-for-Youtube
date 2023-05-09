@@ -3,6 +3,8 @@
 
  import 'package:equatable/equatable.dart';
 
+import '../../../domain/models/channel_model_cred.dart';
+
 class MainEvent extends Equatable{
   @override
 
@@ -16,9 +18,11 @@ class MainEvent extends Equatable{
  class GetChannelEvent extends MainEvent{}
 
  class GetListVideoFromChannelEvent extends MainEvent{
-    final String idChannel;
+    final ChannelModelCred cred;
+
 
     GetListVideoFromChannelEvent({
-    required this.idChannel,
+    required this.cred,
+
   });
 }

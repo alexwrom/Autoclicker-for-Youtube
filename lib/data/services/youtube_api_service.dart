@@ -14,8 +14,10 @@ import 'package:youtube_clicker/data/models/channel_model_from_api.dart';
 import 'package:youtube_clicker/domain/models/channel_model.dart';
 import 'package:youtube_clicker/utils/failure.dart';
 import '../../di/locator.dart';
+import '../../domain/models/channel_model_cred.dart';
 import '../../domain/models/video_model.dart';
 import '../../utils/preferences_util.dart';
+import '../http_client/dio_auth_client.dart';
 import '../http_client/dio_client_insert_caption.dart';
 import '../http_client/http_client.dart';
 import '../models/channel_cred_from_api.dart';
@@ -26,6 +28,7 @@ import '../models/video_model_from_api.dart';
     IOClient? httpClient;
     final _googleSingIn = locator.get<GoogleSignIn>();
     final _dio = locator.get<DioClientInsertCaption>();
+    final _dioTokenClient=locator.get<DioAuthClient>();
     FirebaseAuth? _auth;
 
     YouTubeApiService(){
@@ -36,33 +39,32 @@ import '../models/video_model_from_api.dart';
     
     Future<ChannelModelCredFromApi> addChannel()async{
       try {
-
         final googleSignInAccount=  await _googleSingIn.signIn();
-        //final googleSignInAccount=  await _googleSingIn.signInSilently();
-          if (_googleSingIn.currentUser == null) {
-            throw const Failure('Process stopped...');
-          }
-
-
-          final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount!.authentication;
-          final AuthCredential credential = GoogleAuthProvider.credential(
-            accessToken: googleSignInAuthentication.accessToken,
-            idToken: googleSignInAuthentication.idToken,
-          );
-
-          final UserCredential userCredential =
-          await _auth!.signInWithCredential(credential);
-          final  authHeaders = await _googleSingIn.currentUser!.authHeaders;
-          httpClient = GoogleHttpClient(authHeaders);
-          final data = YouTubeApi(httpClient!);
+        final email=_googleSingIn.currentUser!.email;
+        if (_googleSingIn.currentUser == null) {
+          throw const Failure('Process stopped...');
+        }
+        final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount!.authentication.catchError((error){
+          throw const Failure('Error google signin');
+        });
+        final accessT=googleSignInAuthentication.accessToken;
+        final  authHeaders = await _googleSingIn.currentUser!.authHeaders;
+        httpClient = GoogleHttpClient(authHeaders);
+        final data = YouTubeApi(httpClient!);
         final result = await data.channels.list(
             ['snippet,contentDetails,statistics'], mine: true);
-        await _googleSingIn.signOut();
+        await _googleSingIn.currentUser!.clearAuthCache();
         if(result.items==null){
-           throw const Failure('Channel list is empty');
+          throw const Failure('Channel list is empty');
         }
 
-        return ChannelModelCredFromApi.fromApi(channel: result.items![0],googleAccount: userCredential.user!.email!);
+        return ChannelModelCredFromApi.fromApi(
+            channel: result.items![0],
+            googleAccount: email,
+            idTok: '',
+            accessTok: accessT!,
+            googleSignInAccount:googleSignInAccount
+        );
 
        
       } on Failure catch (error, stackTrace) {
@@ -84,6 +86,7 @@ import '../models/video_model_from_api.dart';
           if (_googleSingIn.currentUser == null) {
             throw const Failure('Error auth');
           }
+
           final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount!.authentication;
           final AuthCredential credential = GoogleAuthProvider.credential(
             accessToken: googleSignInAuthentication.accessToken,
@@ -122,10 +125,14 @@ import '../models/video_model_from_api.dart';
 
 
     Future<List<AllVideoModelFromApi>> getVideoFromAccount(
-        String idUpload) async {
+        ChannelModelCred cred) async {
       List<String> idsVideo = [];
-
       try {
+        final authHeaders=<String, String>{
+          'Authorization': 'Bearer ${cred.accessToken}',
+          'X-Goog-AuthUser': '0',
+        };
+        httpClient = GoogleHttpClient(authHeaders);
         final data = YouTubeApi(httpClient!);
         final result = await data.search.list(['snippet'], forMine: true, maxResults: 20, type: ['video']);
         for (var item in result.items!) {
@@ -133,10 +140,10 @@ import '../models/video_model_from_api.dart';
         }
         final ids = idsVideo.toString().split('[')[1].split(']')[0].replaceAll(' ', '');
         final listVideo = await data.videos.list(['snippet,contentDetails,statistics,status'], id: [ids]);
-         if(listVideo.items==null){
-           return [];
-         }
-         return listVideo.items!.map((e) => AllVideoModelFromApi.fromApi(video: e)).toList();
+        if(listVideo.items==null){
+          return [];
+        }
+        return listVideo.items!.map((e) => AllVideoModelFromApi.fromApi(video: e)).toList();
       } on Failure catch (error, stackTrace) {
         Error.throwWithStackTrace(Failure(error.message), stackTrace);
       } on PlatformException catch (error, stackTrace) {
@@ -263,6 +270,12 @@ import '../models/video_model_from_api.dart';
         Error.throwWithStackTrace(Failure(error.toString()), stackTrace);
       }
     }
+
+    Future<String> refreshToken(ChannelModelCred cred) async {
+      final GoogleSignInAuthentication googleSignInAuthentication = await cred.googleSignInAcc.authentication;
+      return googleSignInAuthentication.accessToken!; // New refreshed token
+    }
+
 
   }
 

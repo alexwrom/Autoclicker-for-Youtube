@@ -198,7 +198,7 @@ class _ListChannelAddState extends State<ListChannelAdd> {
                                      visible: !state.mainStatus.isEmpty,
                                      child: Column(children: [
                                        ...List.generate(state.listCredChannels.length, (index){
-                                         return  ItemChannelCred(channelModel: state.listCredChannels[index]);
+                                         return  ItemChannelCred(channelModelCred: state.listCredChannels[index]);
                                        })
                                      ],)),
 

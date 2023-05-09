@@ -17,17 +17,21 @@ class CredChannelAdapter extends TypeAdapter<CredChannel> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return CredChannel(
-      idUpload: fields[0] as String,
       nameChannel: fields[1] as String,
       imgBanner: fields[2] as String,
       accountName: fields[3] as String,
+      idUpload: fields[0] as String,
+      idChannel: fields[4] as String,
+      accessToken: fields[5] as String,
+      idToken: fields[6] as String,
+      googleSignInAcc: fields[7] as GoogleSignInAccount,
     );
   }
 
   @override
   void write(BinaryWriter writer, CredChannel obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(8)
       ..writeByte(0)
       ..write(obj.idUpload)
       ..writeByte(1)
@@ -37,7 +41,13 @@ class CredChannelAdapter extends TypeAdapter<CredChannel> {
       ..writeByte(3)
       ..write(obj.accountName)
       ..writeByte(4)
-      ..write(obj.idUpload);
+      ..write(obj.idChannel)
+      ..writeByte(5)
+      ..write(obj.accessToken)
+      ..writeByte(6)
+      ..write(obj.idToken)
+      ..writeByte(7)
+      ..write(obj.googleSignInAcc);
   }
 
   @override

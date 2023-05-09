@@ -34,9 +34,9 @@ class YouTubeApiUtil{
     }
 
 
-    Future<List<VideoModel>> getVideoFromAccount(String idUpload)async{
+    Future<List<VideoModel>> getVideoFromAccount(ChannelModelCred cred)async{
       List<VideoModel> list=[];
-     final result= await _youTubeApi.getVideoFromAccount(idUpload);
+     final result= await _youTubeApi.getVideoFromAccount(cred);
       for(var item in result){
         list.add(VideoMapper.fromApi(videoNotPublishedModelFromApi: item));
 

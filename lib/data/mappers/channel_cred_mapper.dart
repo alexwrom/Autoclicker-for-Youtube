@@ -14,6 +14,10 @@ class ChannelCredMapper{
         nameChannel: channelModelCredFromApi.nameChannel,
         imgBanner: channelModelCredFromApi.imgBanner,
         accountName: channelModelCredFromApi.accountName,
-        idUpload: channelModelCredFromApi.idUpload);
+        idUpload: channelModelCredFromApi.idUpload,
+        idChannel: channelModelCredFromApi.idChannel,
+        idToken: channelModelCredFromApi.idToken,
+        accessToken: channelModelCredFromApi.accessToken,
+        googleSignInAcc: channelModelCredFromApi.googleSignInAcc);
   }
 }

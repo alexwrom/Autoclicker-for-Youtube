@@ -1,6 +1,8 @@
 
 
- import '../../data/models/hive_models/cred_channel.dart';
+ import 'package:google_sign_in/google_sign_in.dart';
+
+import '../../data/models/hive_models/cred_channel.dart';
 
 class ChannelModelCred{
 
@@ -8,16 +10,32 @@ class ChannelModelCred{
   final String imgBanner;
   final String accountName;
   final String idUpload;
+  final String idChannel;
+  final String accessToken;
+  final String idToken;
+  final GoogleSignInAccount googleSignInAcc;
 
   const ChannelModelCred({
     required this.nameChannel,
     required this.imgBanner,
     required this.accountName,
-    required this.idUpload
+    required this.idUpload,
+    required this.idChannel,
+    required this.accessToken,
+    required this.idToken,
+    required this.googleSignInAcc
   });
 
 
   static ChannelModelCred fromBoxHive({required CredChannel channel}){
-    return ChannelModelCred(nameChannel: channel.nameChannel, imgBanner: channel.imgBanner, accountName: channel.accountName, idUpload: channel.idUpload);
+    return ChannelModelCred(
+        nameChannel: channel.nameChannel,
+        imgBanner: channel.imgBanner,
+        accountName: channel.accountName,
+        idUpload: channel.idUpload,
+        idChannel: channel.idChannel,
+        accessToken: channel.accessToken,
+        idToken: channel.idToken,
+        googleSignInAcc: channel.googleSignInAcc);
   }
 }

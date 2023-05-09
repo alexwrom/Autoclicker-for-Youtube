@@ -69,16 +69,20 @@ class MainBloc extends Bloc<MainEvent,MainState>{
       }
       await boxCredVideo
           .add(CredChannel(
+              idChannel: result.idChannel,
               nameChannel: result.nameChannel,
               imgBanner: result.imgBanner,
               accountName: result.accountName,
-              idUpload: result.idUpload))
+              idUpload: result.idUpload,
+              idToken: result.idToken,
+               accessToken: result.accessToken,
+                googleSignInAcc: result.googleSignInAcc))
           .catchError((error) {
         print('Error hive $error');
         throw const Failure('Error while saving locally');
       });
       listCredChannels.add(result);
-      emit(state.copyWith(addCredStatus: AddCredStatus.success,listCredChannels: listCredChannels));
+      emit(state.copyWith(mainStatus:MainStatus.success,addCredStatus: AddCredStatus.success,listCredChannels: listCredChannels));
     }on Failure catch (error){
       emit(state.copyWith(addCredStatus: AddCredStatus.error,error: error.message));
     }
@@ -89,53 +93,68 @@ class MainBloc extends Bloc<MainEvent,MainState>{
 
 
    Future<void> _getChannel(GetChannelEvent event,emit)async{
-    videoListNotPublished.clear();
-      videoListFromChannel.clear();
-      allListVideoAccount.clear();
-     emit(state.copyWith(mainStatus: MainStatus.loading));
-     try{
-
-       final result=await _googleApiRepository.getListChanel(true);
-       final name= PreferencesUtil.getUserName;
-       final avatar=PreferencesUtil.getUrlAvatar;
-       if(result!.isEmpty){
-
-         emit(state.copyWith(mainStatus: MainStatus.empty, userName: name, urlAvatar: avatar));
-       }else{
-
-        final videos = await _googleApiRepository.getVideoFromAccount(result[0].idUpload);
-
-        allListVideoAccount = videos;
-        for (var item in videos) {
-
-          if (!item.isPublic) {
-            videoListNotPublished.add(item);
-          }
-        }
-
-        emit(state.copyWith(
-            mainStatus: MainStatus.success,
-            channelList: result,
-            userName: name,
-            urlAvatar: avatar,
-            videoNotPubList: videoListNotPublished));
-      }
-
-    }on Failure catch(error){
-       emit(state.copyWith(mainStatus: MainStatus.error,error: error.message));
-     }
+    // videoListNotPublished.clear();
+    //   videoListFromChannel.clear();
+    //   allListVideoAccount.clear();
+    //  emit(state.copyWith(mainStatus: MainStatus.loading));
+    //  try{
+    //
+    //    final result=await _googleApiRepository.getListChanel(true);
+    //    final name= PreferencesUtil.getUserName;
+    //    final avatar=PreferencesUtil.getUrlAvatar;
+    //    if(result!.isEmpty){
+    //      emit(state.copyWith(mainStatus: MainStatus.empty, userName: name, urlAvatar: avatar));
+    //    }else{
+    //
+    //     final videos = await _googleApiRepository.getVideoFromAccount(result[0].idUpload);
+    //
+    //     allListVideoAccount = videos;
+    //     for (var item in videos) {
+    //
+    //       if (!item.isPublic) {
+    //         videoListNotPublished.add(item);
+    //       }
+    //     }
+    //
+    //     emit(state.copyWith(
+    //         mainStatus: MainStatus.success,
+    //         channelList: result,
+    //         userName: name,
+    //         urlAvatar: avatar,
+    //         videoNotPubList: videoListNotPublished));
+    //   }
+    //
+    // }on Failure catch(error){
+    //    emit(state.copyWith(mainStatus: MainStatus.error,error: error.message));
+    //  }
 
    }
 
+
+
+
     Future<void> _getListVideoFromChannel(GetListVideoFromChannelEvent event,emit)async{
-      emit(state.copyWith(mainStatus: MainStatus.loading));
-      videoListFromChannel.clear();
-      for(var item in allListVideoAccount){
-        if(item.isPublic&&event.idChannel==item.idChannel){
-          videoListFromChannel.add(item);
-        }
-      }
-      emit(state.copyWith(mainStatus: MainStatus.success,videoFromChannel: videoListFromChannel));
+       emit(state.copyWith(videoListStatus: VideoListStatus.loading));
+       videoListFromChannel.clear();
+       videoListNotPublished.clear();
+       allListVideoAccount.clear();
+       try {
+         final videos = await _googleApiRepository.getVideoFromAccount(event.cred);
+         allListVideoAccount = videos;
+         for (var item in videos) {
+                  if (!item.isPublic) {
+                    videoListNotPublished.add(item);
+                  }
+                }
+         for(var item in allListVideoAccount){
+                 if(item.isPublic&&event.cred.idChannel==item.idChannel){
+                   videoListFromChannel.add(item);
+                 }
+               }
+         emit(state.copyWith(videoListStatus: VideoListStatus.success,videoFromChannel: videoListFromChannel));
+       }on Failure catch (e) {
+         emit(state.copyWith(videoListStatus: VideoListStatus.error,error: e.message));
+       }
     }
 
 
