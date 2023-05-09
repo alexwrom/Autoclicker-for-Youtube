@@ -100,7 +100,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try{
       await PreferencesUtil.clear();
       await _authRepository.logOut();
-      await boxVideo.clear();
       emit(state.copyWith(authStatus: AuthStatus.unauthenticated));
     }on Failure catch(error){
       emit(state.copyWith(authStatus: AuthStatus.error,error: error.message));

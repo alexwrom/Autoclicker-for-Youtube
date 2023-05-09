@@ -14,6 +14,22 @@ enum MainStatus{
   empty
 }
 
+enum AddCredStatus{
+  unknown,
+  error,
+  loading,
+  success,
+  empty
+}
+extension AddCredStatusExt on AddCredStatus{
+  bool get isUnknown=>this==AddCredStatus.unknown;
+  bool get isError=>this==AddCredStatus.error;
+  bool get isLoading=>this==AddCredStatus.loading;
+  bool get isSuccess=>this==AddCredStatus.success;
+  bool get isEmpty=>this==AddCredStatus.empty;
+
+}
+
   extension AuthStatusExt on MainStatus{
      bool get isUnknown=>this==MainStatus.unknown;
      bool get isError=>this==MainStatus.error;
@@ -26,6 +42,7 @@ enum MainStatus{
  class MainState extends Equatable{
 
    final MainStatus mainStatus;
+   final AddCredStatus addCredStatus;
    final List<ChannelModel> channelList;
    final List<VideoModel> videoNotPubList;
    final List<VideoModel> videoFromChannel;
@@ -35,22 +52,23 @@ enum MainStatus{
    final String urlAvatar;
 
 
-   const MainState(this.listCredChannels,this.mainStatus, this.channelList,this.error,this.userName,this.urlAvatar,this.videoNotPubList,this.videoFromChannel);
+   const MainState(this.listCredChannels,this.mainStatus,this.addCredStatus, this.channelList,this.error,this.userName,this.urlAvatar,this.videoNotPubList,this.videoFromChannel);
 
 
    factory MainState.unknown(){
-     return const MainState([],MainStatus.unknown, [],'','','',[],[]);
+     return const MainState([],MainStatus.unknown,AddCredStatus.unknown, [],'','','',[],[]);
    }
 
 
 
   @override
 
-  List<Object?> get props => [listCredChannels,mainStatus,channelList,error,userName,urlAvatar,videoNotPubList,videoFromChannel];
+  List<Object?> get props => [listCredChannels,mainStatus,addCredStatus,channelList,error,userName,urlAvatar,videoNotPubList,videoFromChannel];
 
    MainState copyWith({
      List<ChannelModelCred>? listCredChannels,
     MainStatus? mainStatus,
+     AddCredStatus? addCredStatus,
     List<ChannelModel>? channelList,
     String? error,
       String? userName,
@@ -61,6 +79,7 @@ enum MainStatus{
     return MainState(
       listCredChannels??this.listCredChannels,
       mainStatus?? this.mainStatus,
+      addCredStatus??this.addCredStatus,
       channelList ?? this.channelList,
       error?? this.error,
       userName??this.userName,

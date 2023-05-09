@@ -40,6 +40,7 @@ import '../presentation/main_screen/cubit/user_data_cubit.dart';
 
     //auth
       locator.registerLazySingleton(() => GoogleSignIn(
+          forceCodeForRefreshToken: true,
           scopes: [YouTubeApi.youtubeForceSslScope]
       ));
       locator.registerLazySingleton(() => AuthService());

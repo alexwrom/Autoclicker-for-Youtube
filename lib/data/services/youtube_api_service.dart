@@ -11,12 +11,14 @@ import 'package:http/io_client.dart';
 import 'package:googleapis/youtube/v3.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:youtube_clicker/data/models/channel_model_from_api.dart';
+import 'package:youtube_clicker/domain/models/channel_model.dart';
 import 'package:youtube_clicker/utils/failure.dart';
 import '../../di/locator.dart';
 import '../../domain/models/video_model.dart';
 import '../../utils/preferences_util.dart';
 import '../http_client/dio_client_insert_caption.dart';
 import '../http_client/http_client.dart';
+import '../models/channel_cred_from_api.dart';
 import '../models/video_model_from_api.dart';
 
   class YouTubeApiService {
@@ -28,6 +30,48 @@ import '../models/video_model_from_api.dart';
 
     YouTubeApiService(){
       _auth=FirebaseAuth.instance;
+    }
+
+
+    
+    Future<ChannelModelCredFromApi> addChannel()async{
+      try {
+
+        final googleSignInAccount=  await _googleSingIn.signIn();
+        //final googleSignInAccount=  await _googleSingIn.signInSilently();
+          if (_googleSingIn.currentUser == null) {
+            throw const Failure('Process stopped...');
+          }
+
+
+          final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount!.authentication;
+          final AuthCredential credential = GoogleAuthProvider.credential(
+            accessToken: googleSignInAuthentication.accessToken,
+            idToken: googleSignInAuthentication.idToken,
+          );
+
+          final UserCredential userCredential =
+          await _auth!.signInWithCredential(credential);
+          final  authHeaders = await _googleSingIn.currentUser!.authHeaders;
+          httpClient = GoogleHttpClient(authHeaders);
+          final data = YouTubeApi(httpClient!);
+        final result = await data.channels.list(
+            ['snippet,contentDetails,statistics'], mine: true);
+        await _googleSingIn.signOut();
+        if(result.items==null){
+           throw const Failure('Channel list is empty');
+        }
+
+        return ChannelModelCredFromApi.fromApi(channel: result.items![0],googleAccount: userCredential.user!.email!);
+
+       
+      } on Failure catch (error, stackTrace) {
+        Error.throwWithStackTrace(Failure(error.message), stackTrace);
+      } on PlatformException catch (error, stackTrace) {
+        Error.throwWithStackTrace(Failure(error.message!), stackTrace);
+      } catch (error, stackTrace) {
+        Error.throwWithStackTrace(Failure(error.toString()), stackTrace);
+      }
     }
 
 

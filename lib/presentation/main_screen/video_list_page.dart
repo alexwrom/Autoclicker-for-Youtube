@@ -169,11 +169,11 @@ class _VideoListPageState extends State<VideoListPage> with WidgetsBindingObserv
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
-   if (state == AppLifecycleState.resumed) {
-      await _googleSingIn.currentUser!.clearAuthCache();
-      final  authHeaders = await _googleSingIn.currentUser!.authHeaders;
-      await PreferencesUtil.setHeadersGoogleApi(authHeaders);
-    }
-  }
+  //  if (state == AppLifecycleState.resumed) {
+  //     await _googleSingIn.currentUser!.clearAuthCache();
+  //     final  authHeaders = await _googleSingIn.currentUser!.authHeaders;
+  //     await PreferencesUtil.setHeadersGoogleApi(authHeaders);
+  //   }
+   }
 
 }

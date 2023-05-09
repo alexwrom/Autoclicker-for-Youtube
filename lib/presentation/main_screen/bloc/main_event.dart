@@ -11,6 +11,7 @@ class MainEvent extends Equatable{
 
 
  }
+ class AddChannelEvent extends MainEvent{}
 
  class GetChannelEvent extends MainEvent{}
 

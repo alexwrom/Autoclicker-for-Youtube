@@ -3,13 +3,17 @@
 
 
 import 'package:googleapis/youtube/v3.dart';
+import 'package:youtube_clicker/data/models/channel_model_from_api.dart';
 import 'package:youtube_clicker/data/models/video_model_from_api.dart';
 import 'package:youtube_clicker/di/locator.dart';
 import 'package:youtube_clicker/domain/models/video_model.dart';
 
 import '../../domain/models/channel_model.dart';
+import '../../domain/models/channel_model_cred.dart';
+import '../mappers/channel_cred_mapper.dart';
 import '../mappers/video_api_mapper.dart';
 import '../mappers/youtube_api_mapper.dart';
+import '../models/channel_cred_from_api.dart';
 import '../services/youtube_api_service.dart';
 
 class YouTubeApiUtil{
@@ -17,7 +21,7 @@ class YouTubeApiUtil{
     final _youTubeApi=locator.get<YouTubeApiService>();
 
 
-    Future<List<ChannelModel>?> getChannels(bool reload) async{
+    Future<List<ChannelModel>?> getListChanel(bool reload) async{
       List<ChannelModel>? list=[];
       final result=await _youTubeApi.getListChanel(reload);
       for (var element in result) {
@@ -57,6 +61,11 @@ class YouTubeApiUtil{
 
     Future<void> removeCaptions(String idCap)async{
       await _youTubeApi.removeCaptions(idCap);
+    }
+
+    Future<ChannelModelCred> addChannel()async{
+     final channel= await _youTubeApi.addChannel();
+     return ChannelCredMapper.fromApi(channelModelCredFromApi: channel);
     }
 
 

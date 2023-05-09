@@ -18,6 +18,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:responsive_framework/responsive_wrapper.dart';
 import 'app_bloc/app_bloc.dart';
 import 'components/dialoger.dart';
+import 'data/models/hive_models/cred_channel.dart';
 import 'data/models/hive_models/video.dart';
 import 'di/locator.dart';
 import 'presentation/auth_screen/auth_page_google.dart';
@@ -26,15 +27,24 @@ import 'utils/app_theme.dart';
 
 Future<void> initHive()async{
   final path=(await getApplicationDocumentsDirectory()).path;
-  Hive..init(path)..registerAdapter(VideoAdapter());
-  await Hive.openBox('video_box');
+  Hive.init(path);
+  Hive.registerAdapter(VideoAdapter());
+  Hive.registerAdapter(CredChannelAdapter());
+  await Hive.openBox('video_box').catchError((error){
+    print('Error Open Box 1 $error');
+  });
+  await Hive.openBox('cred_video').catchError((error){
+    print('Error Open Box 2 $error');
+  });
 }
+
 
 void main()async  {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await PreferencesUtil.init();
   await initHive();
+
   di.setup();
   runApp(const MyApp());
 }

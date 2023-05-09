@@ -38,7 +38,6 @@ class AuthService{
     try{
       await _auth!.signOut();
       await _googleSingIn.signOut();
-      print('SING OUT');
     } on  FirebaseAuthException catch(error,stackTrace){
       Error.throwWithStackTrace(Failure.fromAuthApiError(error), stackTrace);
 

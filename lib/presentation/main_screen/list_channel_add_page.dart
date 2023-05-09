@@ -35,187 +35,190 @@ class _ListChannelAddState extends State<ListChannelAdd> {
   }
   @override
   Widget build(BuildContext context) {
-   return Scaffold(
-     floatingActionButton: FloatingActionButton(
-       backgroundColor: colorRed,
-       child: const Icon(Icons.add,color: Colors.white),
-       onPressed: () {
+   return BlocBuilder<MainBloc,MainState>(
+     builder: (context,state) {
+       return Scaffold(
+         floatingActionButton: state.mainStatus.isEmpty?null:FloatingActionButton(
+           backgroundColor: colorRed,
+           child: const Icon(Icons.add,color: Colors.white),
+           onPressed: () {
+               context.read<MainBloc>().add(AddChannelEvent());
+         },),
+           backgroundColor: colorBackground,
+           body: BlocConsumer<MainBloc,MainState>(
+               listener: (_,s){
+                 if(s.mainStatus.isError||s.addCredStatus.isError){
+                   Dialoger.showError(s.error, context);
+                 }
 
-     },),
-       backgroundColor: colorBackground,
-       body: BlocConsumer<MainBloc,MainState>(
-           listener: (_,s){
-             if(s.mainStatus.isError){
-               Dialoger.showError(s.error, context);
-             }
-           },
-           builder: (context,state) {
-             if(state.mainStatus.isLoading){
-               return const Center(child: CircularProgressIndicator());
-             }
+               },
+               builder: (context,state) {
+                 if(state.mainStatus.isLoading||state.addCredStatus.isLoading){
+                   return const Center(child: CircularProgressIndicator());
+                 }
 
-             if(state.mainStatus.isError){
 
-               return Center(
-                 child: Column(
-                   mainAxisAlignment: MainAxisAlignment.center,
-                   children:  [
-                     const Icon(Icons.error_outline,color: Colors.grey),
-                     const SizedBox(height: 10),
-                     const Text('Data loading error',style: TextStyle(
-                         color: Colors.grey,
-                         fontSize: 16,
-                         fontWeight: FontWeight.w400
-                     ),),
-                     const SizedBox(height: 10),
-                     ElevatedButton(
-                         style: ButtonStyle(
-                             backgroundColor: MaterialStateProperty.all(colorRed)
-                         ),
-                         onPressed: (){
-                          //context.read<MainBloc>().add(GetChannelEvent(reload: widget.reAuth));
-                         },
-                         child:const Text('Reload page'))
-                   ],
-                 ),
-               );
-             }
-
-             if(state.mainStatus.isSuccess||state.mainStatus.isEmpty){
-               return Column(
-                 children: [
-                   Container(
-                     height: 120,
-                     padding: const EdgeInsets.only(top: 40,left: 20,right: 20),
-                     decoration: BoxDecoration(
-                         color: colorPrimary,
-                         borderRadius: const BorderRadius.only(bottomRight: Radius.circular(20),
-                             bottomLeft: Radius.circular(40))
-                     ),
-                     child: Row(
-                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                       children: [
-                         Row(
-                           children: [
-                             const Icon(Icons.perm_identity_rounded,size: 30,color: Colors.white),
-                             const SizedBox(width: 10),
-                             SizedBox(
-                               width: MediaQuery.of(context).size.width/2,
-                               child: Text(state.userName,
-                                 maxLines: 1,
-                                 style:const TextStyle(
-                                 overflow: TextOverflow.ellipsis,
-                                   color: Colors.white,
-                                   fontSize: 18,
-                                   fontWeight: FontWeight.w700
-                               ),),
+                 if(state.mainStatus.isError){
+                   return Center(
+                     child: Column(
+                       mainAxisAlignment: MainAxisAlignment.center,
+                       children:  [
+                         const Icon(Icons.error_outline,color: Colors.grey),
+                         const SizedBox(height: 10),
+                         const Text('Data loading error',style: TextStyle(
+                             color: Colors.grey,
+                             fontSize: 16,
+                             fontWeight: FontWeight.w400
+                         ),),
+                         const SizedBox(height: 10),
+                         ElevatedButton(
+                             style: ButtonStyle(
+                                 backgroundColor: MaterialStateProperty.all(colorRed)
                              ),
-
-                           ],
-                         ),
-                         Row(
-                           children: [
-                             const UserDataCard(),
-                             IconButton(onPressed: (){
-                               Dialoger.showLogOut(context: context);
+                             onPressed: (){
+                               context.read<MainBloc>().add(GetChannelEvent());
                              },
-                                 icon: Icon(Icons.logout,color: colorRed))
-                           ],
-                         ),
-
-
+                             child:const Text('Reload page'))
                        ],
                      ),
-                   ),
-                   Expanded(
-                     child: SingleChildScrollView(
-                       child: Padding(
-                         padding: const EdgeInsets.symmetric(horizontal: 20),
-                         child: Column(
-                           mainAxisAlignment: MainAxisAlignment.center,
+                   );
+                 }
+
+            if (state.mainStatus.isSuccess ||
+                state.addCredStatus.isSuccess ||
+                state.mainStatus.isEmpty) {
+              return Column(
+                     children: [
+                       Container(
+                         height: 120,
+                         padding: const EdgeInsets.only(top: 40,left: 20,right: 20),
+                         decoration: BoxDecoration(
+                             color: colorPrimary,
+                             borderRadius: const BorderRadius.only(bottomRight: Radius.circular(20),
+                                 bottomLeft: Radius.circular(40))
+                         ),
+                         child: Row(
+                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                            children: [
-                             CardFreeTrial(),
-                             Visibility(
-                               visible: !state.mainStatus.isEmpty,
-                               child: Align(
-                                 alignment: Alignment.centerLeft,
-                                 child: Container(
-                                   margin: const EdgeInsets.only(left: 30,top: 30),
-                                   alignment: Alignment.center,
-                                   height: 30,
-                                   width: 120,
-                                   decoration: BoxDecoration(
-                                       borderRadius: BorderRadius.circular(30),
-                                       color: colorRed
-                                   ),
-                                   child:const Text('My channels',
-                                     style: TextStyle(
-                                         color: Colors.white,
-                                         fontSize: 14,
-                                         fontWeight: FontWeight.w400
-                                     ),),
+                             Row(
+                               children: [
+                                 const Icon(Icons.perm_identity_rounded,size: 30,color: Colors.white),
+                                 const SizedBox(width: 10),
+                                 SizedBox(
+                                   width: MediaQuery.of(context).size.width/2,
+                                   child: Text(state.userName,
+                                     maxLines: 1,
+                                     style:const TextStyle(
+                                     overflow: TextOverflow.ellipsis,
+                                       color: Colors.white,
+                                       fontSize: 18,
+                                       fontWeight: FontWeight.w700
+                                   ),),
                                  ),
-                               ),
+
+                               ],
                              ),
-                             const SizedBox(height: 10),
-                             Visibility(
-                               visible: state.mainStatus.isEmpty,
-                               child: Column(
-                                 mainAxisAlignment: MainAxisAlignment.center,
-                                 children: [
-                                    SizedBox(height: MediaQuery.of(context).size.height/3),
-                                   const Icon(Icons.hourglass_empty,
-                                       color: Colors.grey, size: 50),
-                                   const SizedBox(height: 20),
-                                   const Text(
-                                     "Saved channel list is empty",
-                                     style: TextStyle(
-                                         color: Colors.grey,
-                                         fontSize: 20,
-                                         fontWeight: FontWeight.w400),
-                                   ),
-                                   const SizedBox(height: 10),
-                                   ElevatedButton(
-                                       style: ButtonStyle(
-                                           backgroundColor:
-                                           MaterialStateProperty.all(
-                                               colorRed)),
-                                       onPressed: () {
-                                         //add channel
-                                         // context
-                                         //     .read<AuthBloc>()
-                                         //     .add(LogOutEvent());
-                                         // Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=>const AuthPage()));
-                                       },
-                                       child: const Text(
-                                           'Add a channel'))
-                                 ],
-                               ),
+                             Row(
+                               children: [
+                                 const UserDataCard(),
+                                 IconButton(onPressed: (){
+                                   Dialoger.showLogOut(context: context);
+                                 },
+                                     icon: Icon(Icons.logout,color: colorRed))
+                               ],
                              ),
 
-                             Visibility(
-                                 visible: !state.mainStatus.isEmpty,
-                                 child: Column(children: [
-                                   ...List.generate(state.listCredChannels.length, (index){
-                                     return  ItemChannelCred(channelModel: state.listCredChannels[index]);
-                                   })
-                                 ],)),
 
                            ],
                          ),
                        ),
-                     ),
-                   )
+                       Expanded(
+                         child: SingleChildScrollView(
+                           child: Padding(
+                             padding: const EdgeInsets.symmetric(horizontal: 20),
+                             child: Column(
+                               mainAxisAlignment: MainAxisAlignment.center,
+                               children: [
+                                 CardFreeTrial(),
+                                 Visibility(
+                                   visible: !state.mainStatus.isEmpty,
+                                   child: Align(
+                                     alignment: Alignment.centerLeft,
+                                     child: Container(
+                                       margin: const EdgeInsets.only(left: 30,top: 30),
+                                       alignment: Alignment.center,
+                                       height: 30,
+                                       width: 120,
+                                       decoration: BoxDecoration(
+                                           borderRadius: BorderRadius.circular(30),
+                                           color: colorRed
+                                       ),
+                                       child:const Text('My channels',
+                                         style: TextStyle(
+                                             color: Colors.white,
+                                             fontSize: 14,
+                                             fontWeight: FontWeight.w400
+                                         ),),
+                                     ),
+                                   ),
+                                 ),
+                                 const SizedBox(height: 10),
+                                 Visibility(
+                                   visible: state.mainStatus.isEmpty,
+                                   child: Column(
+                                     mainAxisAlignment: MainAxisAlignment.center,
+                                     children: [
+                                        SizedBox(height: MediaQuery.of(context).size.height/3),
+                                       const Icon(Icons.hourglass_empty,
+                                           color: Colors.grey, size: 50),
+                                       const SizedBox(height: 20),
+                                       const Text(
+                                         "Saved channel list is empty",
+                                         style: TextStyle(
+                                             color: Colors.grey,
+                                             fontSize: 20,
+                                             fontWeight: FontWeight.w400),
+                                       ),
+                                       const SizedBox(height: 10),
+                                       ElevatedButton(
+                                           style: ButtonStyle(
+                                               backgroundColor:
+                                               MaterialStateProperty.all(
+                                                   colorRed)),
+                                           onPressed: () {
+                                             context.read<MainBloc>().add(AddChannelEvent());
+                                           },
+                                           child: const Text(
+                                               'Add a channel'))
+                                     ],
+                                   ),
+                                 ),
 
-                 ],
-               );
-             }
+                                 Visibility(
+                                     visible: !state.mainStatus.isEmpty,
+                                     child: Column(children: [
+                                       ...List.generate(state.listCredChannels.length, (index){
+                                         return  ItemChannelCred(channelModel: state.listCredChannels[index]);
+                                       })
+                                     ],)),
+
+                               ],
+                             ),
+                           ),
+                         ),
+                       )
+
+                     ],
+                   );
+                 }
 
 
-             return Container();
+                 return Container();
 
-           }
-       )
+               }
+           )
+       );
+     }
    );
   }
 }

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 
 import '../../../domain/models/channel_model_cred.dart';
 import '../../../resourses/colors_app.dart';
+import '../video_list_page.dart';
 
 class ItemChannelCred extends StatelessWidget{
   const ItemChannelCred({super.key,required this.channelModel});
@@ -18,6 +19,7 @@ class ItemChannelCred extends StatelessWidget{
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: (){
+        //Navigator.push(context, MaterialPageRoute(builder: (_)=> VideoListPage(channelModel: channelModel)));
         // if(int.parse(channelModel.videoCount)>0){
         //   Navigator.push(context, MaterialPageRoute(builder: (_)=> VideoListPage(channelModel: channelModel)));
         // }else{
