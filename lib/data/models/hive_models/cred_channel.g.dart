@@ -17,6 +17,7 @@ class CredChannelAdapter extends TypeAdapter<CredChannel> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return CredChannel(
+      keyLangCode: fields[7] as int,
       nameChannel: fields[1] as String,
       imgBanner: fields[2] as String,
       accountName: fields[3] as String,
@@ -24,7 +25,6 @@ class CredChannelAdapter extends TypeAdapter<CredChannel> {
       idChannel: fields[4] as String,
       accessToken: fields[5] as String,
       idToken: fields[6] as String,
-      googleSignInAcc: fields[7] as GoogleSignInAccount,
     );
   }
 
@@ -47,7 +47,7 @@ class CredChannelAdapter extends TypeAdapter<CredChannel> {
       ..writeByte(6)
       ..write(obj.idToken)
       ..writeByte(7)
-      ..write(obj.googleSignInAcc);
+      ..write(obj.keyLangCode);
   }
 
   @override

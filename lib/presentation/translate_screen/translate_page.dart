@@ -15,8 +15,9 @@ import 'package:youtube_clicker/presentation/main_screen/cubit/user_data_state.d
 import 'package:youtube_clicker/resourses/colors_app.dart';
 
 import '../../components/dialoger.dart';
-import '../../data/models/hive_models/video.dart';
+import '../../data/models/hive_models/channel_lang_code.dart';
 import '../../data/services/youtube_api_service.dart';
+import '../../domain/models/channel_model_cred.dart';
 import '../../utils/parse_time_duration.dart';
 import 'bloc/translate_bloc.dart';
 import 'bloc/translate_event.dart';
@@ -25,9 +26,10 @@ import 'choise_language_page.dart';
 
 
 class TranslatePage extends StatefulWidget{
-  const TranslatePage({super.key,required this.videoModel});
+  const TranslatePage({super.key,required this.videoModel,required this.credChannel});
 
   final VideoModel videoModel;
+  final ChannelModelCred credChannel;
 
   @override
   State<TranslatePage> createState() => _TranslatePageState();
@@ -175,8 +177,11 @@ class _TranslatePageState extends State<TranslatePage> {
                                   ),
 
                                   onPressed:()async{
-                                     Navigator.of(context).push(MaterialPageRoute(builder: (_)=> ChoiceLanguagePage(idVideo:widget.videoModel.idVideo)));
-                                     },
+                                    Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (_) => ChoiceLanguagePage(
+                                          idVideo: widget.videoModel.idVideo,
+                                          credChannel: widget.credChannel)));
+                                },
                                   child:const Icon(Icons.translate,color: Colors.white,)),
                             ],
                           ),
@@ -447,10 +452,13 @@ class _TranslatePageState extends State<TranslatePage> {
     super.initState();
     _translateBloc=TranslateBloc(cubitUserData: context.read<UserDataCubit>());
     _translateBloc.add(GetSubtitlesEvent(videoId: widget.videoModel.idVideo));
-    boxVideo.keys.map((key) {
-      final Video value = boxVideo.get(key);
-      _listCodeLanguage=value.codeLanguage;
-    }).toList();
+    final ChannelLangCode value = boxVideo.get(widget.credChannel.keyLangCode);
+    _listCodeLanguage=value.codeLanguage;
+    print('Get List Box ${_listCodeLanguage.length} key ${widget.credChannel.keyLangCode}');
+    // boxVideo.keys.map((key) {
+    //   final ChannelLangCode value = boxVideo.get(widget.credChannel.keyLangCode);
+    //   _listCodeLanguage=value.codeLanguage;
+    // }).toList();
    notifiCodeList.value=_listCodeLanguage.length;
   }
 

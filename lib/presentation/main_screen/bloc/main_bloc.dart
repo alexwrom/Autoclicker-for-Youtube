@@ -3,7 +3,9 @@
 
  import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:googleapis/youtube/v3.dart';
 import 'package:hive/hive.dart';
+import 'package:youtube_clicker/data/models/hive_models/channel_lang_code.dart';
 import 'package:youtube_clicker/data/services/youtube_api_service.dart';
 import 'package:youtube_clicker/di/locator.dart';
 import 'package:youtube_clicker/domain/repository/youtube_repository.dart';
@@ -23,7 +25,8 @@ class MainBloc extends Bloc<MainEvent,MainState>{
   List<VideoModel> videoListFromChannel=[];
   List<VideoModel> allListVideoAccount=[];
   List<ChannelModelCred> listCredChannels=[];
-  final boxCredVideo=Hive.box('cred_video');
+  final boxCredChannel=Hive.box('cred_video');
+  final boxVideo=Hive.box('video_box');
 
 
   MainBloc():super(MainState.unknown()){
@@ -36,9 +39,10 @@ class MainBloc extends Bloc<MainEvent,MainState>{
   Future<void> _getListCredChannel(GetChannelEvent event,emit)async{
     emit(state.copyWith(mainStatus: MainStatus.loading));
     try {
+      listCredChannels.clear();
       final name= PreferencesUtil.getUserName;
-      boxCredVideo.keys.map((key) {
-            CredChannel value = boxCredVideo.get(key);
+      boxCredChannel.keys.map((key) {
+            CredChannel value = boxCredChannel.get(key);
             listCredChannels.add(ChannelModelCred.fromBoxHive(channel: value));
           }).toList();
       if(listCredChannels.isEmpty){
@@ -67,19 +71,21 @@ class MainBloc extends Bloc<MainEvent,MainState>{
       if(exists.isNotEmpty){
         throw const Failure('Сhannel already added');
       }
-      await boxCredVideo
+      final key= await boxVideo.add(ChannelLangCode(id: result.idChannel, codeLanguage: [])).catchError((error) {
+        throw const Failure('Error while saving locally...');
+      });
+      await boxCredChannel
           .add(CredChannel(
+               keyLangCode: key,
               idChannel: result.idChannel,
               nameChannel: result.nameChannel,
               imgBanner: result.imgBanner,
               accountName: result.accountName,
               idUpload: result.idUpload,
               idToken: result.idToken,
-               accessToken: result.accessToken,
-                googleSignInAcc: result.googleSignInAcc))
+               accessToken: result.accessToken))
           .catchError((error) {
-        print('Error hive $error');
-        throw const Failure('Error while saving locally');
+        throw const Failure('Error while saving locally..');
       });
       listCredChannels.add(result);
       emit(state.copyWith(mainStatus:MainStatus.success,addCredStatus: AddCredStatus.success,listCredChannels: listCredChannels));
@@ -92,55 +98,20 @@ class MainBloc extends Bloc<MainEvent,MainState>{
 
 
 
-   Future<void> _getChannel(GetChannelEvent event,emit)async{
-    // videoListNotPublished.clear();
-    //   videoListFromChannel.clear();
-    //   allListVideoAccount.clear();
-    //  emit(state.copyWith(mainStatus: MainStatus.loading));
-    //  try{
-    //
-    //    final result=await _googleApiRepository.getListChanel(true);
-    //    final name= PreferencesUtil.getUserName;
-    //    final avatar=PreferencesUtil.getUrlAvatar;
-    //    if(result!.isEmpty){
-    //      emit(state.copyWith(mainStatus: MainStatus.empty, userName: name, urlAvatar: avatar));
-    //    }else{
-    //
-    //     final videos = await _googleApiRepository.getVideoFromAccount(result[0].idUpload);
-    //
-    //     allListVideoAccount = videos;
-    //     for (var item in videos) {
-    //
-    //       if (!item.isPublic) {
-    //         videoListNotPublished.add(item);
-    //       }
-    //     }
-    //
-    //     emit(state.copyWith(
-    //         mainStatus: MainStatus.success,
-    //         channelList: result,
-    //         userName: name,
-    //         urlAvatar: avatar,
-    //         videoNotPubList: videoListNotPublished));
-    //   }
-    //
-    // }on Failure catch(error){
-    //    emit(state.copyWith(mainStatus: MainStatus.error,error: error.message));
-    //  }
-
-   }
-
-
 
 
     Future<void> _getListVideoFromChannel(GetListVideoFromChannelEvent event,emit)async{
-       emit(state.copyWith(videoListStatus: VideoListStatus.loading));
+       emit(state.copyWith(videoListStatus: VideoListStatus.loading,addCredStatus: AddCredStatus.unknown));
        videoListFromChannel.clear();
        videoListNotPublished.clear();
        allListVideoAccount.clear();
        try {
          final videos = await _googleApiRepository.getVideoFromAccount(event.cred);
          allListVideoAccount = videos;
+         if(videos.isEmpty){
+           emit(state.copyWith(videoListStatus: VideoListStatus.empty));
+           return;
+         }
          for (var item in videos) {
                   if (!item.isPublic) {
                     videoListNotPublished.add(item);
@@ -151,7 +122,7 @@ class MainBloc extends Bloc<MainEvent,MainState>{
                    videoListFromChannel.add(item);
                  }
                }
-         emit(state.copyWith(videoListStatus: VideoListStatus.success,videoFromChannel: videoListFromChannel));
+         emit(state.copyWith(videoListStatus: VideoListStatus.success,addCredStatus: AddCredStatus.unknown,videoFromChannel: videoListFromChannel));
        }on Failure catch (e) {
          emit(state.copyWith(videoListStatus: VideoListStatus.error,error: e.message));
        }

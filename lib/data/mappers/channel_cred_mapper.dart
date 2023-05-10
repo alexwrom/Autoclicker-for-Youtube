@@ -18,6 +18,6 @@ class ChannelCredMapper{
         idChannel: channelModelCredFromApi.idChannel,
         idToken: channelModelCredFromApi.idToken,
         accessToken: channelModelCredFromApi.accessToken,
-        googleSignInAcc: channelModelCredFromApi.googleSignInAcc);
+        keyLangCode: 0);
   }
 }

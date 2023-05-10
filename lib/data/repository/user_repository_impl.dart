@@ -10,8 +10,8 @@ class UserRepositoryImpl extends UserRepository{
   final _util=locator.get<UserDataApiUtil>();
 
   @override
-  Future<UserData> getDataUser({required String uid}) async{
-    return await _util.getDataUser(uid: uid);
+  Future<UserData> getDataUser({required String email}) async{
+    return await _util.getDataUser(email: email);
   }
 
   @override

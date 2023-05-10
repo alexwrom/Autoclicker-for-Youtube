@@ -68,7 +68,7 @@ class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
      }
 
      Future<void> _insertCaption(InsertSubtitlesEvent event,emit)async{
-       print('_insertCaption');
+
        if(cubitUserData.state.userData.numberOfTrans==0){
          emit(state.copyWith(translateStatus: TranslateStatus.forbidden));
        }else{

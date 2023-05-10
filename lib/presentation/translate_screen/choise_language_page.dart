@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
-import 'package:youtube_clicker/data/models/hive_models/video.dart';
+import 'package:youtube_clicker/data/models/hive_models/channel_lang_code.dart';
 import 'package:youtube_clicker/data/models/list_translate_api.dart';
 import 'package:youtube_clicker/di/locator.dart';
 import 'package:youtube_clicker/presentation/main_screen/cubit/user_data_cubit.dart';
@@ -11,11 +11,15 @@ import 'package:youtube_clicker/resourses/colors_app.dart';
 import 'package:youtube_clicker/utils/preferences_util.dart';
 
 import '../../components/dialoger.dart';
+import '../../domain/models/channel_model_cred.dart';
 import '../../utils/failure.dart';
 
 class ChoiceLanguagePage extends StatefulWidget{
-   const ChoiceLanguagePage({super.key,required this.idVideo});
+   const ChoiceLanguagePage({super.key,required this.idVideo,required this.credChannel});
    final String idVideo;
+   final ChannelModelCred credChannel;
+
+
   @override
   State<ChoiceLanguagePage> createState() => _ChoiceLanguagePageState();
 }
@@ -27,7 +31,7 @@ class _ChoiceLanguagePageState extends State<ChoiceLanguagePage> {
 
    late List<String> _choiceCodeLanguageList;
    final boxVideo=Hive.box('video_box');
-   dynamic _keyHiveVideo;
+   //dynamic _keyHiveVideo;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,9 +76,9 @@ class _ChoiceLanguagePageState extends State<ChoiceLanguagePage> {
                                     callback: (i){
                                       var code=ListTranslate.langCode(i!['index']);
                                       if(i['add']){
-                                        _addChoiceCodeLanguage(code,widget.idVideo);
+                                        _addChoiceCodeLanguage(widget.credChannel.keyLangCode,code,widget.idVideo);
                                       }else{
-                                        _removeChoiceCodeLanguage(code,widget.idVideo);
+                                        _removeChoiceCodeLanguage(widget.credChannel.keyLangCode,code,widget.idVideo);
                                       }
 
                                     },);
@@ -110,26 +114,28 @@ class _ChoiceLanguagePageState extends State<ChoiceLanguagePage> {
           );
   }
 
-   List<String> _getListChoiceCodeLanguage(String idVideo){
+   List<String> _getListChoiceCodeLanguage(int keyLangCode){
        List<String> codesList=[];
-       boxVideo.keys.map((key) {
-          Video value = boxVideo.get(key);
-            codesList=value.codeLanguage;
-       }).toList();
+       ChannelLangCode value = boxVideo.get(keyLangCode);
+       codesList=value.codeLanguage;
+       // boxVideo.keys.map((key) {
+       //    ChannelLangCode value = boxVideo.get(key);
+       //      codesList=value.codeLanguage;
+       // }).toList();
        return codesList;
     }
 
 
-    _addChoiceCodeLanguage(String code,String idVideo)async{
-      boxVideo.put(_keyHiveVideo, Video(id: idVideo, codeLanguage: _choiceCodeLanguageList));
+    _addChoiceCodeLanguage(int keyLangCode,String code,String idChannel)async{
+      boxVideo.put(keyLangCode, ChannelLangCode(id: idChannel, codeLanguage: _choiceCodeLanguageList));
       _choiceCodeLanguageList.add(code);
       notifiCodeList.value=_choiceCodeLanguageList.length;
     }
 
-    _removeChoiceCodeLanguage(String code,String idVideo){
+    _removeChoiceCodeLanguage(int keyLangCode,String code,String idVideo){
       _choiceCodeLanguageList.remove(code);
       try{
-        boxVideo.put(_keyHiveVideo, Video(id: idVideo, codeLanguage: _choiceCodeLanguageList));
+        boxVideo.put(keyLangCode, ChannelLangCode(id: idVideo, codeLanguage: _choiceCodeLanguageList));
         notifiCodeList.value=_choiceCodeLanguageList.length;
       }on HiveError catch(error,stackTrace){
          Dialoger.showError(error.message, context);
@@ -151,8 +157,8 @@ class _ChoiceLanguagePageState extends State<ChoiceLanguagePage> {
   @override
   void initState() {
     super.initState();
-   _choiceCodeLanguageList=_getListChoiceCodeLanguage(widget.idVideo);
-    _keyHiveVideo=PreferencesUtil.getKey;
+   _choiceCodeLanguageList=_getListChoiceCodeLanguage(widget.credChannel.keyLangCode);
+   // _keyHiveVideo=PreferencesUtil.getKey;
   }
 }
 

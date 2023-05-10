@@ -27,18 +27,8 @@ class UserDataCubit extends Cubit<UserdataState>{
     String uid='';
     emit(state.copyWith(userDataStatus: UserDataStatus.loading));
     try {
-       uid=PreferencesUtil.getUid;
-      if(uid.isEmpty){
-        if(Platform.isIOS){
-          final data=await _deviceInfoPlugin.iosInfo;
-          uid=data.identifierForVendor!;
-        }else if(Platform.isAndroid){
-          final data=await _deviceInfoPlugin.androidInfo;
-          uid=data.id!;
-        }
-      }
-
-       _userData=await _repositoryUser.getDataUser(uid: uid);
+       uid=PreferencesUtil.getEmail;
+       _userData=await _repositoryUser.getDataUser(email: uid);
 
        if(_userData!.isActive){
          _userData=_userData!.copyWith(numberOfTrans: _userData!.numberOfTransActive);
@@ -56,7 +46,6 @@ class UserDataCubit extends Cubit<UserdataState>{
 
 
   setListCodeLanguage(List<String> list)async{
-    print('List Cubit ${list.length}');
     emit(state.copyWith(choiceCodeLanguageList: list));
   }
 

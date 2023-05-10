@@ -13,7 +13,8 @@ class ChannelModelCred{
   final String idChannel;
   final String accessToken;
   final String idToken;
-  final GoogleSignInAccount googleSignInAcc;
+  final int keyLangCode;
+
 
   const ChannelModelCred({
     required this.nameChannel,
@@ -23,7 +24,7 @@ class ChannelModelCred{
     required this.idChannel,
     required this.accessToken,
     required this.idToken,
-    required this.googleSignInAcc
+    required this.keyLangCode
   });
 
 
@@ -36,6 +37,6 @@ class ChannelModelCred{
         idChannel: channel.idChannel,
         accessToken: channel.accessToken,
         idToken: channel.idToken,
-        googleSignInAcc: channel.googleSignInAcc);
+        keyLangCode:channel.keyLangCode);
   }
 }

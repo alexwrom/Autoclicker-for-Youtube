@@ -233,7 +233,7 @@ class _ChannelsPageState extends State<ChannelsPage> {
                               visible: state.videoNotPubList.isNotEmpty,
                               child: Column(children: [
                                 ...List.generate(state.videoNotPubList.length, (index){
-                                  return  ItemNotPubVideo(videoNotPublished: state.videoNotPubList[index]);
+                                  return  ItemNotPubVideo(videoNotPublished: state.videoNotPubList[index],credChannel:state.listCredChannels[index] );
                                 })
                               ],)),
 

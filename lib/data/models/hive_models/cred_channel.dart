@@ -21,10 +21,12 @@ class CredChannel{
   @HiveField(6)
   final String idToken;
   @HiveField(7)
-  final GoogleSignInAccount googleSignInAcc;
+  final int keyLangCode;
+
 
 
   CredChannel({
+    required this.keyLangCode,
     required this.nameChannel,
     required this.imgBanner,
     required this.accountName,
@@ -32,6 +34,6 @@ class CredChannel{
     required this.idChannel,
     required this.accessToken,
     required this.idToken,
-    required this.googleSignInAcc
+
   });
 }

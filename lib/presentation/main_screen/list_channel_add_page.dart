@@ -168,7 +168,7 @@ class _ListChannelAddState extends State<ListChannelAdd> {
                                    child: Column(
                                      mainAxisAlignment: MainAxisAlignment.center,
                                      children: [
-                                        SizedBox(height: MediaQuery.of(context).size.height/3),
+                                        SizedBox(height: MediaQuery.of(context).size.height/3.5),
                                        const Icon(Icons.hourglass_empty,
                                            color: Colors.grey, size: 50),
                                        const SizedBox(height: 20),

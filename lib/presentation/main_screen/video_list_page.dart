@@ -33,7 +33,7 @@ class VideoListPage extends StatefulWidget{
 
 class _VideoListPageState extends State<VideoListPage> with WidgetsBindingObserver{
 
-  final _googleSingIn = locator.get<GoogleSignIn>();
+  //final _googleSingIn = locator.get<GoogleSignIn>();
   IOClient? httpClient;
 
 
@@ -101,6 +101,43 @@ class _VideoListPageState extends State<VideoListPage> with WidgetsBindingObserv
                         }
                       },
                     builder: (_,state){
+
+                      if (state.videoListStatus.isEmpty) {
+                       return Column(
+                         mainAxisAlignment: MainAxisAlignment.center,
+                         children: [
+                           SizedBox(height: MediaQuery.of(context).size.height/3),
+                           const Icon(Icons.hourglass_empty,
+                               color: Colors.grey, size: 50),
+                           const SizedBox(height: 20),
+                           const Text(
+                             "No published videos found",
+                             style: TextStyle(
+                                 color: Colors.grey,
+                                 fontSize: 20,
+                                 fontWeight: FontWeight.w400),
+                           ),
+                         ],
+                       );
+                      }
+                      if(state.videoListStatus.isError){
+                        return  Padding(
+                          padding:  EdgeInsets.only(top:center),
+                          child:  Center(child:
+                            Column(
+                              children:const [
+                                 Icon(Icons.error_outline,color: Colors.grey,size: 50),
+                                 SizedBox(height: 10),
+                                 Text('Data loading error',style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w400
+                                ),),
+                              ],
+                            )
+                          ),
+                        );
+                      }
                         if(state.videoListStatus.isLoading){
                           return  Padding(
                             padding:  EdgeInsets.only(top:center),
@@ -130,7 +167,7 @@ class _VideoListPageState extends State<VideoListPage> with WidgetsBindingObserv
                           ),
                           const SizedBox(height: 10),
                           ...List.generate(state.videoFromChannel.length, (index){
-                            return  ItemVideo(videoModel: state.videoFromChannel[index]);
+                            return  ItemVideo(videoModel: state.videoFromChannel[index],credChannel:widget.channelModelCred);
                           })
                         ],);
                        }

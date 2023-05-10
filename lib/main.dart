@@ -19,7 +19,7 @@ import 'package:responsive_framework/responsive_wrapper.dart';
 import 'app_bloc/app_bloc.dart';
 import 'components/dialoger.dart';
 import 'data/models/hive_models/cred_channel.dart';
-import 'data/models/hive_models/video.dart';
+import 'data/models/hive_models/channel_lang_code.dart';
 import 'di/locator.dart';
 import 'presentation/auth_screen/auth_page_google.dart';
 import 'presentation/splash_screen/splash_page.dart';
@@ -28,7 +28,7 @@ import 'utils/app_theme.dart';
 Future<void> initHive()async{
   final path=(await getApplicationDocumentsDirectory()).path;
   Hive.init(path);
-  Hive.registerAdapter(VideoAdapter());
+  Hive.registerAdapter(ChannelLangCodeAdapter());
   Hive.registerAdapter(CredChannelAdapter());
   await Hive.openBox('video_box').catchError((error){
     print('Error Open Box 1 $error');

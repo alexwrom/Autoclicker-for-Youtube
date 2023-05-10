@@ -14,15 +14,13 @@ import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import '../../di/locator.dart';
 import '../../utils/failure.dart';
-import '../http_client/dio_auth_client.dart';
-import 'package:http/http.dart' as http;
+
 
 
 class AuthService{
 
    FirebaseAuth? _auth;
    FirebaseFirestore? _firebaseFirestore;
-   final  _dio=locator.get<DioAuthClient>();
    final _googleSingIn=locator.get<GoogleSignIn>();
   final  _deviceInfoPlugin = locator.get<DeviceInfoPlugin>();
 
@@ -167,7 +165,6 @@ class AuthService{
          throw const Failure('User is not found');
        }else{
          if(userDoc.get('password')==pass){
-           print('Email Save $email');
            await PreferencesUtil.setUserName(email);
            await PreferencesUtil.setEmail(email);
            return true;

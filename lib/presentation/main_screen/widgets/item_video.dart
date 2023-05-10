@@ -4,6 +4,7 @@
   import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:youtube_clicker/domain/models/channel_model_cred.dart';
 import 'package:youtube_clicker/domain/models/video_model.dart';
 import 'package:youtube_clicker/utils/parse_time_duration.dart';
 
@@ -11,16 +12,17 @@ import '../../../resourses/colors_app.dart';
 import '../../translate_screen/translate_page.dart';
 
 class ItemVideo extends StatelessWidget{
-  const ItemVideo({super.key,required this.videoModel});
+  const ItemVideo({super.key,required this.videoModel,required this.credChannel});
 
   final VideoModel videoModel;
+  final ChannelModelCred credChannel;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: (){
         //start play
-       Navigator.push(context, MaterialPageRoute(builder: (_)=>TranslatePage(videoModel: videoModel)));
+       Navigator.push(context, MaterialPageRoute(builder: (_)=>TranslatePage(videoModel: videoModel,credChannel:credChannel)));
       },
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 10),

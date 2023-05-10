@@ -6,21 +6,23 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:youtube_clicker/utils/parse_time_duration.dart';
 
+import '../../../domain/models/channel_model_cred.dart';
 import '../../../domain/models/video_model.dart';
 import '../../../resourses/colors_app.dart';
 import '../../translate_screen/translate_page.dart';
 
 class ItemNotPubVideo extends StatelessWidget{
-  const ItemNotPubVideo({super.key,required this.videoNotPublished});
+  const ItemNotPubVideo({super.key,required this.videoNotPublished,required this.credChannel});
 
   final VideoModel videoNotPublished;
+  final ChannelModelCred credChannel;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: (){
         //start play
-        Navigator.push(context, MaterialPageRoute(builder: (_)=>TranslatePage(videoModel: videoNotPublished)));
+        Navigator.push(context, MaterialPageRoute(builder: (_)=>TranslatePage(videoModel: videoNotPublished,credChannel: credChannel)));
       },
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 10),
