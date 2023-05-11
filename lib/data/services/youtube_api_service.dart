@@ -126,13 +126,13 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
         ChannelModelCred cred) async {
       List<String> idsVideo = [];
       try {
-        print('Email ${cred.accountName}');
+
         final accessToken=await refreshToken(cred.accountName);
-        print('New Token $accessToken');
         final authHeaders=<String, String>{
-          'Authorization': 'Bearer ${accessToken}',
+          'Authorization': 'Bearer $accessToken',
           'X-Goog-AuthUser': '0',
         };
+        await PreferencesUtil.setHeadersGoogleApi(authHeaders);
         httpClient = GoogleHttpClient(authHeaders);
         final data = YouTubeApi(httpClient!);
         final result = await data.search.list(['snippet'], forMine: true, maxResults: 20, type: ['video']);
@@ -154,7 +154,7 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
       }
     }
 
-
+    //todo test
     Future<int> updateLocalization(VideoModel videoModel,
         Map<String, VideoLocalization> map) async {
       try {
@@ -273,7 +273,9 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
     }
 
     Future<String> refreshToken(String email) async {
+      print('Email $email');
       try {
+        await _googleSingIn.signInSilently();
         final GoogleSignInTokenData response =
               await GoogleSignInPlatform.instance.getTokens(
                 email: email,

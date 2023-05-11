@@ -6,6 +6,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:youtube_clicker/utils/preferences_util.dart';
 
 import '../../app_bloc/app_bloc.dart';
 import '../../components/buttons.dart';
@@ -30,6 +31,7 @@ class _LogInPageState extends State<LogInPage> {
 
   late TextEditingController _emailController;
   late TextEditingController _passController;
+  String email='';
 
 
   @override
@@ -44,6 +46,8 @@ class _LogInPageState extends State<LogInPage> {
     super.initState();
     _emailController=TextEditingController();
     _passController=TextEditingController();
+    email=PreferencesUtil.getEmail;
+    if(email.isNotEmpty)_emailController.text=email;
   }
   @override
   Widget build(BuildContext context) {
@@ -64,7 +68,7 @@ class _LogInPageState extends State<LogInPage> {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                EmailFieldLogin(controller: _emailController,),
+                EmailFieldLogin(controller: _emailController),
                 const SizedBox(height: 10),
                 PassFieldLogin(controller: _passController,textHint: 'Password',),
                 const SizedBox(height: 50),

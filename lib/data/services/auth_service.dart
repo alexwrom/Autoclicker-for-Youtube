@@ -77,23 +77,13 @@ class AuthService{
       await PreferencesUtil.setUserName(userCredential.user!.displayName!);
       await PreferencesUtil.setUserId(imei);
       await PreferencesUtil.setEmail(userCredential.user!.email!);
-      DocumentSnapshot userDoc=await _firebaseFirestore!.collection('users').doc(imei).get();
-      if(userDoc.exists){
-        await _firebaseFirestore!.collection('users').doc(imei).update({
-          'imei':imei
-        });
-      }else{
-        final ts=DateTime.now().millisecondsSinceEpoch;
-        await _firebaseFirestore!.collection('users').doc(imei).set({
-          'imei':imei,
-          'isActive':false,
-          'description':userCredential.user!.displayName!.isNotEmpty?userCredential.user!.displayName!:'',
-          'balance':300,
-          'balanceActive':1000,
-          'timeStampAuth':ts,
-          'timestampPurchase':0
-        });
-      }
+      final ts=DateTime.now().millisecondsSinceEpoch;
+      await _firebaseFirestore!.collection('userpc').doc(imei).set({
+        'balance':300,
+        'timeStampAuth':ts,
+        'timestampPurchase':0
+      });
+
 
     } on FirebaseAuthException catch(error,stackTrace){
         print('Error Auth ${error.message}');
@@ -122,12 +112,12 @@ class AuthService{
        }
        if(newPass.contains('abc')){
          await _auth!.signInAnonymously();
-         DocumentSnapshot userDoc=await _firebaseFirestore!.collection('users').doc(email).get();
+         DocumentSnapshot userDoc=await _firebaseFirestore!.collection('userpc').doc(email).get();
          if(!userDoc.exists){
            throw const Failure('User is not found');
          }
        }else{
-         await _firebaseFirestore!.collection('users').doc(email).update({
+         await _firebaseFirestore!.collection('userpc').doc(email).update({
            'password':newPass
          });
          return true;
@@ -158,9 +148,8 @@ class AuthService{
          throw Failure('Enter password');
        }
 
-
-       await _auth!.signInWithEmailAndPassword(email: email, password: pass);
-       DocumentSnapshot userDoc=await _firebaseFirestore!.collection('users').doc(email).get();
+       await _auth!.signInAnonymously();
+       DocumentSnapshot userDoc=await _firebaseFirestore!.collection('userpc').doc(email).get();
        if(!userDoc.exists){
          throw const Failure('User is not found');
        }else{
@@ -204,7 +193,7 @@ class AuthService{
 
 
        await _auth!.createUserWithEmailAndPassword(email: email, password: pass);
-       DocumentSnapshot userDoc=await _firebaseFirestore!.collection('users').doc(email).get();
+       DocumentSnapshot userDoc=await _firebaseFirestore!.collection('userpc').doc(email).get();
        if(userDoc.exists){
          throw Failure('This user already exists');
        }else{
@@ -212,11 +201,8 @@ class AuthService{
          await PreferencesUtil.setEmail(email);
 
          final ts=DateTime.now().millisecondsSinceEpoch;
-         await _firebaseFirestore!.collection('users').doc(email).set({
-           'isActive':false,
-           'description':'',
+         await _firebaseFirestore!.collection('userpc').doc(email).set({
            'balance':800,
-           'balanceActive':1000,
            'timeStampAuth':ts,
            'timestampPurchase':0,
            'password':pass,

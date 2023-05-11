@@ -29,14 +29,22 @@ enum AddCredStatus{
   error,
   loading,
   success,
-  empty
+  empty,
+  removed,
+  removal,
+  errorRemove
 }
+
+
 extension AddCredStatusExt on AddCredStatus{
   bool get isUnknown=>this==AddCredStatus.unknown;
   bool get isError=>this==AddCredStatus.error;
   bool get isLoading=>this==AddCredStatus.loading;
   bool get isSuccess=>this==AddCredStatus.success;
   bool get isEmpty=>this==AddCredStatus.empty;
+  bool get isErrorRemove=>this==AddCredStatus.errorRemove;
+  bool get isRemoval=>this==AddCredStatus.removal;
+  bool get isRemoved=>this==AddCredStatus.removed;
 
 }
 

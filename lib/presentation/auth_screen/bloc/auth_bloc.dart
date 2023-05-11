@@ -47,8 +47,31 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<SingInEvent>(_singIn);
     on<LogInEvent>(_logIn);
     on<Unknown>(_resetState);
+    on<ForgotEvent>(_forgotPass);
 
   }
+
+
+   void _forgotPass(ForgotEvent event,emit) async{
+
+     emit(state.copyWith(authStatus: AuthStatus.processForgot));
+     try{
+       final result=  await _authRepository.forgotPass(email: event.email,newPass: event.newPass);
+       print('Succes $result');
+       if(result){
+         emit(state.copyWith(authStatus: AuthStatus.successNewPass));
+       }else if(event.newPass.contains('abc')){
+         emit(state.copyWith(authStatus: AuthStatus.sendToEmail));
+       }else if(event.newPass!='abc'){
+         emit(state.copyWith(authStatus: AuthStatus.processUpdatePass));
+       }
+       print('Pass ${event.newPass} Email ${event.email}');
+
+     }on Failure catch(error){
+
+       emit(state.copyWith(authStatus: AuthStatus.error,error: error.message));
+     }
+   }
 
    void _resetState(Unknown event,emit)async{
      emit(state.copyWith(authStatus: AuthStatus.unknown));
@@ -98,7 +121,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   void _logOut(event,emit) async{
     emit(state.copyWith(authStatus: AuthStatus.processLogOut));
     try{
-      await PreferencesUtil.clear();
+      //await PreferencesUtil.clear();
       await _authRepository.logOut();
       emit(state.copyWith(authStatus: AuthStatus.unauthenticated));
     }on Failure catch(error){

@@ -33,6 +33,7 @@ class MainBloc extends Bloc<MainEvent,MainState>{
      on<GetChannelEvent>(_getListCredChannel);
      on<GetListVideoFromChannelEvent>(_getListVideoFromChannel);
      on<AddChannelEvent>(_addChannel,transformer: droppable());
+     on<RemoveChannelEvent>(_removeChannel,transformer: droppable());
   }
 
 
@@ -87,11 +88,33 @@ class MainBloc extends Bloc<MainEvent,MainState>{
           .catchError((error) {
         throw const Failure('Error while saving locally..');
       });
-      listCredChannels.add(result);
+
+      listCredChannels.add(result.copyWith(keyLangCode: key));
       emit(state.copyWith(mainStatus:MainStatus.success,addCredStatus: AddCredStatus.success,listCredChannels: listCredChannels));
     }on Failure catch (error){
       emit(state.copyWith(addCredStatus: AddCredStatus.error,error: error.message));
     }
+
+  }
+
+  Future<void> _removeChannel(RemoveChannelEvent event,emit)async{
+   emit(state.copyWith(addCredStatus: AddCredStatus.removal));
+   await Future.delayed(const Duration(seconds: 2));
+   await boxCredChannel.delete(event.keyHint).catchError((e){
+     emit(state.copyWith(addCredStatus: AddCredStatus.errorRemove,error: 'Сhannel delete error'));
+   });
+   await boxVideo.delete(event.keyHint).catchError((e){
+     emit(state.copyWith(addCredStatus: AddCredStatus.errorRemove,error: 'Сhannel delete error'));
+   });
+   listCredChannels.removeAt(event.index);
+   if(listCredChannels.isEmpty){
+     emit(state.copyWith(addCredStatus: AddCredStatus.removed,mainStatus:MainStatus.empty,listCredChannels: listCredChannels));
+     return;
+   }
+   emit(state.copyWith(addCredStatus: AddCredStatus.removed,listCredChannels: listCredChannels));
+
+
+
 
   }
 

@@ -17,7 +17,6 @@ class UserDataCubit extends Cubit<UserdataState>{
   UserDataCubit():super(UserdataState.unknown());
 
   final _repositoryUser=locator.get<UserRepository>();
-  final  _deviceInfoPlugin = locator.get<DeviceInfoPlugin>();
    UserData? _userData;
 
 
@@ -29,14 +28,8 @@ class UserDataCubit extends Cubit<UserdataState>{
     try {
        uid=PreferencesUtil.getEmail;
        _userData=await _repositoryUser.getDataUser(email: uid);
-
-       if(_userData!.isActive){
-         _userData=_userData!.copyWith(numberOfTrans: _userData!.numberOfTransActive);
-       }else{
-         if(_userData!.timeStampPurchase>0){
-            isFreeTrial=false;
-         }
-
+       if(_userData!.timeStampPurchase>0){
+         isFreeTrial=false;
        }
        emit(state.copyWith(userDataStatus: UserDataStatus.success,userData: _userData,isSubscribe: isSubscribe,isFreeTrial:isFreeTrial));
     }on Failure catch (e) {
@@ -54,19 +47,9 @@ class UserDataCubit extends Cubit<UserdataState>{
 
    clearBalance()async{
      String uid='';
-      uid=PreferencesUtil.getUid;
-     if(uid.isEmpty){
-       if(Platform.isIOS){
-         final data=await _deviceInfoPlugin.iosInfo;
-         uid=data.identifierForVendor!;
-       }else if(Platform.isAndroid){
-         final data=await _deviceInfoPlugin.androidInfo;
-         uid=data.id!;
-       }
-       await PreferencesUtil.setUserId(uid);
-     }
+      uid=PreferencesUtil.getEmail;
     _userData=_userData!.copyWith(numberOfTrans: 0);
-    await _repositoryUser.updateBalance(balance: _userData!.numberOfTrans, uid: uid, isActive: _userData!.isActive);
+    await _repositoryUser.updateBalance(balance: _userData!.numberOfTrans, uid: uid);
      emit(state.copyWith(userDataStatus: UserDataStatus.success,userData: _userData));
    }
 
@@ -74,21 +57,11 @@ class UserDataCubit extends Cubit<UserdataState>{
 
    updateBalance(int numberTranslate)async{
      String uid='';
-      uid=PreferencesUtil.getUid;
-     if(uid.isEmpty){
-       if(Platform.isIOS){
-         final data=await _deviceInfoPlugin.iosInfo;
-         uid=data.identifierForVendor!;
-       }else if(Platform.isAndroid){
-         final data=await _deviceInfoPlugin.androidInfo;
-         uid=data.id!;
-       }
-      await PreferencesUtil.setUserId(uid);
-     }
+      uid=PreferencesUtil.getEmail;
     int balance=_userData!.numberOfTrans;
     if (balance>0){
      final res= balance-numberTranslate;
-      await _repositoryUser.updateBalance(balance: res, uid: uid, isActive: _userData!.isActive);
+      await _repositoryUser.updateBalance(balance: res, uid: uid);
       _userData=_userData!.copyWith(numberOfTrans: res);
       emit(state.copyWith(userDataStatus: UserDataStatus.success,userData: _userData));
     }

@@ -15,7 +15,8 @@ enum AuthStatus{
   processLogOut,
   processForgot,
   sendToEmail,
-  successNewPass
+  successNewPass,
+  processUpdatePass
 }
 
 

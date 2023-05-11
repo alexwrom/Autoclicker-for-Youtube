@@ -39,4 +39,26 @@ class ChannelModelCred{
         idToken: channel.idToken,
         keyLangCode:channel.keyLangCode);
   }
+
+  ChannelModelCred copyWith({
+    String? nameChannel,
+    String? imgBanner,
+    String? accountName,
+    String? idUpload,
+    String? idChannel,
+    String? accessToken,
+    String? idToken,
+    int? keyLangCode,
+  }) {
+    return ChannelModelCred(
+      nameChannel: nameChannel ?? this.nameChannel,
+      imgBanner: imgBanner ?? this.imgBanner,
+      accountName: accountName ?? this.accountName,
+      idUpload: idUpload ?? this.idUpload,
+      idChannel: idChannel ?? this.idChannel,
+      accessToken: accessToken ?? this.accessToken,
+      idToken: idToken ?? this.idToken,
+      keyLangCode: keyLangCode ?? this.keyLangCode,
+    );
+  }
 }

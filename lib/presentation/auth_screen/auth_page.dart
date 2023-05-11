@@ -117,7 +117,7 @@ class _AuthPageState extends State  with TickerProviderStateMixin{
                               fontSize: 22,
                               fontWeight: FontWeight.w700
                           ),),
-                          const Text('Pay Desktop',style: TextStyle(
+                          const Text('Clicker',style: TextStyle(
                               color: Colors.white,
                               fontSize: 22,
                               fontWeight: FontWeight.w700

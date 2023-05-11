@@ -16,6 +16,11 @@ class MainEvent extends Equatable{
  class AddChannelEvent extends MainEvent{}
 
  class GetChannelEvent extends MainEvent{}
+ class RemoveChannelEvent extends MainEvent{
+   final int keyHint;
+   final int index;
+    RemoveChannelEvent({required this.keyHint,required this.index});
+ }
 
  class GetListVideoFromChannelEvent extends MainEvent{
     final ChannelModelCred cred;

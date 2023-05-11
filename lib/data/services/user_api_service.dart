@@ -21,7 +21,7 @@ class UserApiService{
     Future<UserDataFromApi> getDataUser({required String email})async{
 
    try{
-     DocumentSnapshot documentSnapshot=await _firebaseFirestore!.collection('users').doc(email).get();
+     DocumentSnapshot documentSnapshot=await _firebaseFirestore!.collection('userpc').doc(email).get();
      if(!documentSnapshot.exists){
          throw const Failure('User is not found');
      }
@@ -37,15 +37,11 @@ class UserApiService{
 
     }
 
-    Future<void> updateBalance({required int balance,required String uid,required bool isActive})async{
+    Future<void> updateBalance({required int balance,required String uid})async{
       Map<String,dynamic> map={};
-      if(!isActive){
-        map.addAll({'balance':balance});
-      }else{
-        map.addAll({'balanceActive':balance});
-      }
+      map.addAll({'balance':balance});
       try{
-        await _firebaseFirestore!.collection('users').doc(uid).update(map);
+        await _firebaseFirestore!.collection('userpc').doc(uid).update(map);
 
       }on FirebaseException catch(error,stackTrace){
         Error.throwWithStackTrace(Failure(error.message!), stackTrace);

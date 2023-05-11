@@ -9,10 +9,14 @@ import '../../../resourses/colors_app.dart';
 import '../video_list_page.dart';
 
 class ItemChannelCred extends StatelessWidget{
-  const ItemChannelCred({super.key,required this.channelModelCred});
+  const ItemChannelCred({super.key,required this.channelModelCred,
+  required this.onDelete,
+  required this.index});
 
 
   final ChannelModelCred channelModelCred;
+  final Function onDelete;
+  final int index;
 
 
   @override
@@ -20,11 +24,7 @@ class ItemChannelCred extends StatelessWidget{
     return GestureDetector(
       onTap: (){
         Navigator.push(context, MaterialPageRoute(builder: (_)=> VideoListPage(channelModelCred: channelModelCred)));
-        // if(int.parse(channelModel.videoCount)>0){
-        //   Navigator.push(context, MaterialPageRoute(builder: (_)=> VideoListPage(channelModel: channelModel)));
-        // }else{
-        //   Dialoger.showMessageSnackBar('There are no videos on the channel',context);
-        // }
+
 
       },
       child: Container(
@@ -76,30 +76,18 @@ class ItemChannelCred extends StatelessWidget{
                           fontWeight: FontWeight.w400
                       ),),
                   ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      // Row(
-                      //   children: [
-                      //     Icon(Icons.account_circle_outlined,color: colorRed.withOpacity(0.7),size: 15),
-                      //     const SizedBox(width: 5),
-                      //     Text(channelModel.subscriberCount,
-                      //       overflow: TextOverflow.ellipsis,
-                      //       maxLines: 2,
-                      //       style:const TextStyle(
-                      //           color: Colors.grey,
-                      //           fontSize: 14,
-                      //           fontWeight: FontWeight.w700
-                      //       ),),
-                      //   ],
-                      // ),
 
-                    ],
-                  )
                 ],
               ),
             ),
-
+            Padding(
+              padding: const EdgeInsets.only(top: 60),
+              child: GestureDetector(
+                onTap: (){
+                  onDelete.call(index);
+                },
+                  child: const Icon(Icons.delete_outline,color: Colors.grey)),
+            )
           ],
         ),
       ),

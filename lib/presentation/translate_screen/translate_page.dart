@@ -452,9 +452,9 @@ class _TranslatePageState extends State<TranslatePage> {
     super.initState();
     _translateBloc=TranslateBloc(cubitUserData: context.read<UserDataCubit>());
     _translateBloc.add(GetSubtitlesEvent(videoId: widget.videoModel.idVideo));
+    print('Get Id key ${widget.credChannel.keyLangCode}');
     final ChannelLangCode value = boxVideo.get(widget.credChannel.keyLangCode);
     _listCodeLanguage=value.codeLanguage;
-    print('Get List Box ${_listCodeLanguage.length} key ${widget.credChannel.keyLangCode}');
     // boxVideo.keys.map((key) {
     //   final ChannelLangCode value = boxVideo.get(widget.credChannel.keyLangCode);
     //   _listCodeLanguage=value.codeLanguage;

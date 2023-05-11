@@ -44,12 +44,8 @@ class CardFreeTrial extends StatelessWidget{
            if(state.userDataStatus==UserDataStatus.loading){
              return Container();
            }
-           //todo корректно настроить
-           if(!state.isFreeTrial){
-             return Container();
-           }
 
-           if(state.userData.isActive){
+           if(!state.isFreeTrial){
              return Container();
            }
 
