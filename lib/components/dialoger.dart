@@ -12,8 +12,9 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:youtube_clicker/presentation/membership_screen/membership_page.dart';
 
 import '../presentation/auth_screen/auth_page.dart';
-import '../presentation/auth_screen/auth_page_google.dart';
 import '../presentation/auth_screen/bloc/auth_bloc.dart';
+import '../presentation/main_screen/bloc/main_bloc.dart';
+import '../presentation/main_screen/bloc/main_event.dart';
 import '../resourses/colors_app.dart';
 
 
@@ -39,6 +40,31 @@ class Dialoger {
         context.read<AuthBloc>().add(LogOutEvent());
         Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=>const AuthPage()));
       }
+    );
+
+
+  }
+
+  static void showDeleteChannel({required BuildContext context,required int keyHint,required int index}){
+    showCustomDialog(
+        textButtonCancel: 'Close',
+        textButtonAccept: 'Delete',
+        textButtonColor: Colors.white,
+        contextUp: context,
+        title: 'Delete channel?',
+        titleColor: Platform.isIOS?colorPrimary:Colors.white,
+        content:  Text('Channel data is deleted from local storage',
+          style: TextStyle(
+            color: Platform.isIOS?colorPrimary:Colors.grey,
+
+          ),),
+        voidCallback: (){
+
+          context.read<MainBloc>().add(
+              RemoveChannelEvent(
+                  keyHint: keyHint,
+                  index: index));
+        }
     );
 
 

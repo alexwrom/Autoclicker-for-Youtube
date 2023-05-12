@@ -29,10 +29,10 @@ class Failure implements Exception{
   static String dioError(DioError error){
     switch (error.response!.statusCode) {
       case 500:
-        return 'Ошибка сервера';
+        return 'Server error';
 
       default:
-        return 'Ошибка сервера';
+        return 'Server error';
     }
   }
 
@@ -41,29 +41,29 @@ class Failure implements Exception{
   static String firebaseAuthErrorToMessage(FirebaseAuthException exception){
     switch (exception.code) {
       case 'invalid-email':
-        return 'Hеверный адрес электронной почты';
+        return 'Incorrect e-mail address';
       case 'user-disabled':
-        return 'Пользоваьель отключен';
+        return 'User is disabled';
       case 'user-not-found':
-        return 'Пользователь не найден';
+        return 'User is not found';
       case 'wrong-password':
-        return 'Неправильный пароль';
+        return 'Incorrect password';
       case 'email-already-in-use':
-        return 'Этот электронный адрес уже занят';
+        return 'This e-mail is already taken';
       case 'account-exists-with-different-credential':
-        return 'Учетная запись существует с другими учетными данными';
+        return 'Account exists with different credentials';
       case 'invalid-credential':
-        return 'Недействительные учетные данные';
+        return 'Invalid credentials';
       case 'operation-not-allowed':
-        return 'Операция запрещена';
+        return 'Operation prohibited';
       case 'weak-password':
-        return 'Пароль менее 6 символов';
+        return 'Password less than 6 characters';
       case'network-request-failed':
-        return 'Сбой сетевого запроса, проверь соединение';
+        return 'Network failure';
 
       case 'ERROR_MISSING_GOOGLE_AUTH_TOKEN':
       default:
-        return 'Ошибка сервера';
+        return 'Server error';
     }
   }
 

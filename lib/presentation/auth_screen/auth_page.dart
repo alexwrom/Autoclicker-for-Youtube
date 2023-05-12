@@ -12,7 +12,6 @@ import 'package:youtube_clicker/presentation/auth_screen/singin_page.dart';
 import '../../components/dialoger.dart';
 import '../../resourses/colors_app.dart';
 import '../../resourses/images.dart';
-import '../main_screen/channels_page.dart';
 import '../main_screen/list_channel_add_page.dart';
 import 'bloc/auth_bloc.dart';
 import 'login_page.dart';
@@ -136,7 +135,7 @@ class _AuthPageState extends State  with TickerProviderStateMixin{
                             ),
                             child: TabBar(
                               controller: _tabControllerMain,
-                              labelStyle: TextStyle(
+                              labelStyle: const TextStyle(
                                   fontWeight: FontWeight.w700
                               ),
                               labelColor: Colors.white,
@@ -145,7 +144,7 @@ class _AuthPageState extends State  with TickerProviderStateMixin{
                                   color: colorRed,
                                   borderRadius: BorderRadius.circular(50)
                               ),
-                              tabs: [
+                              tabs: const [
                                 Tab(
                                   text: 'LogIn',
                                 ),

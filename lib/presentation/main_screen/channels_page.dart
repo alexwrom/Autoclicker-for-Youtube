@@ -1,10 +1,7 @@
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:youtube_clicker/di/locator.dart';
-import 'package:youtube_clicker/presentation/auth_screen/auth_page_google.dart';
 import 'package:youtube_clicker/presentation/main_screen/bloc/main_bloc.dart';
 import 'package:youtube_clicker/presentation/main_screen/bloc/main_event.dart';
 import 'package:youtube_clicker/presentation/main_screen/bloc/main_state.dart';
@@ -17,7 +14,6 @@ import '../../resourses/colors_app.dart';
 import '../../utils/preferences_util.dart';
 import '../auth_screen/auth_page.dart';
 import '../auth_screen/bloc/auth_bloc.dart';
-import 'cubit/user_data_cubit.dart';
 
 class ChannelsPage extends StatefulWidget{
   const ChannelsPage({super.key,this.reAuth=true});

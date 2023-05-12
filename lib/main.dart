@@ -1,15 +1,11 @@
-import 'dart:io';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:youtube_clicker/presentation/auth_screen/auth_page.dart';
 import 'package:youtube_clicker/presentation/auth_screen/bloc/auth_bloc.dart';
 import 'package:youtube_clicker/presentation/main_screen/bloc/main_bloc.dart';
-import 'package:youtube_clicker/presentation/main_screen/channels_page.dart';
 import 'package:youtube_clicker/presentation/main_screen/cubit/user_data_cubit.dart';
 import 'package:youtube_clicker/presentation/main_screen/list_channel_add_page.dart';
-import 'package:youtube_clicker/presentation/membership_screen/membership_page.dart';
 import 'package:youtube_clicker/utils/preferences_util.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -20,8 +16,6 @@ import 'app_bloc/app_bloc.dart';
 import 'components/dialoger.dart';
 import 'data/models/hive_models/cred_channel.dart';
 import 'data/models/hive_models/channel_lang_code.dart';
-import 'di/locator.dart';
-import 'presentation/auth_screen/auth_page_google.dart';
 import 'presentation/splash_screen/splash_page.dart';
 import 'utils/app_theme.dart';
 

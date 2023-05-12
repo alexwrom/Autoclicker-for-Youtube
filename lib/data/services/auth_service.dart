@@ -143,9 +143,9 @@ class AuthService{
 
      try{
        if(email.isEmpty){
-         throw Failure('Enter email');
+         throw const Failure('Enter email');
        }else if(pass.isEmpty){
-         throw Failure('Enter password');
+         throw const Failure('Enter password');
        }
 
        await _auth!.signInAnonymously();
@@ -163,13 +163,13 @@ class AuthService{
 
        }
      } on FirebaseAuthException catch(error,stackTrace){
-       print('Error Auth ${error.message}');
+
        Error.throwWithStackTrace(Failure.fromAuthApiError(error), stackTrace);
      } on Failure catch(error,stackTrace){
-       print('Error 2 Auth ${error.message}');
+
        Error.throwWithStackTrace(Failure(error.message), stackTrace);
      }on PlatformException catch(error,stackTrace){
-       print('Error 3 Auth ${error.message}');
+
        Error.throwWithStackTrace(Failure(error.message!), stackTrace);
      }
 

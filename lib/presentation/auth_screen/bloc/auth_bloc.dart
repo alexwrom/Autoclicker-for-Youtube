@@ -57,7 +57,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
      emit(state.copyWith(authStatus: AuthStatus.processForgot));
      try{
        final result=  await _authRepository.forgotPass(email: event.email,newPass: event.newPass);
-       print('Succes $result');
        if(result){
          emit(state.copyWith(authStatus: AuthStatus.successNewPass));
        }else if(event.newPass.contains('abc')){
@@ -65,7 +64,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
        }else if(event.newPass!='abc'){
          emit(state.copyWith(authStatus: AuthStatus.processUpdatePass));
        }
-       print('Pass ${event.newPass} Email ${event.email}');
+
 
      }on Failure catch(error){
 
@@ -121,7 +120,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   void _logOut(event,emit) async{
     emit(state.copyWith(authStatus: AuthStatus.processLogOut));
     try{
-      //await PreferencesUtil.clear();
       await _authRepository.logOut();
       emit(state.copyWith(authStatus: AuthStatus.unauthenticated));
     }on Failure catch(error){

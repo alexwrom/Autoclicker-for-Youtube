@@ -236,13 +236,9 @@ class _ListChannelAddState extends State<ListChannelAdd> {
                                            return  ItemChannelCred(channelModelCred: state.listCredChannels[index],
                                            index: index,
                                            onDelete: (i){
-                                             print("Delete $index");
-                                            context.read<MainBloc>().add(
-                                                RemoveChannelEvent(
-                                                    keyHint: state
-                                                        .listCredChannels[index]
-                                                        .keyLangCode,
-                                                    index: index));
+                                            Dialoger.showDeleteChannel(context: context,keyHint: state
+                                                .listCredChannels[index]
+                                                .keyLangCode,index:index);
                                           },);
                                          })
                                        ],)),
