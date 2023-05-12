@@ -183,9 +183,9 @@ class _ChannelsPageState extends State<ChannelsPage> {
                                             MaterialStateProperty.all(
                                                 colorRed)),
                                     onPressed: () {
-                                      context
-                                          .read<AuthBloc>()
-                                          .add(LogOutEvent());
+                                      // context
+                                      //     .read<AuthBloc>()
+                                      //     .add(LogOutEvent());
                                       Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=>const AuthPage()));
                                     },
                                     child: const Text(

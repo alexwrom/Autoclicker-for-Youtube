@@ -26,7 +26,10 @@ class SingInEvent extends AuthEvent{
 
 }
 class Unknown extends AuthEvent{}
-class LogOutEvent extends AuthEvent{}
+class LogOutEvent extends AuthEvent{
+  final bool isDeleteAcc;
+  const LogOutEvent({required this.isDeleteAcc});
+}
 class ForgotEvent extends AuthEvent{
   final String email;
   final String newPass;

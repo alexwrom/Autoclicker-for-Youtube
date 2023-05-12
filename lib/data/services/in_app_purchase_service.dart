@@ -99,10 +99,9 @@ class InAppPurchaseService{
       }
     }
 
-    Future<void> completePurchase(PurchaseDetails purchaseDetails,int limitTranslation) async {
-      final uid=PreferencesUtil.getUid;
+    Future<void> completePurchase(PurchaseDetails purchaseDetails) async {
       await InAppPurchase.instance.completePurchase(purchaseDetails);
-      await _updateBalance(uid: uid,limitTranslation: limitTranslation);
+
     }
 
     Future<void> clearTransactionsIos() async {
@@ -132,13 +131,14 @@ class InAppPurchaseService{
 
 
 
-    Future<void> _updateBalance({required String uid,required int limitTranslation})async{
+    Future<void> updateBalance({required int resultBalance})async{
       try {
+        final uid=PreferencesUtil.getEmail;
         final ts=DateTime.now().millisecondsSinceEpoch;
         _firebaseFirestore=FirebaseFirestore.instance;
-        await _firebaseFirestore!.collection('users').doc(uid).update({
+        await _firebaseFirestore!.collection('userpc').doc(uid).update({
           'timestampPurchase':ts,
-          'balance':limitTranslation
+          'countTranslate':resultBalance
         });
       } on FirebaseException catch(error,stackTrace){
         Error.throwWithStackTrace(Failure(error.message!), stackTrace);

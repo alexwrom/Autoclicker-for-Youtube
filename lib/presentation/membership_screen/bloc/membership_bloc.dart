@@ -33,21 +33,23 @@ class MemberShipBloc extends Bloc<MemberShipEvent,MemberShipState>{
           add(OnErrorEvent());
         },
         onComplete: (PurchaseDetails purchaseDetails)async{
-          final oldBalance=cubitUserData.state.userData.numberOfTrans;
-          final limitTranslate=state.listDetails.firstWhere((element) => purchaseDetails.productID==element.id).limitTranslation;
-          print('Balance ${limitTranslate}');
-          final resultBalance=oldBalance+limitTranslate;
-          await inAppPurchaseService.completePurchase(purchaseDetails,resultBalance);
-          await cubitUserData.addBalance(resultBalance);
+          await inAppPurchaseService.completePurchase(purchaseDetails);
         },
         onPurchased: (PurchaseDetails purchaseDetails) async {
           try {
             if (purchaseDetails.status==PurchaseStatus.purchased) {
+              final oldBalance=cubitUserData.state.userData.numberOfTrans;
+              final limitTranslate=state.listDetails.firstWhere((element) => purchaseDetails.productID==element.id).limitTranslation;
+              final resultBalance=oldBalance+limitTranslate;
+              await inAppPurchaseService.updateBalance(resultBalance: resultBalance);
+              await cubitUserData.addBalance(resultBalance);
               add(OnPurchasedEvent());
             }
           } catch (_, __) {
-               add(OnErrorEvent());
+
+            add(OnErrorEvent());
           }
+
         },
       )..init();
      on<GetProductEvent>(_getProduct);

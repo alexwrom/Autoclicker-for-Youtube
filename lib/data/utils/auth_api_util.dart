@@ -18,8 +18,8 @@ class AuthApiUtil{
 
   }
 
-  Future<void> logOut()async{
-    await _authApi.logOut();
+  Future<void> logOut({required bool isDelAcc})async{
+    await _authApi.logOut(isDelAcc:isDelAcc);
   }
 
   Future<bool> logIn({required String pass,required String email})async{

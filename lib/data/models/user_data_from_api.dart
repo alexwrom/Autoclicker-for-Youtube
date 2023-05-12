@@ -11,7 +11,7 @@ class UserDataFromApi{
    final  int timeStampPurchase;
 
   UserDataFromApi.fromApi({required DocumentSnapshot documentSnapshot}):
-        numberOfTrans=documentSnapshot.get('balance'),
+        numberOfTrans=documentSnapshot.get('countTranslate'),
         timeStampAuth=documentSnapshot.get('timeStampAuth'),
         timeStampPurchase=documentSnapshot.get('timestampPurchase');
  }

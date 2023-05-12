@@ -13,8 +13,8 @@ class AuthRepositoryImpl extends AuthRepository{
 
 
   @override
-  Future<void> logOut()async {
-    await _apiUtil.logOut();
+  Future<void> logOut({required bool isDelAcc})async {
+    await _apiUtil.logOut(isDelAcc:isDelAcc);
   }
 
   @override

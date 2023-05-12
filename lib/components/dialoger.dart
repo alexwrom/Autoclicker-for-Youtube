@@ -24,6 +24,7 @@ class Dialoger {
 
 
   static void showLogOut({required BuildContext context}){
+    bool isRemoveAccount=false;
     showCustomDialog(
       textButtonCancel: 'Close',
       textButtonAccept: 'Ok',
@@ -31,13 +32,13 @@ class Dialoger {
       contextUp: context,
       title: 'Sign out?',
       titleColor: Platform.isIOS?colorPrimary:Colors.white,
-      content:  Text('Your data is saved on the server',
-        style: TextStyle(
-            color: Platform.isIOS?colorPrimary:Colors.grey,
-
-        ),),
+      content:   ActionDialogLogOut(
+        callback: (isDeleteAcc){
+          isRemoveAccount=isDeleteAcc;
+        },
+      ),
       voidCallback: (){
-        context.read<AuthBloc>().add(LogOutEvent());
+        context.read<AuthBloc>().add(LogOutEvent(isDeleteAcc: isRemoveAccount));
         Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=>const AuthPage()));
       }
     );
@@ -258,6 +259,57 @@ class Dialoger {
       backgroundColor: colorBackground,
       fontSize: 16.0,
       gravity: ToastGravity.CENTER,
+    );
+  }
+}
+
+class ActionDialogLogOut extends StatefulWidget{
+  const ActionDialogLogOut({super.key,required this.callback});
+
+  final Function callback;
+
+  @override
+  State<ActionDialogLogOut> createState() => _ActionDialogLogOutState();
+}
+
+class _ActionDialogLogOutState extends State<ActionDialogLogOut> {
+  var _isRemoveAccount=false;
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Your data is saved on the server',
+            style: TextStyle(
+              color: Platform.isIOS?colorPrimary:Colors.grey,
+
+            ),),
+          Row(
+            children: [
+              Checkbox(
+                  fillColor: MaterialStatePropertyAll(colorRed),
+                  activeColor: colorRed,
+                  value: _isRemoveAccount, onChanged: (v){
+                setState(() {
+                  _isRemoveAccount=v!;
+                  widget.callback.call(_isRemoveAccount);
+                });
+
+              }),
+              Text('Sign out and delete account?',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Platform.isIOS?colorPrimary:Colors.grey,
+
+                ),),
+            ],
+          )
+        ],
+      ),
     );
   }
 }

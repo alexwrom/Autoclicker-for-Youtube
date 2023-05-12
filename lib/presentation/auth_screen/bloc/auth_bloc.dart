@@ -120,7 +120,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   void _logOut(event,emit) async{
     emit(state.copyWith(authStatus: AuthStatus.processLogOut));
     try{
-      await _authRepository.logOut();
+      await _authRepository.logOut(isDelAcc:event.isDeleteAcc);
       emit(state.copyWith(authStatus: AuthStatus.unauthenticated));
     }on Failure catch(error){
       emit(state.copyWith(authStatus: AuthStatus.error,error: error.message));

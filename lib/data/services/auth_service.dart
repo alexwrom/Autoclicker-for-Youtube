@@ -32,8 +32,15 @@ class AuthService{
 
 
 
-  Future<void> logOut()async{
+  Future<void> logOut({required bool isDelAcc})async{
     try{
+      if(isDelAcc){
+        final email= PreferencesUtil.getEmail;
+        print('Remowe Acc $email');
+        await _firebaseFirestore!.collection('userpc').doc(email).delete();
+        final user = FirebaseAuth.instance.currentUser;
+        user!.delete();
+      }
       await _auth!.signOut();
       await _googleSingIn.signOut();
     } on  FirebaseAuthException catch(error,stackTrace){
@@ -79,7 +86,7 @@ class AuthService{
       await PreferencesUtil.setEmail(userCredential.user!.email!);
       final ts=DateTime.now().millisecondsSinceEpoch;
       await _firebaseFirestore!.collection('userpc').doc(imei).set({
-        'balance':300,
+        'countTranslate':300,
         'timeStampAuth':ts,
         'timestampPurchase':0
       });
@@ -202,7 +209,7 @@ class AuthService{
 
          final ts=DateTime.now().millisecondsSinceEpoch;
          await _firebaseFirestore!.collection('userpc').doc(email).set({
-           'balance':800,
+           'countTranslate':800,
            'timeStampAuth':ts,
            'timestampPurchase':0,
            'password':pass,
