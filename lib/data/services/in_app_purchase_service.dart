@@ -1,6 +1,7 @@
 
 
   import 'dart:async';
+import 'dart:convert';
   import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -9,6 +10,7 @@ import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:in_app_purchase_android/billing_client_wrappers.dart';
 import 'package:in_app_purchase_android/in_app_purchase_android.dart';
   import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:youtube_clicker/data/models/product_purchase_from_api.dart';
 import 'package:youtube_clicker/utils/preferences_util.dart';
 
@@ -134,10 +136,9 @@ class InAppPurchaseService{
     Future<void> updateBalance({required int resultBalance})async{
       try {
         final uid=PreferencesUtil.getEmail;
-        final ts=DateTime.now().millisecondsSinceEpoch;
+        await _updateFileConfigFreeTrialPeriod();
         _firebaseFirestore=FirebaseFirestore.instance;
         await _firebaseFirestore!.collection('userpc').doc(uid).update({
-          'timestampPurchase':ts,
           'countTranslate':resultBalance
         });
       } on FirebaseException catch(error,stackTrace){
@@ -149,6 +150,28 @@ class InAppPurchaseService{
       }
 
 
+    }
+
+    Future<void> _updateFileConfigFreeTrialPeriod() async {
+       final ts=DateTime.now().millisecondsSinceEpoch;
+      String dir = (await getExternalStorageDirectory())!.path;
+      final fileConfig = '$dir/config.json';
+      final fileExists=await File(fileConfig).exists();
+      if(fileExists){
+        final jsonString=await File(fileConfig).readAsString();
+       final Map<String,dynamic> jsonConfig=jsonDecode(jsonString);
+       jsonConfig.update('timestampPurchase', (value) => ts);
+        final jsonNewString=jsonEncode(jsonConfig);
+         await File(fileConfig).writeAsString(jsonNewString);
+
+      }else{
+        final ts=DateTime.now().millisecondsSinceEpoch;
+        final jsonConfig={'timeStampAuth':0,
+          'timestampPurchase':ts};
+        final jsonString=jsonEncode(jsonConfig);
+        final f = await File(fileConfig).create();
+        await f.writeAsString(jsonString);
+      }
     }
 
 

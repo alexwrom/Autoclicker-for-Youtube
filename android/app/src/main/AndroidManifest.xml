@@ -3,9 +3,11 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+
    <application
         android:label="YouClicker"
         android:name="${applicationName}"
+
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

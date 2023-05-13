@@ -9,8 +9,7 @@
     const UserData(
 
      this.numberOfTrans,
-
-     this.timeStampAuth,
+        this.timeStampAuth,
         this.timeStampPurchase
   );
 
@@ -18,7 +17,7 @@
 
     numberOfTrans=0,
     timeStampAuth=0,
-     timeStampPurchase=0;
+    timeStampPurchase=0;
 
     UserData copyWith({
     bool? isActive,

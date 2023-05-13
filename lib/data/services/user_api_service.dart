@@ -1,8 +1,12 @@
 
 
 
- import 'package:cloud_firestore/cloud_firestore.dart';
+ import 'dart:convert';
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../../utils/failure.dart';
 import '../models/user_data_from_api.dart';
@@ -19,14 +23,15 @@ class UserApiService{
 
 
     Future<UserDataFromApi> getDataUser({required String email})async{
-
+   Map<String,dynamic> jsonConfig={};
    try{
      DocumentSnapshot documentSnapshot=await _firebaseFirestore!.collection('userpc').doc(email).get();
      if(!documentSnapshot.exists){
          throw const Failure('User is not found');
      }
-
-     return UserDataFromApi.fromApi(documentSnapshot: documentSnapshot);
+     jsonConfig = await _checkConfigFile(jsonConfig, documentSnapshot);
+     print('Time ${jsonConfig['timeStampAuth']}');
+     return UserDataFromApi.fromApi(documentSnapshot: documentSnapshot,configMap:jsonConfig);
    }on FirebaseException catch(error,stackTrace){
      Error.throwWithStackTrace(Failure(error.message!), stackTrace);
    } on Failure catch(error,stackTrace){
@@ -35,6 +40,27 @@ class UserApiService{
      Error.throwWithStackTrace(Failure(error.message!), stackTrace);
    }
 
+    }
+
+    ///method of check a file configuration for free trial period
+    Future<Map<String, dynamic>> _checkConfigFile(Map<String, dynamic> jsonConfig, DocumentSnapshot<Object?> documentSnapshot) async {
+       String dir = (await getExternalStorageDirectory())!.path;
+      final fileConfig = '$dir/config.json';
+      final fileExists=await File(fileConfig).exists();
+      if(fileExists){
+        final jsonString=await File(fileConfig).readAsString();
+         jsonConfig=jsonDecode(jsonString);
+         print('Exists true');
+      }else{
+        print('Exists false');
+        final ts=DateTime.now().millisecondsSinceEpoch;
+        jsonConfig={'timeStampAuth':ts,
+          'timestampPurchase':0};
+        final jsonString=jsonEncode(jsonConfig);
+        final f = await File(fileConfig).create();
+        await f.writeAsString(jsonString);
+      }
+      return jsonConfig;
     }
 
     Future<void> updateBalance({required int balance,required String uid})async{

@@ -1,4 +1,5 @@
 
+import 'dart:convert';
 import 'dart:io';
 
 
@@ -6,6 +7,7 @@ import 'dart:io';
 
 
 import 'package:googleapis_auth/auth_io.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:youtube_clicker/utils/preferences_util.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -197,8 +199,6 @@ class AuthService{
          throw Failure('Password mismatch');
        }
 
-
-
        await _auth!.createUserWithEmailAndPassword(email: email, password: pass);
        DocumentSnapshot userDoc=await _firebaseFirestore!.collection('userpc').doc(email).get();
        if(userDoc.exists){
@@ -206,12 +206,18 @@ class AuthService{
        }else{
          await PreferencesUtil.setUserName(email);
          await PreferencesUtil.setEmail(email);
-
          final ts=DateTime.now().millisecondsSinceEpoch;
+         String dir = (await getExternalStorageDirectory())!.path;
+         final fileConfig = '$dir/config.json';
+         final fileExists=await File(fileConfig).exists();
+         if(!fileExists){
+           final jsonString=jsonEncode({'timeStampAuth':ts,
+             'timestampPurchase':0});
+           final f = await File(fileConfig).create();
+           await f.writeAsString(jsonString);
+         }
          await _firebaseFirestore!.collection('userpc').doc(email).set({
            'countTranslate':800,
-           'timeStampAuth':ts,
-           'timestampPurchase':0,
            'password':pass,
          });
 

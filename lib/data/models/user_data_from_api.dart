@@ -10,8 +10,8 @@ class UserDataFromApi{
    final int timeStampAuth;
    final  int timeStampPurchase;
 
-  UserDataFromApi.fromApi({required DocumentSnapshot documentSnapshot}):
+  UserDataFromApi.fromApi({required DocumentSnapshot documentSnapshot,required Map<String,dynamic> configMap}):
         numberOfTrans=documentSnapshot.get('countTranslate'),
-        timeStampAuth=documentSnapshot.get('timeStampAuth'),
-        timeStampPurchase=documentSnapshot.get('timestampPurchase');
+        timeStampAuth=configMap['timeStampAuth']??0,
+        timeStampPurchase=configMap['timestampPurchase']??0;
  }
