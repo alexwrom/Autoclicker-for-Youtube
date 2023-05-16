@@ -142,7 +142,6 @@ class _ListChannelAddState extends State<ListChannelAdd> {
                                child: Column(
                                  mainAxisAlignment: MainAxisAlignment.center,
                                  children: [
-                                   CardFreeTrial(),
                                    Visibility(
                                      visible: !state.mainStatus.isEmpty,
                                      child: Align(

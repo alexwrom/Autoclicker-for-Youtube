@@ -3,19 +3,15 @@
 
 
 
-import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:youtube_clicker/presentation/main_screen/cubit/user_data_state.dart';
 import 'package:youtube_clicker/presentation/membership_screen/membership_page.dart';
 import 'package:youtube_clicker/resourses/colors_app.dart';
 
-import '../../../di/locator.dart';
 import '../../../resourses/images.dart';
 import '../cubit/user_data_cubit.dart';
 
