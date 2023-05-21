@@ -61,7 +61,6 @@ class _LogInPageState extends State<LogInPage> {
 
             if(s.authStatus==AuthStatus.authenticated){
 
-
             }
           },
           builder: (context,stateAuth) {

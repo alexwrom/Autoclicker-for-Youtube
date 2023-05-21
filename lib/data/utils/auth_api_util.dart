@@ -27,8 +27,8 @@ class AuthApiUtil{
 
   }
 
-  Future<void> singIn({required String pass,required String repPass,required String email})async{
-    return await _authApi.singIn(pass: pass, email: email,repPass: repPass);
+  Future<void> singIn({required String pass,required String email})async{
+    return await _authApi.singIn(pass: pass, email: email);
 
   }
   Future<bool> forgotPass({required String email,required String newPass})async{

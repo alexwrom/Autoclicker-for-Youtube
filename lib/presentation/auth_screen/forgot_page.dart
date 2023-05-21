@@ -57,10 +57,10 @@ class _ForgotPageState extends State<ForgotPage> {
             }
 
             if(state.authStatus==AuthStatus.successNewPass){
-                return Center(
+                return const Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children:const [
+                    children:[
                        Icon(Icons.check_circle_outline_rounded,color: Colors.green,size: 120),
                        SizedBox(height: 20,),
                        Text('Password changed successfully',style: TextStyle(

@@ -38,14 +38,24 @@ class PreferencesUtil{
     await _prefsInstance!.setString(prefsKeyEmail, email);
   }
 
+  static Future<void> setPassword(String password)async{
+    await _prefsInstance!.setString(prefsKeyPassword, password);
+  }
+
   static Future<void> setKeyHave(int key)async{
     await _prefsInstance!.setInt(prefsKeyVideoHave, key);
   }
 
+  static Future<void> setCodeVerificationEmail(List<String> codeData)async{
+    await _prefsInstance!.setStringList(prefsKeyVerifiEmail, codeData);
+  }
 
 
-
- static String get getHeaderApiGoogle =>_prefsInstance!.getString(prefsKeyGoogleToken)??'';
+  ///0 - code verification 1 - time stamp
+  static List<String> get getCOdeVerificationEmail=>_prefsInstance!.getStringList(prefsKeyVerifiEmail)??[];
+  ///
+  static String get getPassword=>_prefsInstance!.getString(prefsKeyPassword)??'';
+  static String get getHeaderApiGoogle =>_prefsInstance!.getString(prefsKeyGoogleToken)??'';
   static String get getUrlAvatar=>_prefsInstance!.getString(prefsKeyUrlAvatar)??'';
   static String get getUserName=>_prefsInstance!.getString(prefsKeyUserName)??'';
   static String get getUid=>_prefsInstance!.getString(prefsKeyUid)??'';
@@ -60,8 +70,8 @@ class PreferencesUtil{
 
  }
 
-
-
+  const String prefsKeyPassword='password';
+  const String prefsKeyVerifiEmail='cede_email';
   const String prefsKeyGoogleToken='token';
   const String prefsKeyUrlAvatar='avatar';
   const String prefsKeyUserName='name';

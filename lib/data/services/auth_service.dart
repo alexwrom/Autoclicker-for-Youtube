@@ -186,26 +186,16 @@ class AuthService{
 
    }
 
-   Future<void> singIn({required String pass,required String repPass,required String email}) async {
+   Future<void> singIn({required String pass,required String email}) async {
 
      try{
-       if(email.isEmpty){
-         throw Failure('Enter email');
-       }else if(pass.isEmpty){
-         throw Failure('Enter password');
-       }else if(repPass.isEmpty){
-         throw Failure('Repeat password');
-       }else if(pass!=repPass){
-         throw Failure('Password mismatch');
-       }
 
        await _auth!.createUserWithEmailAndPassword(email: email, password: pass);
        DocumentSnapshot userDoc=await _firebaseFirestore!.collection('userpc').doc(email).get();
        if(userDoc.exists){
-         throw Failure('This user already exists');
+         throw const Failure('This user already exists');
        }else{
          await PreferencesUtil.setUserName(email);
-         await PreferencesUtil.setEmail(email);
          final ts=DateTime.now().millisecondsSinceEpoch;
          String dir = (await getExternalStorageDirectory())!.path;
          final fileConfig = '$dir/config.json';

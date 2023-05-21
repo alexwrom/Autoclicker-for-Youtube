@@ -6,6 +6,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:youtube_clicker/presentation/auth_screen/enter_code_verification_page.dart';
  import 'dart:ui' as ui;
 import '../../app_bloc/app_bloc.dart';
 import '../../components/buttons.dart';
@@ -57,17 +58,16 @@ class _SingInPageState extends State<SingInPage> {
              const SizedBox(height: 10),
              PassFieldLogin(controller: _passController,textHint: 'Password',),
              const SizedBox(height: 10),
-             PassFieldLogin(controller: _passConfirmController,textHint: 'Confirm password',),
+             PassFieldLogin(controller: _passConfirmController,textHint: 'Confirm password'),
              const SizedBox(height: 40),
           BlocConsumer<AuthBloc,AuthState>(
             listener: (_,snap){
+
               if(snap.authStatus==AuthStatus.error){
                Dialoger.showError(snap.error, context);
              }
 
-              if(snap.authStatus==AuthStatus.authenticated){
 
-              }
             },
             builder: (context,state) {
               if(state.authStatus==AuthStatus.processSingIn){
@@ -76,9 +76,8 @@ class _SingInPageState extends State<SingInPage> {
 
 
               return SubmitButton(onTap: (){
-                FocusScope.of(context).unfocus();
-                final lang=ui.window.locale.toString();
-                 context.read<AuthBloc>().add(SingInEvent(email: _emailController.text, password: _passController.text,repPass: _passConfirmController.text));
+                 FocusScope.of(context).unfocus();
+                 context.read<AuthBloc>().add(SendCodeEmail(email: _emailController.text, password: _passController.text,repPass: _passConfirmController.text));
                  },
                    textButton: 'SingIn');
             }

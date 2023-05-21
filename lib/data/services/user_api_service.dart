@@ -29,8 +29,7 @@ class UserApiService{
      if(!documentSnapshot.exists){
          throw const Failure('User is not found');
      }
-     jsonConfig = await _checkConfigFile(jsonConfig, documentSnapshot);
-     print('Time ${jsonConfig['timeStampAuth']}');
+     jsonConfig = await _checkConfigFile(jsonConfig);
      return UserDataFromApi.fromApi(documentSnapshot: documentSnapshot,configMap:jsonConfig);
    }on FirebaseException catch(error,stackTrace){
      Error.throwWithStackTrace(Failure(error.message!), stackTrace);
@@ -43,7 +42,7 @@ class UserApiService{
     }
 
     ///method of check a file configuration for free trial period
-    Future<Map<String, dynamic>> _checkConfigFile(Map<String, dynamic> jsonConfig, DocumentSnapshot<Object?> documentSnapshot) async {
+    Future<Map<String, dynamic>> _checkConfigFile(Map<String, dynamic> jsonConfig) async {
        String dir = (await getExternalStorageDirectory())!.path;
       final fileConfig = '$dir/config.json';
       final fileExists=await File(fileConfig).exists();

@@ -14,6 +14,7 @@ import '../../resourses/colors_app.dart';
 import '../../resourses/images.dart';
 import '../main_screen/list_channel_add_page.dart';
 import 'bloc/auth_bloc.dart';
+import 'enter_code_verification_page.dart';
 import 'login_page.dart';
 
 class AuthPage extends StatefulWidget {
@@ -61,6 +62,10 @@ class _AuthPageState extends State  with TickerProviderStateMixin{
 
             if(s.authStatus==AuthStatus.authenticated){
               Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_)=>const ListChannelAdd()));
+            }
+
+            if(s.authStatus==AuthStatus.verificationCodeExist){
+              Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=>const EnterCodeVerificationEmail()));
             }
           },
           builder: (context,state) {

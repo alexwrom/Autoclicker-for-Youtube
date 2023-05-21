@@ -22,8 +22,8 @@ class AuthRepositoryImpl extends AuthRepository{
     return await _apiUtil.signInGoogle();
   }
 
-  Future<void> singIn({required String pass,required String repPass,required String email})async{
-    return await _apiUtil.singIn(pass: pass, email: email,repPass: repPass);
+  Future<void> singIn({required String pass,required String email})async{
+    return await _apiUtil.singIn(pass: pass, email: email);
 
   }
 

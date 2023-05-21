@@ -8,7 +8,8 @@ enum AuthStatusCheck{
   authenticated,
   unauthenticated,
   error,
-  processLogOut
+  processLogOut,
+  verificationCodeExist
 }
 
 class AppState extends Equatable {

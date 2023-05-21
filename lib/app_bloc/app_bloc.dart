@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 
 import '../presentation/auth_screen/bloc/auth_bloc.dart';
+import '../utils/preferences_util.dart';
 
 part 'app_event.dart';
 
@@ -24,7 +25,23 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
   void _authInitCheck(event, emit) async {
     await Future.delayed(const Duration(milliseconds: 3500));
-
+    final code=PreferencesUtil.getCOdeVerificationEmail[0];
+    print('Code $code');
+    if(code.isNotEmpty){
+       final timeNow=  DateTime.now().millisecondsSinceEpoch;
+       final tsString=PreferencesUtil.getCOdeVerificationEmail[1];
+       print('TS $tsString');
+       final timeStamp= int.parse(tsString);
+       const int lifetimeCode=60000;
+       final int timeCheck=timeNow-timeStamp;
+       if(lifetimeCode<timeCheck){
+          PreferencesUtil.setPassword('');
+          PreferencesUtil.setCodeVerificationEmail(['','']);
+       }else{
+         emit(state.copyWith(authStatusCheck: AuthStatusCheck.verificationCodeExist));
+         return;
+       }
+    }
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
       emit(state.copyWith(authStatusCheck: AuthStatusCheck.unauthenticated));
@@ -32,6 +49,8 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       emit(state.copyWith(authStatusCheck: AuthStatusCheck.authenticated));
     }
   }
+
+
 
 
 }

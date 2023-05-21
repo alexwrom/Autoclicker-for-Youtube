@@ -16,7 +16,9 @@ enum AuthStatus{
   processForgot,
   sendToEmail,
   successNewPass,
-  processUpdatePass
+  processUpdatePass,
+  verificationCodeExist,
+  completeSingIn
 }
 
 

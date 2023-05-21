@@ -3,6 +3,7 @@ import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:youtube_clicker/presentation/auth_screen/auth_page.dart';
 import 'package:youtube_clicker/presentation/auth_screen/bloc/auth_bloc.dart';
+import 'package:youtube_clicker/presentation/auth_screen/enter_code_verification_page.dart';
 import 'package:youtube_clicker/presentation/main_screen/bloc/main_bloc.dart';
 import 'package:youtube_clicker/presentation/main_screen/cubit/user_data_cubit.dart';
 import 'package:youtube_clicker/presentation/main_screen/list_channel_add_page.dart';
@@ -104,6 +105,8 @@ class _AppState extends State<App> {
           return const SplashPage();
         } else if (state.authStatusCheck == AuthStatusCheck.unauthenticated) {
           return const AuthPage();
+        }else if(state.authStatusCheck==AuthStatusCheck.verificationCodeExist){
+          return const EnterCodeVerificationEmail();
         }
         return const ListChannelAdd();
 

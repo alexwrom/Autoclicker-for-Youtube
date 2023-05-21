@@ -114,3 +114,55 @@ class _PassFieldLoginState extends State<PassFieldLogin> {
     );
   }
 }
+
+
+class CodeField extends StatefulWidget {
+  const CodeField({Key? key, required this.controller,required this.textHint}) : super(key: key);
+  final TextEditingController controller;
+  final String textHint;
+
+  @override
+  State<CodeField> createState() => _CodeFieldState();
+}
+
+class _CodeFieldState extends State<CodeField> {
+
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 50,
+      child: TextField(
+        maxLines: 1,
+        keyboardType: TextInputType.number,
+        textAlign: TextAlign.start,
+        controller: widget.controller,
+        style: const TextStyle(color: Colors.white),
+        decoration: InputDecoration(
+            filled: true,
+            fillColor: colorBackground,
+            suffixIcon: Padding(
+              padding: const EdgeInsets.all(14.0),
+              child: Icon(Icons.code,color: colorGrey)
+            ),
+            hintText: widget.textHint,
+            hintStyle: TextStyle(color: colorGrey,fontSize:16,fontWeight: FontWeight.w400),
+            contentPadding:const EdgeInsets.only(left: 20,right: 20,top: 12,bottom: 12),
+            enabledBorder:  OutlineInputBorder(
+              borderRadius: BorderRadius.circular(50),
+              borderSide: BorderSide(
+                color: colorBackground,
+                width: 1.0,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(50),
+              borderSide: BorderSide(
+                color: colorRed,
+                width: 1.0,
+              ),
+            )),
+      ),
+    );
+  }
+}

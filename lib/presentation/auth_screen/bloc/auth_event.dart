@@ -21,14 +21,26 @@ class SingInEvent extends AuthEvent{
 
   final String email;
   final String password;
-  final String repPass;
-  const SingInEvent({required this.email,required this.password,required this.repPass});
+  final String code;
+  const SingInEvent({required this.email,required this.password,required this.code});
 
 }
 class Unknown extends AuthEvent{}
 class LogOutEvent extends AuthEvent{
   final bool isDeleteAcc;
   const LogOutEvent({required this.isDeleteAcc});
+}
+
+ class SendCodeEmail extends AuthEvent{
+   final String email;
+   final String password;
+   final String repPass;
+
+   const SendCodeEmail({
+    required this.email,
+    required this.password,
+    required this.repPass,
+  });
 }
 class ForgotEvent extends AuthEvent{
   final String email;

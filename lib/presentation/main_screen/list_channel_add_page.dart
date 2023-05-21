@@ -3,7 +3,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:youtube_clicker/presentation/main_screen/widgets/card_free_trial.dart';
 import 'package:youtube_clicker/presentation/main_screen/widgets/item_channel_cred.dart';
 import 'package:youtube_clicker/presentation/main_screen/widgets/user_data_card.dart';
 
