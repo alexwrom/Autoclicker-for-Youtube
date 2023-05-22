@@ -56,7 +56,7 @@ class _EnterCodeVerificationEmailState extends State<EnterCodeVerificationEmail>
                      children:[
                        Icon(Icons.check_circle_outline_rounded,color: Colors.green,size: 120),
                        SizedBox(height: 20,),
-                       Text('Password changed successfully',style: TextStyle(
+                       Text('Registration successfully completed',style: TextStyle(
                            color: Colors.white,
                            fontSize: 20,
                            fontWeight: FontWeight.w700)),

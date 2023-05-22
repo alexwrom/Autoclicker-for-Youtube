@@ -52,7 +52,7 @@ class PreferencesUtil{
 
 
   ///0 - code verification 1 - time stamp
-  static List<String> get getCOdeVerificationEmail=>_prefsInstance!.getStringList(prefsKeyVerifiEmail)??[];
+  static List<String> get getCOdeVerificationEmail=>_prefsInstance!.getStringList(prefsKeyVerifiEmail)??['',''];
   ///
   static String get getPassword=>_prefsInstance!.getString(prefsKeyPassword)??'';
   static String get getHeaderApiGoogle =>_prefsInstance!.getString(prefsKeyGoogleToken)??'';

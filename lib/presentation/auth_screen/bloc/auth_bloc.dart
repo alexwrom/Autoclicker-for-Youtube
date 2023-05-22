@@ -191,7 +191,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
        await _authRepository.singIn(pass: event.password,email: event.email);
        emit(state.copyWith(authStatus: AuthStatus.authenticated));
 
-       await Future.delayed(const Duration(seconds: 2));
+       await Future.delayed(const Duration(seconds: 1));
        PreferencesUtil.setPassword('');
        PreferencesUtil.setCodeVerificationEmail(['','']);
        emit(state.copyWith(authStatus: AuthStatus.completeSingIn));
