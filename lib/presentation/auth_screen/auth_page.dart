@@ -65,7 +65,7 @@ class _AuthPageState extends State  with TickerProviderStateMixin{
             }
 
             if(s.authStatus==AuthStatus.verificationCodeExist){
-              Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=>const EnterCodeVerificationEmail()));
+              Navigator.push(context, MaterialPageRoute(builder:(_)=>const EnterCodeVerificationEmail()));
             }
           },
           builder: (context,state) {

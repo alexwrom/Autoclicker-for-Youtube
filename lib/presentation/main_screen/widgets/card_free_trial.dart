@@ -20,7 +20,7 @@ class CardFreeTrial extends StatelessWidget{
 
 
 
-   CardFreeTrial({super.key});
+   const CardFreeTrial({super.key});
 
    int _timeEnd(int timeStamp){
      final timeNow=DateTime.now().millisecondsSinceEpoch;

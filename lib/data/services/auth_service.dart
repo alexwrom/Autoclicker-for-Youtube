@@ -38,7 +38,6 @@ class AuthService{
     try{
       if(isDelAcc){
         final email= PreferencesUtil.getEmail;
-        print('Remowe Acc $email');
         await _firebaseFirestore!.collection('userpc').doc(email).delete();
         final user = FirebaseAuth.instance.currentUser;
         user!.delete();
