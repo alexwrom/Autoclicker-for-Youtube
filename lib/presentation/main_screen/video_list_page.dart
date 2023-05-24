@@ -33,7 +33,7 @@ class VideoListPage extends StatefulWidget{
 
 class _VideoListPageState extends State<VideoListPage> with WidgetsBindingObserver{
 
-  //final _googleSingIn = locator.get<GoogleSignIn>();
+
   IOClient? httpClient;
 
 
@@ -123,9 +123,9 @@ class _VideoListPageState extends State<VideoListPage> with WidgetsBindingObserv
                       if(state.videoListStatus.isError){
                         return  Padding(
                           padding:  EdgeInsets.only(top:center),
-                          child:  Center(child:
+                          child:  const Center(child:
                             Column(
-                              children:const [
+                              children:[
                                  Icon(Icons.error_outline,color: Colors.grey,size: 50),
                                  SizedBox(height: 10),
                                  Text('Data loading error',style: TextStyle(

@@ -19,6 +19,7 @@ class ItemVideo extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
+    final _width=MediaQuery.of(context).size.width;
     return GestureDetector(
       onTap: (){
         //start play
@@ -69,12 +70,12 @@ class ItemVideo extends StatelessWidget{
             ),
 
             Padding(
-              padding: const EdgeInsets.only(left: 15,top: 15,bottom: 15,right: 15),
+              padding: const EdgeInsets.only(left: 15,top: 15,bottom: 15,right: 25),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
-                    width: 270,
+                    width: _width/1.8,
                     child: Text(videoModel.title,
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
@@ -86,7 +87,7 @@ class ItemVideo extends StatelessWidget{
                   ),
                   const SizedBox(height: 10),
                   SizedBox(
-                    width: 270,
+                    width: _width/1.8,
                     height: 35,
                     child: Text(videoModel.description.isEmpty?'Video description missing....':videoModel.description,
                       overflow: TextOverflow.ellipsis,

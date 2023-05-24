@@ -110,6 +110,7 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
         if(result.items==null){
           return [];
         }
+
         return result.items!.map((e) => ChannelModelFromApi.fromApi(channel: e))
             .toList();
       } on Failure catch (error, stackTrace) {
@@ -154,10 +155,11 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
       }
     }
 
-    //todo test
+
     Future<int> updateLocalization(VideoModel videoModel,
         Map<String, VideoLocalization> map) async {
       try {
+         //todo check code language default
         final authHeaderString = PreferencesUtil.getHeaderApiGoogle;
         final authHeaders = json.decode(authHeaderString);
         final header = Map<String, String>.from(authHeaders);
@@ -273,7 +275,6 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
     }
 
     Future<String> refreshToken(String email) async {
-      print('Email $email');
       try {
         await _googleSingIn.signInSilently();
         final GoogleSignInTokenData response =

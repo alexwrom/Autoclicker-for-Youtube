@@ -21,5 +21,7 @@ class ChannelModelFromApi{
           description=channel.snippet!.description!,
           videoCount=channel.statistics!.videoCount!,
        viewCount=channel.statistics!.viewCount!,
-          subscriberCount=channel.statistics!.subscriberCount!;
+            subscriberCount=channel.statistics!.subscriberCount!;
+            //channel.snippet.defaultLanguage;
+
 }
