@@ -70,28 +70,28 @@ class CardFreeTrial extends StatelessWidget{
                    fontSize: 18
                  ),),
                  const SizedBox(height: 15),
-                 CountdownTimer(
-                   endTime: _timeEnd(state.userData.timeStampAuth),
-                   widgetBuilder: (_, time) {
-                     if (time == null) {
-                       if(state.userData.numberOfTrans>0){
-                         context.read<UserDataCubit>().clearBalance();
-                       }
-                       return Text('Trial period ended!',style: TextStyle(
-                           color: colorRed,
-                           fontWeight: FontWeight.w500,
-                           fontSize: 26
-                       ),);
-                     }
-                     return Text(
-                         '${time.days??'0'} days ${time.hours??'00'} hours ${time.min??'00'} min ${time.sec??'00'} sec',
-                       style: TextStyle(
-                           color: colorRed,
-                           fontWeight: FontWeight.w500,
-                           fontSize: 26
-                       ),);
-                   },
-                 ),
+                 // CountdownTimer(
+                 //   endTime: _timeEnd(state.userData.timeStampAuth),
+                 //   widgetBuilder: (_, time) {
+                 //     if (time == null) {
+                 //       if(state.userData.numberOfTrans>0){
+                 //         context.read<UserDataCubit>().clearBalance();
+                 //       }
+                 //       return Text('Trial period ended!',style: TextStyle(
+                 //           color: colorRed,
+                 //           fontWeight: FontWeight.w500,
+                 //           fontSize: 26
+                 //       ),);
+                 //     }
+                 //     return Text(
+                 //         '${time.days??'0'} days ${time.hours??'00'} hours ${time.min??'00'} min ${time.sec??'00'} sec',
+                 //       style: TextStyle(
+                 //           color: colorRed,
+                 //           fontWeight: FontWeight.w500,
+                 //           fontSize: 26
+                 //       ),);
+                 //   },
+                 // ),
                  const SizedBox(height: 15),
                  const Text('After the end of the free trial period, the balance of transfers is reset to zero',
                    textAlign: TextAlign.center,

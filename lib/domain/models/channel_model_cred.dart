@@ -14,6 +14,8 @@ class ChannelModelCred{
   final String accessToken;
   final String idToken;
   final int keyLangCode;
+  final String defaultLanguage;
+
 
 
   const ChannelModelCred({
@@ -24,7 +26,8 @@ class ChannelModelCred{
     required this.idChannel,
     required this.accessToken,
     required this.idToken,
-    required this.keyLangCode
+    required this.keyLangCode,
+    required this.defaultLanguage
   });
 
 
@@ -37,7 +40,8 @@ class ChannelModelCred{
         idChannel: channel.idChannel,
         accessToken: channel.accessToken,
         idToken: channel.idToken,
-        keyLangCode:channel.keyLangCode);
+        keyLangCode:channel.keyLangCode,
+        defaultLanguage:  channel.defaultLanguage);
   }
 
   ChannelModelCred copyWith({
@@ -49,6 +53,7 @@ class ChannelModelCred{
     String? accessToken,
     String? idToken,
     int? keyLangCode,
+    String? defaultLanguage
   }) {
     return ChannelModelCred(
       nameChannel: nameChannel ?? this.nameChannel,
@@ -59,6 +64,7 @@ class ChannelModelCred{
       accessToken: accessToken ?? this.accessToken,
       idToken: idToken ?? this.idToken,
       keyLangCode: keyLangCode ?? this.keyLangCode,
+      defaultLanguage: defaultLanguage??this.defaultLanguage
     );
   }
 }

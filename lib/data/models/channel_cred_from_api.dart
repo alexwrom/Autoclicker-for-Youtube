@@ -12,6 +12,7 @@ class ChannelModelCredFromApi{
    final String idChannel;
    final String accessToken;
    final String idToken;
+   final String defaultLanguage;
 
 
 
@@ -19,6 +20,7 @@ class ChannelModelCredFromApi{
        nameChannel=channel.snippet!.title!,
        imgBanner=channel.snippet!.thumbnails!.medium!.url!,
        idUpload=channel.contentDetails!.relatedPlaylists!.uploads!,
+        defaultLanguage=channel.snippet!.defaultLanguage??'',
        idChannel=channel.id!,
        idToken=idTok,
        accessToken=accessTok,

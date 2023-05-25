@@ -280,26 +280,7 @@ class _TranslatePageState extends State<TranslatePage> {
                               ),
 
                                 onPressed:()async{
-                                 if(!state.captionStatus.isTranslating&&!state.translateStatus.isTranslating){
-                                   if(_listCodeLanguage.isNotEmpty){
-                                     if(state.translateStatus.isForbidden){
-                                       Dialoger.showNotTranslate(context,'The balance of active transfers is over');
-                                     }else{
-                                       if(balance<_listCodeLanguage.length){
-                                         Dialoger.showNotTranslate(context,'You don\'t have enough translations');
-                                       }else{
-                                         Dialoger.showGetStartedTranslate(context,_listCodeLanguage.length, () {
-                                           _translateBloc.add(StartTranslateEvent(
-                                               codeLanguage: _listCodeLanguage,
-                                               videoModel: widget.videoModel));
-                                         });
-                                       }
-
-                                     }
-                                   }else{
-                                     Dialoger.showMessageSnackBar('No languages selected for translation', context);
-                                   }
-                                 }
+                                 _initTranslate(context, state, balance);
 
 
                                  },
@@ -324,8 +305,6 @@ class _TranslatePageState extends State<TranslatePage> {
                                 ),
 
                                 onPressed:()async{
-
-
                                   if(!state.captionStatus.isTranslating&&!state.translateStatus.isTranslating){
                                     if(state.captionStatus.isSuccess){
                                       if(_listCodeLanguage.isNotEmpty){
@@ -381,6 +360,39 @@ class _TranslatePageState extends State<TranslatePage> {
         ),
       ),
     );
+  }
+
+  void _initTranslate(BuildContext context, TranslateState state, int balance) {
+    if (widget.videoModel.defaultLanguage.isEmpty&&widget.credChannel.defaultLanguage.isEmpty) {
+      Dialoger.showInfoDialog(
+          context,
+          'There are no localization settings on the channel',
+          'You need to set the language of the title and description of the video in your channel settings',
+          false,
+          () {});
+    } else {
+      if(!state.captionStatus.isTranslating&&!state.translateStatus.isTranslating){
+        if(_listCodeLanguage.isNotEmpty){
+          if(state.translateStatus.isForbidden){
+            Dialoger.showNotTranslate(context,'The balance of active transfers is over');
+          }else{
+            if(balance<_listCodeLanguage.length){
+              Dialoger.showNotTranslate(context,'You don\'t have enough translations');
+            }else{
+              Dialoger.showGetStartedTranslate(context,_listCodeLanguage.length, () {
+                _translateBloc.add(StartTranslateEvent(
+                    channelModelCred: widget.credChannel,
+                    codeLanguage: _listCodeLanguage,
+                    videoModel: widget.videoModel));
+              });
+            }
+
+          }
+        }else{
+          Dialoger.showMessageSnackBar('No languages selected for translation', context);
+        }
+      }
+    }
   }
 
   Widget _progressIndicator(TranslateStatus status,String progress,double percent){

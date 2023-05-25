@@ -3,6 +3,7 @@
 
   import 'package:equatable/equatable.dart';
 
+import '../../../domain/models/channel_model_cred.dart';
 import '../../../domain/models/video_model.dart';
 
 class TranslateEvent extends Equatable{
@@ -14,11 +15,13 @@ class TranslateEvent extends Equatable{
  class StartTranslateEvent extends TranslateEvent{
    final List<String> codeLanguage;
    final VideoModel videoModel;
+   final ChannelModelCred channelModelCred;
 
 
    StartTranslateEvent({
      required this.videoModel,
     required this.codeLanguage,
+     required this.channelModelCred
   });
 
 

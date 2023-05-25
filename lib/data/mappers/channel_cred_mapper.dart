@@ -18,6 +18,7 @@ class ChannelCredMapper{
         idChannel: channelModelCredFromApi.idChannel,
         idToken: channelModelCredFromApi.idToken,
         accessToken: channelModelCredFromApi.accessToken,
+        defaultLanguage: channelModelCredFromApi.defaultLanguage,
         keyLangCode: 0);
   }
 }

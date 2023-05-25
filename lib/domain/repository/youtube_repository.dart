@@ -15,7 +15,7 @@ abstract class YouTubeRepository{
     Future<List<ChannelModel>?> getListChanel(bool reload);
     Future<ChannelModelCred> addChannel();
     Future<List<VideoModel>> getVideoFromAccount(ChannelModelCred cred);
-    Future<int> updateLocalization(VideoModel videoModel,Map<String,VideoLocalization> map);
+    Future<int> updateLocalization(VideoModel videoModel,ChannelModelCred channelModelCred,Map<String,VideoLocalization> map);
     Future<List<Caption>> loadCaptions(String idVideo);
     Future<void> insertCaption({required String idCap,required String idVideo,required String codeLang});
     Future<void> removeCaptions(String idCap);

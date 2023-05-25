@@ -27,8 +27,8 @@ class YouTubeRepositoryImpl extends YouTubeRepository{
   }
 
   @override
-  Future<int> updateLocalization(VideoModel videoModel, Map<String, VideoLocalization> map)async {
-   return await _youTubeApi.updateLocalization(videoModel, map);
+  Future<int> updateLocalization(VideoModel videoModel,ChannelModelCred channelModelCred, Map<String, VideoLocalization> map)async {
+   return await _youTubeApi.updateLocalization(videoModel, map,channelModelCred);
   }
 
   @override

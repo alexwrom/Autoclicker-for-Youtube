@@ -84,7 +84,8 @@ class MainBloc extends Bloc<MainEvent,MainState>{
               accountName: result.accountName,
               idUpload: result.idUpload,
               idToken: result.idToken,
-               accessToken: result.accessToken))
+               accessToken: result.accessToken,
+              defaultLanguage: result.defaultLanguage))
           .catchError((error) {
         throw const Failure('Error while saving locally..');
       });

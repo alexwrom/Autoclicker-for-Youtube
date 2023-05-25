@@ -22,15 +22,15 @@ class UserDataCubit extends Cubit<UserdataState>{
 
   getDataUser()async{
     bool isSubscribe=false;
-    bool isFreeTrial=true;
+    bool isFreeTrial=false;
     String uid='';
     emit(state.copyWith(userDataStatus: UserDataStatus.loading));
     try {
        uid=PreferencesUtil.getEmail;
        _userData=await _repositoryUser.getDataUser(email: uid);
-       if(_userData!.timeStampPurchase>0){
-         isFreeTrial=false;
-       }
+       // if(_userData!.timeStampPurchase>0){
+       //   isFreeTrial=false;
+       // }
        emit(state.copyWith(userDataStatus: UserDataStatus.success,userData: _userData,isSubscribe: isSubscribe,isFreeTrial:isFreeTrial));
     }on Failure catch (e) {
       emit(state.copyWith(userDataStatus: UserDataStatus.error,error: e.message));

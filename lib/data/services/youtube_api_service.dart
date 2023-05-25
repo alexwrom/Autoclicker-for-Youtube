@@ -36,7 +36,6 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
 
     
     Future<ChannelModelCredFromApi> addChannel()async{
-
       try {
         final googleSignInAccount=  await _googleSingIn.signIn();
         if (_googleSingIn.currentUser == null) {
@@ -157,9 +156,14 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
 
 
     Future<int> updateLocalization(VideoModel videoModel,
+        ChannelModelCred channelModelCred,
         Map<String, VideoLocalization> map) async {
       try {
-         //todo check code language default
+         print('DLC = ${channelModelCred.defaultLanguage} DLV = ${videoModel.defaultLanguage}');
+        String defLang='en';
+        if(videoModel.defaultLanguage.isEmpty){
+            defLang=channelModelCred.defaultLanguage;
+        }
         final authHeaderString = PreferencesUtil.getHeaderApiGoogle;
         final authHeaders = json.decode(authHeaderString);
         final header = Map<String, String>.from(authHeaders);
@@ -171,7 +175,7 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
                 description: videoModel.description,
                 title: videoModel.title,
                 categoryId: videoModel.categoryId,
-                defaultLanguage: videoModel.defaultLanguage
+                defaultLanguage: defLang
             ),
             localizations: map
         ), ['localizations,snippet,status']);

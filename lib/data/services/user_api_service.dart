@@ -23,14 +23,14 @@ class UserApiService{
 
 
     Future<UserDataFromApi> getDataUser({required String email})async{
-   Map<String,dynamic> jsonConfig={};
+   //Map<String,dynamic> jsonConfig={};
    try{
      DocumentSnapshot documentSnapshot=await _firebaseFirestore!.collection('userpc').doc(email).get();
      if(!documentSnapshot.exists){
          throw const Failure('User is not found');
      }
-     jsonConfig = await _checkConfigFile(jsonConfig);
-     return UserDataFromApi.fromApi(documentSnapshot: documentSnapshot,configMap:jsonConfig);
+     //jsonConfig = await _checkConfigFile(jsonConfig);
+     return UserDataFromApi.fromApi(documentSnapshot: documentSnapshot);
    }on FirebaseException catch(error,stackTrace){
      Error.throwWithStackTrace(Failure(error.message!), stackTrace);
    } on Failure catch(error,stackTrace){
@@ -49,9 +49,7 @@ class UserApiService{
       if(fileExists){
         final jsonString=await File(fileConfig).readAsString();
          jsonConfig=jsonDecode(jsonString);
-         print('Exists true');
       }else{
-        print('Exists false');
         final ts=DateTime.now().millisecondsSinceEpoch;
         jsonConfig={'timeStampAuth':ts,
           'timestampPurchase':0};
@@ -64,7 +62,7 @@ class UserApiService{
 
     Future<void> updateBalance({required int balance,required String uid})async{
       Map<String,dynamic> map={};
-      map.addAll({'balance':balance});
+      map.addAll({'countTranslate':balance});
       try{
         await _firebaseFirestore!.collection('userpc').doc(uid).update(map);
 

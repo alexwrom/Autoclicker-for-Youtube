@@ -14,6 +14,7 @@ import 'package:youtube_clicker/presentation/translate_screen/bloc/translate_sta
 import 'package:youtube_clicker/utils/failure.dart';
 
 import '../../../di/locator.dart';
+import '../../../domain/models/channel_model_cred.dart';
 import '../../../domain/repository/translate_repository.dart';
 import '../../../domain/repository/youtube_repository.dart';
 import '../../main_screen/cubit/user_data_cubit.dart';
@@ -115,7 +116,6 @@ class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
 
 
      Future<void> _initTranslate(StartTranslateEvent event,emit)async{
-       print('_initTranslate');
        _clearVar();
        if(cubitUserData.state.userData.numberOfTrans==0){
          emit(state.copyWith(translateStatus: TranslateStatus.forbidden));
@@ -128,7 +128,7 @@ class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
          _operationQueueTitleTrans=_codeList.length;
          emit(state.copyWith(translateStatus: TranslateStatus.translating,progressTranslate: '0%',progressTranslateDouble: 0.0));
          try{
-           await _cycleTranslate(event.videoModel, event.codeLanguage);
+           await _cycleTranslate(event.videoModel, event.channelModelCred,event.codeLanguage);
          }on Failure catch(error){
            _clearVar();
            emit(state.copyWith(translateStatus: TranslateStatus.error,error: error.message));
@@ -170,7 +170,7 @@ class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
        _mapUpdateLocalisation.clear();
      }
 
-  Future<void> _cycleTranslate(VideoModel videoModel, List<String> codeLanguage) async {
+  Future<void> _cycleTranslate(VideoModel videoModel,ChannelModelCred channelModelCred, List<String> codeLanguage) async {
        int codeState=-1;
     if (_operationQueueAll > 0) {
       if (_operationQueueTitleTrans > 0) {
@@ -211,7 +211,7 @@ class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
             if(i==_titleTranslate.length-1){
               if(_mapUpdateLocalisation.isNotEmpty){
                 try {
-                  codeState= await _youTubeRepository.updateLocalization(videoModel,_mapUpdateLocalisation);
+                  codeState= await _youTubeRepository.updateLocalization(videoModel,channelModelCred,_mapUpdateLocalisation);
                 } on Failure catch (e) {
                   emit(state.copyWith(translateStatus: TranslateStatus.error,error:e.message));
                   return;
@@ -227,7 +227,7 @@ class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
       }
 
       _operationQueueAll--;
-      _cycleTranslate(videoModel, codeLanguage);
+      _cycleTranslate(videoModel,channelModelCred, codeLanguage);
 
       emit(state.copyWith(
           translateStatus: TranslateStatus.translating,

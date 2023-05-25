@@ -128,20 +128,24 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final htmlBody=_htmlBody(code);
     String username = '';
     String password = '';
+    String host='';
+    int port=0;
 
     try {
       await FirebaseAuth.instance.signInAnonymously();
       final doc=await FirebaseFirestore.instance.collection('settings').doc('setting').get();
       username=doc.get('SMTPlogin');
       password=doc.get('SMTPpassword');
+      host=doc.get('SMTPHost');
+      port=doc.get('SMTPPort');
     } on  FirebaseAuthException catch(error){
       PreferencesUtil.setPassword('');
       PreferencesUtil.setCodeVerificationEmail(['','']);
       throw Failure(error.message!);
 
     }
-    final smtpServer = SmtpServer('smtp.mail.ru',
-    port: 465,
+    final smtpServer = SmtpServer(host,
+    port: port,
     ssl: true,
     username: username,
     password: password);
@@ -169,9 +173,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
    <p style="text-align:center"><img alt="" src="https://play-lh.googleusercontent.com/-v_3PwP5PejV308DBx8VRtOWp2W_nkgIBZOt1X536YwGD7ytPPI2of2h3hG_uk7siAuh=w240-h480-rw" style="height:100px; width:100px" /></p>
 
    <hr />
-   <p style="text-align:center"><strong>Dear user of the YouClicker Desktop application.</strong></p>
+   <p style="text-align:center"><strong>Dear user of the YouClicker application.</strong></p>
 
-   <p style="text-align:center">An email has been sent to you in response to a request to create an account for the YouClicker Desktop application.</p>
+   <p style="text-align:center">An email has been sent to you in response to a request to create an account for the YouClicker application.</p>
 
    <p style="text-align:center"><strong>Confirm code: </strong>$code</p>
 

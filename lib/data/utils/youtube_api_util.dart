@@ -46,8 +46,8 @@ class YouTubeApiUtil{
 
     }
 
-    Future<int> updateLocalization(VideoModel videoModel,Map<String,VideoLocalization> map)async{
-      return await _youTubeApi.updateLocalization(videoModel, map);
+    Future<int> updateLocalization(VideoModel videoModel,Map<String,VideoLocalization> map,ChannelModelCred channelModelCred)async{
+      return await _youTubeApi.updateLocalization(videoModel,channelModelCred, map);
 
     }
 
