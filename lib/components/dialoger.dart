@@ -279,37 +279,50 @@ class _ActionDialogLogOutState extends State<ActionDialogLogOut> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('Your data is saved on the server',
-            style: TextStyle(
-              color: Platform.isIOS?colorPrimary:Colors.grey,
+        padding: const EdgeInsets.only(top: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Your data is saved on the server',
+              style: TextStyle(
+                color: Platform.isIOS?colorPrimary:Colors.grey,
 
-            ),),
-          Row(
-            children: [
-              Checkbox(
-                  fillColor: MaterialStatePropertyAll(colorRed),
-                  activeColor: colorRed,
-                  value: _isRemoveAccount, onChanged: (v){
-                setState(() {
-                  _isRemoveAccount=v!;
-                  widget.callback.call(_isRemoveAccount);
-                });
+              ),),
+            Row(
+              children: [
+                if(Platform.isAndroid)...{
+                  Checkbox(
+                      fillColor: MaterialStatePropertyAll(colorRed),
+                      activeColor: colorRed,
+                      value: _isRemoveAccount, onChanged: (v){
+                    setState(() {
+                      _isRemoveAccount=v!;
+                      widget.callback.call(_isRemoveAccount);
+                    });
 
-              }),
-              Text('Sign out and delete account?',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Platform.isIOS?colorPrimary:Colors.grey,
+                  })
+                }else...{
+                  CupertinoCheckbox(
+                      activeColor: colorRed,
+                      value: _isRemoveAccount, onChanged: (v){
+                    setState(() {
+                      _isRemoveAccount=v!;
+                      widget.callback.call(_isRemoveAccount);
+                    });
 
-                ),),
-            ],
-          )
-        ],
-      ),
+                  })
+                },
+
+                Text('Sign out and delete account?',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Platform.isIOS?colorPrimary:Colors.grey,
+
+                  ),),
+              ],
+            )
+          ],
+        ),
     );
   }
 }

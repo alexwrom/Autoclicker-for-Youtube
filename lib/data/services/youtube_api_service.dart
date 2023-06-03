@@ -126,8 +126,10 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
         ChannelModelCred cred) async {
       List<String> idsVideo = [];
       try {
+        print('Start');
 
         final accessToken=await refreshToken(cred.accountName);
+
         final authHeaders=<String, String>{
           'Authorization': 'Bearer $accessToken',
           'X-Goog-AuthUser': '0',
@@ -135,12 +137,16 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
         await PreferencesUtil.setHeadersGoogleApi(authHeaders);
         httpClient = GoogleHttpClient(authHeaders);
         final data = YouTubeApi(httpClient!);
+        print('Start 2');
         final result = await data.search.list(['snippet'], forMine: true, maxResults: 20, type: ['video']);
+        print('Start 3 $result');
         for (var item in result.items!) {
           idsVideo.add(item.id!.videoId!);
         }
         final ids = idsVideo.toString().split('[')[1].split(']')[0].replaceAll(' ', '');
+        print('Start 4');
         final listVideo = await data.videos.list(['snippet,contentDetails,statistics,status'], id: [ids]);
+        print('Start 5 $listVideo');
         if(listVideo.items==null){
           return [];
         }
@@ -159,7 +165,6 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
         ChannelModelCred channelModelCred,
         Map<String, VideoLocalization> map) async {
       try {
-         print('DLC = ${channelModelCred.defaultLanguage} DLV = ${videoModel.defaultLanguage}');
         String defLang='en';
         if(videoModel.defaultLanguage.isEmpty){
             defLang=channelModelCred.defaultLanguage;
@@ -279,15 +284,19 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
     }
 
     Future<String> refreshToken(String email) async {
+      print('Refresh Token $email');
       try {
         await _googleSingIn.signInSilently();
+        print('SingIn');
         final GoogleSignInTokenData response =
               await GoogleSignInPlatform.instance.getTokens(
                 email: email,
                 shouldRecoverAuth: true,
               );
+        print('SingIn $response');
         return response.accessToken!;
       }on Failure catch (e,stackTrace) {
+        print('Error refresh token ${e.message}');
         Error.throwWithStackTrace(Failure(e.toString()), stackTrace);
       } // New refreshed token
     }
