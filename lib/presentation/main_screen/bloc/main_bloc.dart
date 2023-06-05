@@ -1,7 +1,9 @@
 
 
 
- import 'package:bloc_concurrency/bloc_concurrency.dart';
+ import 'dart:html';
+
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:googleapis/youtube/v3.dart';
 import 'package:hive/hive.dart';
@@ -128,28 +130,38 @@ class MainBloc extends Bloc<MainEvent,MainState>{
        emit(state.copyWith(videoListStatus: VideoListStatus.loading,addCredStatus: AddCredStatus.unknown));
        videoListFromChannel.clear();
        videoListNotPublished.clear();
-       allListVideoAccount.clear();
        try {
          final videos = await _googleApiRepository.getVideoFromAccount(event.cred);
-         allListVideoAccount = videos;
          if(videos.isEmpty){
            emit(state.copyWith(videoListStatus: VideoListStatus.empty));
            return;
          }
-         for (var item in videos) {
-                  if (!item.isPublic) {
-                    videoListNotPublished.add(item);
-                  }
-                }
-         for(var item in allListVideoAccount){
-                 if(item.isPublic&&event.cred.idChannel==item.idChannel){
-                   videoListFromChannel.add(item);
-                 }
-               }
-         emit(state.copyWith(videoListStatus: VideoListStatus.success,addCredStatus: AddCredStatus.unknown,videoFromChannel: videoListFromChannel));
+         //getVideosIsNotPublished(videos);
+         //getVideosFromChannel(videos, event);
+         emit(state.copyWith(videoListStatus: VideoListStatus.success,addCredStatus: AddCredStatus.unknown,videoFromChannel: videos));
        }on Failure catch (e) {
          emit(state.copyWith(videoListStatus: VideoListStatus.error,error: e.message));
        }
+    }
+
+  List<VideoModel> getVideosFromChannel(List<VideoModel> videos, GetListVideoFromChannelEvent event) {
+      List<VideoModel> list=[];
+      for(var item in videos){
+              if(item.isPublic&&event.cred.idChannel==item.idChannel){
+                list.add(item);
+              }
+            }
+      return list;
+    }
+
+  List<VideoModel> getVideosIsNotPublished(List<VideoModel> videos) {
+    List<VideoModel> list=[];
+      for (var item in videos) {
+               if (!item.isPublic) {
+                 list.add(item);
+               }
+             }
+      return list;
     }
 
 

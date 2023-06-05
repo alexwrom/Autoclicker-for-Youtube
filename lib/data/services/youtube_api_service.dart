@@ -16,6 +16,7 @@ import '../../di/locator.dart';
 import '../../domain/models/channel_model_cred.dart';
 import '../../domain/models/video_model.dart';
 import '../../utils/preferences_util.dart';
+import '../http_client/dio_auth_client.dart';
 import '../http_client/dio_client_insert_caption.dart';
 import '../http_client/http_client.dart';
 import '../models/channel_cred_from_api.dart';
@@ -27,6 +28,7 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
     IOClient? httpClient;
     final _googleSingIn = locator.get<GoogleSignIn>();
     final _dio = locator.get<DioClientInsertCaption>();
+    final _dioAuthClient=locator.get<DioAuthClient>();
     FirebaseAuth? _auth;
 
     YouTubeApiService(){
@@ -126,10 +128,9 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
         ChannelModelCred cred) async {
       List<String> idsVideo = [];
       try {
-        print('Start');
 
-        final accessToken=await refreshToken(cred.accountName);
-
+        //final accessToken=await refreshToken(cred.accountName);
+        final accessToken=await refreshToken();
         final authHeaders=<String, String>{
           'Authorization': 'Bearer $accessToken',
           'X-Goog-AuthUser': '0',
@@ -137,19 +138,19 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
         await PreferencesUtil.setHeadersGoogleApi(authHeaders);
         httpClient = GoogleHttpClient(authHeaders);
         final data = YouTubeApi(httpClient!);
-        print('Start 2');
-        final result = await data.search.list(['snippet'], forMine: true, maxResults: 20, type: ['video']);
-        print('Start 3 $result');
+        final result = await data.search.list(['snippet'],
+            forMine: true, maxResults: 20, type: ['video']);
         for (var item in result.items!) {
           idsVideo.add(item.id!.videoId!);
         }
+
         final ids = idsVideo.toString().split('[')[1].split(']')[0].replaceAll(' ', '');
-        print('Start 4');
+        print('IDS ${ids.length}');
         final listVideo = await data.videos.list(['snippet,contentDetails,statistics,status'], id: [ids]);
-        print('Start 5 $listVideo');
         if(listVideo.items==null){
           return [];
         }
+        print('Videos ${listVideo.items!.length}');
         return listVideo.items!.map((e) => AllVideoModelFromApi.fromApi(video: e)).toList();
       } on Failure catch (error, stackTrace) {
         Error.throwWithStackTrace(Failure(error.message), stackTrace);
@@ -283,22 +284,39 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
       }
     }
 
-    Future<String> refreshToken(String email) async {
-      print('Refresh Token $email');
+    Future<String> getNewToken(String email) async {
       try {
         await _googleSingIn.signInSilently();
-        print('SingIn');
         final GoogleSignInTokenData response =
               await GoogleSignInPlatform.instance.getTokens(
                 email: email,
                 shouldRecoverAuth: true,
               );
-        print('SingIn $response');
         return response.accessToken!;
       }on Failure catch (e,stackTrace) {
-        print('Error refresh token ${e.message}');
         Error.throwWithStackTrace(Failure(e.toString()), stackTrace);
       } // New refreshed token
+    }
+
+
+    Future<String> refreshToken()async{
+       try {
+
+         final token=await _dioAuthClient.init().post('/token',
+                    queryParameters: {
+                    'client_id':'975260836202-auh4p2otnnbf3eta2il2tms67fpdgqct.apps.googleusercontent.com',
+                      'client_secret':'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',
+                      'refresh_token':'1//0cF2nRorOLoeUCgYIARAAGAwSNwF-L9IrHP6NEtf2C6-NmCpnmauhpnZKNWwmCmMHOGgK4uAjVIC0R_Ty-odWo0Yx9pCZvqUaJdY',
+                      'grant_type':'refresh_token'
+                });
+
+         return token.data['access_token'];
+       }on DioError catch (e,stackTrace) {
+         print('Error token ${e.message}');
+         Error.throwWithStackTrace(const Failure('Error refresh token'), stackTrace);
+
+       }
+
     }
 
 
