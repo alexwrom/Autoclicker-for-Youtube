@@ -13,10 +13,16 @@ class ChannelModelCredFromApi{
    final String accessToken;
    final String idToken;
    final String defaultLanguage;
+   final String refreshToken;
 
 
 
-   ChannelModelCredFromApi.fromApi({required Channel channel,required String googleAccount,required String accessTok,required String idTok}):
+   ChannelModelCredFromApi.fromApi(
+       {required Channel channel,
+          required String googleAccount,
+          required String accessTok,
+          required String idTok,
+       required String refToken}):
        nameChannel=channel.snippet!.title!,
        imgBanner=channel.snippet!.thumbnails!.medium!.url!,
        idUpload=channel.contentDetails!.relatedPlaylists!.uploads!,
@@ -24,6 +30,7 @@ class ChannelModelCredFromApi{
        idChannel=channel.id!,
        idToken=idTok,
        accessToken=accessTok,
+       refreshToken=refToken,
         accountName=googleAccount;
 
 

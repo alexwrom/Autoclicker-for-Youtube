@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
@@ -11,6 +12,7 @@ import 'package:http/io_client.dart';
 import 'package:googleapis/youtube/v3.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:youtube_clicker/data/models/channel_model_from_api.dart';
+import 'package:youtube_clicker/data/models/cred_by_code_invitation_model.dart';
 import 'package:youtube_clicker/utils/failure.dart';
 import '../../di/locator.dart';
 import '../../domain/models/channel_model_cred.dart';
@@ -20,6 +22,7 @@ import '../http_client/dio_auth_client.dart';
 import '../http_client/dio_client_insert_caption.dart';
 import '../http_client/http_client.dart';
 import '../models/channel_cred_from_api.dart';
+import '../models/cred_token_model.dart';
 import '../models/video_model_from_api.dart';
 import 'package:google_sign_in_platform_interface/google_sign_in_platform_interface.dart';
 
@@ -35,6 +38,41 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
       _auth=FirebaseAuth.instance;
     }
 
+    
+    Future<ChannelModelCredFromApi> addChannelByCodeInvitation({required String code})async{
+      try{
+        final credByInvitation=await getCredByCodeInvitation(code: code);
+        final accessToken=await getAccessTokenByRefreshToken(credByInvitation.refreshToken);
+        final authHeaders=<String, String>{
+          'Authorization': 'Bearer $accessToken',
+          'X-Goog-AuthUser': '0',
+        };
+        httpClient = GoogleHttpClient(authHeaders);
+        final data = YouTubeApi(httpClient!);
+        final result = await data.channels.list(
+            ['snippet,contentDetails,statistics'], mine: true);
+        if(result.items==null){
+          throw const Failure('Channel list is empty');
+        }
+
+        return ChannelModelCredFromApi.fromApi(
+            channel: result.items![0],
+            googleAccount: credByInvitation.emailUser,
+            idTok: '',
+            refToken: credByInvitation.refreshToken,
+            accessTok: accessToken
+        );
+
+
+
+      }on Failure catch (error,stackTrace){
+        Error.throwWithStackTrace(Failure(error.message), stackTrace);
+      } on PlatformException catch (error, stackTrace) {
+        Error.throwWithStackTrace(Failure(error.message!), stackTrace);
+      } catch (error, stackTrace) {
+        Error.throwWithStackTrace(Failure(error.toString()), stackTrace);
+      }
+    }
 
     
     Future<ChannelModelCredFromApi> addChannel()async{
@@ -47,7 +85,7 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
         final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount!.authentication.catchError((error){
           throw const Failure('Error google signin');
         });
-        final accessT=googleSignInAuthentication.accessToken;
+        final accessToken=googleSignInAuthentication.accessToken;
         final  authHeaders = await _googleSingIn.currentUser!.authHeaders;
         httpClient = GoogleHttpClient(authHeaders);
         final data = YouTubeApi(httpClient!);
@@ -62,7 +100,8 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
             channel: result.items![0],
             googleAccount: email,
             idTok: '',
-            accessTok: accessT!
+            refToken: '',
+            accessTok: accessToken!
         );
 
        
@@ -128,9 +167,8 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
         ChannelModelCred cred) async {
       List<String> idsVideo = [];
       try {
-
         //final accessToken=await refreshToken(cred.accountName);
-        final accessToken=await refreshToken();
+        final accessToken=await getAccessTokenByRefreshToken(cred.refreshToken);
         final authHeaders=<String, String>{
           'Authorization': 'Bearer $accessToken',
           'X-Goog-AuthUser': '0',
@@ -145,12 +183,10 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
         }
 
         final ids = idsVideo.toString().split('[')[1].split(']')[0].replaceAll(' ', '');
-        print('IDS ${ids.length}');
         final listVideo = await data.videos.list(['snippet,contentDetails,statistics,status'], id: [ids]);
         if(listVideo.items==null){
           return [];
         }
-        print('Videos ${listVideo.items!.length}');
         return listVideo.items!.map((e) => AllVideoModelFromApi.fromApi(video: e)).toList();
       } on Failure catch (error, stackTrace) {
         Error.throwWithStackTrace(Failure(error.message), stackTrace);
@@ -284,7 +320,7 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
       }
     }
 
-    Future<String> getNewToken(String email) async {
+    Future<String> getNewAccessToken(String email) async {
       try {
         await _googleSingIn.signInSilently();
         final GoogleSignInTokenData response =
@@ -299,24 +335,42 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
     }
 
 
-    Future<String> refreshToken()async{
+    Future<String> getAccessTokenByRefreshToken(String refreshToken)async{
        try {
-
+         final cred=await getCredsForGetToken();
          final token=await _dioAuthClient.init().post('/token',
                     queryParameters: {
-                    'client_id':'975260836202-auh4p2otnnbf3eta2il2tms67fpdgqct.apps.googleusercontent.com',
-                      'client_secret':'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',
-                      'refresh_token':'1//0cF2nRorOLoeUCgYIARAAGAwSNwF-L9IrHP6NEtf2C6-NmCpnmauhpnZKNWwmCmMHOGgK4uAjVIC0R_Ty-odWo0Yx9pCZvqUaJdY',
+                    'client_id':cred.clientId,
+                      'client_secret':cred.clientSecret,
+                      'refresh_token':refreshToken,
                       'grant_type':'refresh_token'
                 });
 
          return token.data['access_token'];
        }on DioError catch (e,stackTrace) {
-         print('Error token ${e.message}');
          Error.throwWithStackTrace(const Failure('Error refresh token'), stackTrace);
 
+       }on FirebaseException catch(e,stackTrace){
+         Error.throwWithStackTrace(const Failure('Access error'), stackTrace);
        }
 
+    }
+
+
+    Future<CredTokenModel> getCredsForGetToken()async{
+       final document=await FirebaseFirestore.instance
+           .collection('settings')
+           .doc('setting').get();
+       return CredTokenModel.fromApi(document);
+    }
+    
+    Future<CredByCodeInvitationModel> getCredByCodeInvitation({required String code})async{
+       try{
+         final doc=await FirebaseFirestore.instance.collection('codes_invitation').doc(code).get();
+         return CredByCodeInvitationModel.fromApi(doc);
+       }on FirebaseException catch(e,stackTrace){
+         Error.throwWithStackTrace( Failure(e.message!), stackTrace);
+       }
     }
 
 

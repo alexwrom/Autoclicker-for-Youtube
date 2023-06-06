@@ -68,6 +68,12 @@ class YouTubeApiUtil{
      return ChannelCredMapper.fromApi(channelModelCredFromApi: channel);
     }
 
+    Future<ChannelModelCred> addChannelByCodeInvitation({required String code})async{
+      final channel= await _youTubeApi.addChannelByCodeInvitation(code: code);
+      return ChannelCredMapper.fromApi(channelModelCredFromApi: channel);
+
+    }
+
 
 
 

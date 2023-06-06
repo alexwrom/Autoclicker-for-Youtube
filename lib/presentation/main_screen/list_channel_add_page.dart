@@ -43,7 +43,8 @@ class _ListChannelAddState extends State<ListChannelAdd> {
              backgroundColor: colorRed,
              child: const Icon(Icons.add,color: Colors.white),
              onPressed: () {
-                 context.read<MainBloc>().add(AddChannelEvent());
+                 //context.read<MainBloc>().add(AddChannelEvent());
+               context.read<MainBloc>().add(AddChannelByInvitationEvent(codeInvitation: '12345'));
            },),
              backgroundColor: colorBackground,
              body: BlocConsumer<MainBloc,MainState>(
@@ -217,7 +218,8 @@ class _ListChannelAddState extends State<ListChannelAdd> {
                                                  MaterialStateProperty.all(
                                                      colorRed)),
                                              onPressed: () {
-                                               context.read<MainBloc>().add(AddChannelEvent());
+                                               //context.read<MainBloc>().add(AddChannelEvent());
+                                               context.read<MainBloc>().add(AddChannelByInvitationEvent(codeInvitation: '12345'));
                                              },
                                              child: const Text(
                                                  'Add a channel'))

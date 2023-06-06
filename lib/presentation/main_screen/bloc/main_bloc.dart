@@ -1,8 +1,6 @@
 
 
 
- import 'dart:html';
-
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:googleapis/youtube/v3.dart';
@@ -35,6 +33,7 @@ class MainBloc extends Bloc<MainEvent,MainState>{
      on<GetChannelEvent>(_getListCredChannel);
      on<GetListVideoFromChannelEvent>(_getListVideoFromChannel);
      on<AddChannelEvent>(_addChannel,transformer: droppable());
+     on<AddChannelByInvitationEvent>(_addChannelByCodeInvitation,transformer: droppable());
      on<RemoveChannelEvent>(_removeChannel,transformer: droppable());
   }
 
@@ -64,6 +63,45 @@ class MainBloc extends Bloc<MainEvent,MainState>{
 
   }
 
+  Future<void> _addChannelByCodeInvitation(AddChannelByInvitationEvent event,emit)async{
+    emit(state.copyWith(addCredStatus: AddCredStatus.loading));
+    try{
+      if(event.codeInvitation.isEmpty){
+        throw const Failure('Enter the invitation code');
+
+      }
+      final result=await _googleApiRepository.addChannelByCodeInvitation(code: event.codeInvitation);
+      final exists= listCredChannels.where((element) => element.idUpload==result.idUpload);
+      if(exists.isNotEmpty){
+        throw const Failure('Сhannel already added');
+      }
+      final key= await boxVideo.add(ChannelLangCode(id: result.idChannel, codeLanguage: [])).catchError((error) {
+        throw const Failure('Error while saving locally...');
+      });
+      await boxCredChannel
+          .add(CredChannel(
+          refreshToken: result.refreshToken,
+          keyLangCode: key,
+          idChannel: result.idChannel,
+          nameChannel: result.nameChannel,
+          imgBanner: result.imgBanner,
+          accountName: result.accountName,
+          idUpload: result.idUpload,
+          idToken: result.idToken,
+          accessToken: result.accessToken,
+          defaultLanguage: result.defaultLanguage))
+          .catchError((error) {
+        throw const Failure('Error while saving locally..');
+      });
+
+      listCredChannels.add(result.copyWith(keyLangCode: key));
+      emit(state.copyWith(mainStatus:MainStatus.success,addCredStatus: AddCredStatus.success,listCredChannels: listCredChannels));
+    }on Failure catch (error){
+      emit(state.copyWith(addCredStatus: AddCredStatus.error,error: error.message));
+    }
+
+  }
+
 
 
   Future<void> _addChannel(AddChannelEvent event,emit)async{
@@ -79,6 +117,7 @@ class MainBloc extends Bloc<MainEvent,MainState>{
       });
       await boxCredChannel
           .add(CredChannel(
+               refreshToken: result.refreshToken,
                keyLangCode: key,
               idChannel: result.idChannel,
               nameChannel: result.nameChannel,
@@ -122,11 +161,7 @@ class MainBloc extends Bloc<MainEvent,MainState>{
   }
 
 
-
-
-
-
-    Future<void> _getListVideoFromChannel(GetListVideoFromChannelEvent event,emit)async{
+     Future<void> _getListVideoFromChannel(GetListVideoFromChannelEvent event,emit)async{
        emit(state.copyWith(videoListStatus: VideoListStatus.loading,addCredStatus: AddCredStatus.unknown));
        videoListFromChannel.clear();
        videoListNotPublished.clear();
@@ -137,8 +172,8 @@ class MainBloc extends Bloc<MainEvent,MainState>{
            return;
          }
          //getVideosIsNotPublished(videos);
-         //getVideosFromChannel(videos, event);
-         emit(state.copyWith(videoListStatus: VideoListStatus.success,addCredStatus: AddCredStatus.unknown,videoFromChannel: videos));
+         final listVideo=getVideosFromChannel(videos, event);
+         emit(state.copyWith(videoListStatus: VideoListStatus.success,addCredStatus: AddCredStatus.unknown,videoFromChannel: listVideo));
        }on Failure catch (e) {
          emit(state.copyWith(videoListStatus: VideoListStatus.error,error: e.message));
        }

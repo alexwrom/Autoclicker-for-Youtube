@@ -14,42 +14,50 @@ import '../utils/youtube_api_util.dart';
 
 class YouTubeRepositoryImpl extends YouTubeRepository{
 
-   final _youTubeApi=locator.get<YouTubeApiUtil>();
+   final _youTubeApiUtil=locator.get<YouTubeApiUtil>();
 
   @override
   Future<List<ChannelModel>?> getListChanel(bool reload) async{
-   return await _youTubeApi.getListChanel(reload);
+   return await _youTubeApiUtil.getListChanel(reload);
   }
 
   @override
   Future<List<VideoModel>> getVideoFromAccount(ChannelModelCred cred) async{
-    return await _youTubeApi.getVideoFromAccount(cred);
+    return await _youTubeApiUtil.getVideoFromAccount(cred);
   }
 
   @override
   Future<int> updateLocalization(VideoModel videoModel,ChannelModelCred channelModelCred, Map<String, VideoLocalization> map)async {
-   return await _youTubeApi.updateLocalization(videoModel, map,channelModelCred);
+   return await _youTubeApiUtil.updateLocalization(videoModel, map,channelModelCred);
   }
 
   @override
   Future<List<Caption>> loadCaptions(String idVideo)async {
-    return await _youTubeApi.loadCaptions(idVideo);
+    return await _youTubeApiUtil.loadCaptions(idVideo);
   }
 
   @override
   Future<void> insertCaption({required String idCap, required String idVideo, required String codeLang})async {
-   return await _youTubeApi.insertCaption(idCap: idCap, idVideo: idVideo, codeLang: codeLang);
+   return await _youTubeApiUtil.insertCaption(idCap: idCap, idVideo: idVideo, codeLang: codeLang);
   }
 
   @override
   Future<void> removeCaptions(String idCap) async{
-    await _youTubeApi.removeCaptions(idCap);
+    await _youTubeApiUtil.removeCaptions(idCap);
   }
 
   @override
   Future<ChannelModelCred> addChannel()async {
-    return await _youTubeApi.addChannel();
+    return await _youTubeApiUtil.addChannel();
   }
+
+
+   @override
+   Future<ChannelModelCred> addChannelByCodeInvitation({required String code})async{
+     return await _youTubeApiUtil.addChannelByCodeInvitation(code: code);
+
+
+   }
 
 
 

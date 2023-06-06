@@ -15,6 +15,13 @@ class MainEvent extends Equatable{
  }
  class AddChannelEvent extends MainEvent{}
 
+ class AddChannelByInvitationEvent extends MainEvent{
+   final String codeInvitation;
+   AddChannelByInvitationEvent({
+    required this.codeInvitation,
+  });
+}
+
  class GetChannelEvent extends MainEvent{}
  class RemoveChannelEvent extends MainEvent{
    final int keyHint;
