@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:youtube_clicker/components/text_fields.dart';
 import 'package:youtube_clicker/presentation/membership_screen/membership_page.dart';
 
 import '../presentation/auth_screen/auth_page.dart';
@@ -16,6 +17,7 @@ import '../presentation/auth_screen/bloc/auth_bloc.dart';
 import '../presentation/main_screen/bloc/main_bloc.dart';
 import '../presentation/main_screen/bloc/main_event.dart';
 import '../resourses/colors_app.dart';
+import 'buttons.dart';
 
 
 
@@ -46,7 +48,7 @@ class Dialoger {
 
   }
 
-  static void showDeleteChannel({required BuildContext context,required int keyHint,required int index}){
+  static void showDeleteChannel({required BuildContext context,required int keyHive,required int index}){
     showCustomDialog(
         textButtonCancel: 'Close',
         textButtonAccept: 'Delete',
@@ -63,7 +65,7 @@ class Dialoger {
 
           context.read<MainBloc>().add(
               RemoveChannelEvent(
-                  keyHint: keyHint,
+                  keyHive: keyHive,
                   index: index));
         }
     );
@@ -229,6 +231,23 @@ class Dialoger {
     );
   }
 
+  static void showChannelSelectionMenu({required BuildContext context}){
+     showModalBottomSheet(
+       isScrollControlled: true,
+       backgroundColor: Colors.transparent,
+         context: context,
+         builder: (_){
+       return  BodyChannelSelectionMenu(
+         onAddChannelByCode: (code){
+           context.read<MainBloc>().add(AddChannelByInvitationEvent(codeInvitation: code));
+         },
+         onAddChannelWithGoogle: (){
+           context.read<MainBloc>().add(AddChannelWithGoogleEvent());
+         },
+       );
+     });
+  }
+
   static void showNotSignedIn() {
     Fluttertoast.showToast(
       msg: 'Sign in or Sign up to continue.',
@@ -259,6 +278,180 @@ class Dialoger {
       backgroundColor: colorBackground,
       fontSize: 16.0,
       gravity: ToastGravity.CENTER,
+    );
+  }
+}
+
+class BodyChannelSelectionMenu extends StatefulWidget{
+  const BodyChannelSelectionMenu({super.key,
+    required this.onAddChannelWithGoogle,
+  required this.onAddChannelByCode});
+  final VoidCallback onAddChannelWithGoogle;
+  final Function onAddChannelByCode;
+
+  @override
+  State<BodyChannelSelectionMenu> createState() => _BodyChannelSelectionMenuState();
+}
+
+class _BodyChannelSelectionMenuState extends State<BodyChannelSelectionMenu> {
+
+  var _isAddChannelByCode=false;
+  var _isAddChannelByGoogleAccount=true;
+  late TextEditingController _codeController;
+
+
+
+  @override
+  void initState() {
+    super.initState();
+    _codeController=TextEditingController();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding:  EdgeInsets.only(bottom:
+      MediaQuery.of(context).viewInsets.bottom),
+      child: Container(
+        height: 500.0,
+        decoration: BoxDecoration(
+          color: colorPrimary,
+          borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(30.0), topRight: Radius.circular(30.0))),
+        padding: const EdgeInsets.all(30.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const Text('Choose how to add a channel',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 30.0
+              ),),
+            const SizedBox(height: 20.0),
+            const Divider(),
+            const SizedBox(height: 20.0),
+            if(Platform.isAndroid)...{
+              Row(
+                children: [
+                  Checkbox(
+                    fillColor: MaterialStatePropertyAll(colorRed),
+                    activeColor: colorRed,
+                    value: _isAddChannelByGoogleAccount,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        _isAddChannelByGoogleAccount=value!;
+                        if(_isAddChannelByGoogleAccount){
+                          _isAddChannelByCode=false;
+                        }
+                      });
+                    },
+
+                  ),
+                  const Text('Add a channel with an account google',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20.0
+                    ),),
+                ],
+              ),
+              Row(
+                children: [
+                  Checkbox(
+                    fillColor: MaterialStatePropertyAll(colorRed),
+                    activeColor: colorRed,
+                    value: _isAddChannelByCode,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        _isAddChannelByCode=value!;
+                        if(_isAddChannelByCode){
+                          _isAddChannelByGoogleAccount=false;
+                        }
+                      });
+                    },
+                  ),
+                  const Text('Add channel with invitation code',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20.0
+                    ),),
+                ],
+              )
+            }else...{
+              Row(
+                children: [
+                  CupertinoCheckbox(
+                    activeColor: colorRed,
+                    value: _isAddChannelByGoogleAccount,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        _isAddChannelByGoogleAccount=value!;
+                        if(_isAddChannelByGoogleAccount){
+                          _isAddChannelByCode=false;
+                        }
+                      });
+                    },
+
+                  ),
+                  const Text('Add a channel with an account google',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20.0
+                    ),),
+                ],
+              ),
+              Row(
+                children: [
+                  CupertinoCheckbox(
+                    activeColor: colorRed,
+                    value: _isAddChannelByCode,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        _isAddChannelByCode=value!;
+                        if(_isAddChannelByCode){
+                          _isAddChannelByGoogleAccount=false;
+                        }
+
+                      });
+                    },
+                  ),
+                  const Text('Add channel with invitation code',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20.0
+                    ),),
+                ],
+              )
+            },
+
+            if(_isAddChannelByCode)...{
+              const SizedBox(height: 20.0),
+              CodeField(controller: _codeController,textHint: 'Enter the invitation code')
+             },
+
+            const SizedBox(height: 40.0),
+            Center(
+              child: SubmitButton(onTap: (){
+                FocusScope.of(context).unfocus();
+                if(_isAddChannelByCode){
+                  if(_codeController.text.isNotEmpty){
+                    widget.onAddChannelByCode.call(_codeController.text);
+                    Navigator.pop(context);
+                  }else{
+                    Dialoger.showMessage('Enter the invitation code');
+                  }
+
+                }else if(_isAddChannelByGoogleAccount){
+                  widget.onAddChannelWithGoogle.call();
+                  Navigator.pop(context);
+                }else if(!_isAddChannelByGoogleAccount&&!_isAddChannelByCode){
+                  Dialoger.showMessage('Choose how to add a channel');
+                }
+              },
+                textButton: 'Add a channel',),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -294,7 +487,8 @@ class _ActionDialogLogOutState extends State<ActionDialogLogOut> {
                   Checkbox(
                       fillColor: MaterialStatePropertyAll(colorRed),
                       activeColor: colorRed,
-                      value: _isRemoveAccount, onChanged: (v){
+                      value: _isRemoveAccount,
+                      onChanged: (v){
                     setState(() {
                       _isRemoveAccount=v!;
                       widget.callback.call(_isRemoveAccount);

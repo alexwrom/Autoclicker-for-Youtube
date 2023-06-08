@@ -78,22 +78,46 @@ extension VideoListStatusExt on VideoListStatus{
    final String error;
    final String userName;
    final String urlAvatar;
+   final bool isChannelDeactivation;
 
 
-   const MainState(this.videoListStatus,this.listCredChannels,this.mainStatus,this.addCredStatus, this.channelList,this.error,this.userName,this.urlAvatar,this.videoNotPubList,this.videoFromChannel);
+   const MainState(
+      this.videoListStatus,
+      this.listCredChannels,
+      this.mainStatus,
+      this.addCredStatus,
+      this.channelList,
+      this.error,
+      this.userName,
+      this.urlAvatar,
+      this.videoNotPubList,
+      this.videoFromChannel,
+       this.isChannelDeactivation);
 
-
-   factory MainState.unknown(){
-     return const MainState(VideoListStatus.unknown,[],MainStatus.unknown,AddCredStatus.unknown, [],'','','',[],[]);
+  factory MainState.unknown(){
+     return const MainState(VideoListStatus.unknown,[],MainStatus.unknown,AddCredStatus.unknown, [],'','','',[],[],true);
    }
 
 
 
   @override
 
-  List<Object?> get props => [videoListStatus,listCredChannels,mainStatus,addCredStatus,channelList,error,userName,urlAvatar,videoNotPubList,videoFromChannel];
+  List<Object?> get props =>
+      [
+        videoListStatus,
+        listCredChannels,
+        mainStatus,
+        addCredStatus,
+        channelList,
+        error,
+        userName,
+        urlAvatar,
+        videoNotPubList,
+        videoFromChannel,
+        isChannelDeactivation
+      ];
 
-   MainState copyWith({
+  MainState copyWith({
      VideoListStatus? videoListStatus,
      List<ChannelModelCred>? listCredChannels,
     MainStatus? mainStatus,
@@ -103,7 +127,8 @@ extension VideoListStatusExt on VideoListStatus{
       String? userName,
       String? urlAvatar,
      List<VideoModel>? videoNotPubList,
-     List<VideoModel>? videoFromChannel
+     List<VideoModel>? videoFromChannel,
+    bool? isChannelDeactivation
   }) {
     return MainState(
       videoListStatus??this.videoListStatus,
@@ -115,7 +140,8 @@ extension VideoListStatusExt on VideoListStatus{
       userName??this.userName,
       urlAvatar??this.urlAvatar,
       videoNotPubList??this.videoNotPubList,
-      videoFromChannel??this.videoFromChannel
+      videoFromChannel??this.videoFromChannel,
+        isChannelDeactivation??this.isChannelDeactivation
     );
   }
 }

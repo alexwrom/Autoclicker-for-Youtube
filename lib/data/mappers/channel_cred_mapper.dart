@@ -20,6 +20,7 @@ class ChannelCredMapper{
         accessToken: channelModelCredFromApi.accessToken,
         defaultLanguage: channelModelCredFromApi.defaultLanguage,
         refreshToken: channelModelCredFromApi.refreshToken,
-        keyLangCode: 0);
+        keyLangCode: 0,
+    idInvitation: channelModelCredFromApi.idInvitation);
   }
 }

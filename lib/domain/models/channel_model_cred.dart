@@ -16,6 +16,7 @@ class ChannelModelCred{
   final int keyLangCode;
   final String refreshToken;
   final String defaultLanguage;
+  final String idInvitation;
 
 
 
@@ -29,7 +30,8 @@ class ChannelModelCred{
     required this.idToken,
     required this.keyLangCode,
     required this.refreshToken,
-    required this.defaultLanguage
+    required this.defaultLanguage,
+    required this.idInvitation
   });
 
 
@@ -44,6 +46,7 @@ class ChannelModelCred{
         idToken: channel.idToken,
         keyLangCode:channel.keyLangCode,
         refreshToken:  channel.refreshToken,
+        idInvitation: channel.idInvitation,
         defaultLanguage:  channel.defaultLanguage);
   }
 
@@ -57,6 +60,7 @@ class ChannelModelCred{
     String? idToken,
     int? keyLangCode,
     String? refreshToken,
+    String? idInvitation,
     String? defaultLanguage
   }) {
     return ChannelModelCred(
@@ -69,6 +73,7 @@ class ChannelModelCred{
       idToken: idToken ?? this.idToken,
       keyLangCode: keyLangCode ?? this.keyLangCode,
       refreshToken: refreshToken??this.refreshToken,
+      idInvitation: idInvitation??this.idInvitation,
       defaultLanguage: defaultLanguage??this.defaultLanguage
     );
   }

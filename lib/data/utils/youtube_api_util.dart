@@ -21,17 +21,17 @@ class YouTubeApiUtil{
     final _youTubeApi=locator.get<YouTubeApiService>();
 
 
-    Future<List<ChannelModel>?> getListChanel(bool reload) async{
-      List<ChannelModel>? list=[];
-      final result=await _youTubeApi.getListChanel(reload);
-      for (var element in result) {
-         list.add(YouTubeApiMapper.fromApi(channelModelFromApi:element));
-      }
-
-      return list;
-
-
-    }
+    // Future<List<ChannelModel>?> getListChanel(bool reload) async{
+    //   List<ChannelModel>? list=[];
+    //   final result=await _youTubeApi.getListChanel(reload);
+    //   for (var element in result) {
+    //      list.add(YouTubeApiMapper.fromApi(channelModelFromApi:element));
+    //   }
+    //
+    //   return list;
+    //
+    //
+    // }
 
 
     Future<List<VideoModel>> getVideoFromAccount(ChannelModelCred cred)async{
@@ -72,6 +72,10 @@ class YouTubeApiUtil{
       final channel= await _youTubeApi.addChannelByCodeInvitation(code: code);
       return ChannelCredMapper.fromApi(channelModelCredFromApi: channel);
 
+    }
+
+    Future<bool> isActivatedChanelByInvitation(String code)async{
+      return await _youTubeApi.isActivatedChanelByInvitation(code);
     }
 
 

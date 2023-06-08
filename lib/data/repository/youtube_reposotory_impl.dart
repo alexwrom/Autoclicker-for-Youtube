@@ -16,10 +16,10 @@ class YouTubeRepositoryImpl extends YouTubeRepository{
 
    final _youTubeApiUtil=locator.get<YouTubeApiUtil>();
 
-  @override
-  Future<List<ChannelModel>?> getListChanel(bool reload) async{
-   return await _youTubeApiUtil.getListChanel(reload);
-  }
+  // @override
+  // Future<List<ChannelModel>?> getListChanel(bool reload) async{
+  //  return await _youTubeApiUtil.getListChanel(reload);
+  // }
 
   @override
   Future<List<VideoModel>> getVideoFromAccount(ChannelModelCred cred) async{
@@ -57,6 +57,10 @@ class YouTubeRepositoryImpl extends YouTubeRepository{
      return await _youTubeApiUtil.addChannelByCodeInvitation(code: code);
 
 
+   }
+    @override
+   Future<bool> isActivatedChanelByInvitation(String code)async{
+    return await _youTubeApiUtil.isActivatedChanelByInvitation(code);
    }
 
 

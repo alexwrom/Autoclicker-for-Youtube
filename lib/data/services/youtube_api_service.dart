@@ -60,7 +60,8 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
             googleAccount: credByInvitation.emailUser,
             idTok: '',
             refToken: credByInvitation.refreshToken,
-            accessTok: accessToken
+            accessTok: accessToken,
+            iDInvitation: credByInvitation.idInvitation
         );
 
 
@@ -82,7 +83,8 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
           throw const Failure('Process stopped...');
         }
         final email=_googleSingIn.currentUser!.email;
-        final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount!.authentication.catchError((error){
+        final GoogleSignInAuthentication googleSignInAuthentication =
+        await googleSignInAccount!.authentication.catchError((error){
           throw const Failure('Error google signin');
         });
         final accessToken=googleSignInAuthentication.accessToken;
@@ -101,6 +103,7 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
             googleAccount: email,
             idTok: '',
             refToken: '',
+            iDInvitation: '',
             accessTok: accessToken!
         );
 
@@ -117,58 +120,64 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
 
 
 
-    Future<List<ChannelModelFromApi>> getListChanel(bool reload) async {
-      try {
-        if (reload) {
-        final googleSignInAccount=  await _googleSingIn.signIn();
-          if (_googleSingIn.currentUser == null) {
-            throw const Failure('Error auth');
-          }
-
-          final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount!.authentication;
-          final AuthCredential credential = GoogleAuthProvider.credential(
-            accessToken: googleSignInAuthentication.accessToken,
-            idToken: googleSignInAuthentication.idToken,
-          );
-          final UserCredential userCredential =
-          await _auth!.signInWithCredential(credential);
-          await PreferencesUtil.setUrlAvatar(userCredential.user!.photoURL!);
-          await PreferencesUtil.setUserName(userCredential.user!.displayName!);
-          await PreferencesUtil.setEmail(userCredential.user!.email!);
-          final  authHeaders = await _googleSingIn.currentUser!.authHeaders;
-          await PreferencesUtil.setHeadersGoogleApi(authHeaders);
-          httpClient = GoogleHttpClient(authHeaders);
-        }else{
-          final authHeaderString = PreferencesUtil.getHeaderApiGoogle;
-          final authHeaders = json.decode(authHeaderString);
-          final header = Map<String, String>.from(authHeaders);
-          httpClient = GoogleHttpClient(header);
-        }
-        final data = YouTubeApi(httpClient!);
-        final result = await data.channels.list(
-            ['snippet,contentDetails,statistics'], mine: true);
-        if(result.items==null){
-          return [];
-        }
-
-        return result.items!.map((e) => ChannelModelFromApi.fromApi(channel: e))
-            .toList();
-      } on Failure catch (error, stackTrace) {
-        Error.throwWithStackTrace(Failure(error.message), stackTrace);
-      } on PlatformException catch (error, stackTrace) {
-        Error.throwWithStackTrace(Failure(error.message!), stackTrace);
-      } catch (error, stackTrace) {
-        Error.throwWithStackTrace(Failure(error.toString()), stackTrace);
-      }
-    }
+    // Future<List<ChannelModelFromApi>> getListChanel(bool reload) async {
+    //   try {
+    //     if (reload) {
+    //     final googleSignInAccount=  await _googleSingIn.signIn();
+    //       if (_googleSingIn.currentUser == null) {
+    //         throw const Failure('Error auth');
+    //       }
+    //
+    //       final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount!.authentication;
+    //       final AuthCredential credential = GoogleAuthProvider.credential(
+    //         accessToken: googleSignInAuthentication.accessToken,
+    //         idToken: googleSignInAuthentication.idToken,
+    //       );
+    //       final UserCredential userCredential =
+    //       await _auth!.signInWithCredential(credential);
+    //       await PreferencesUtil.setUrlAvatar(userCredential.user!.photoURL!);
+    //       await PreferencesUtil.setUserName(userCredential.user!.displayName!);
+    //       await PreferencesUtil.setEmail(userCredential.user!.email!);
+    //       final  authHeaders = await _googleSingIn.currentUser!.authHeaders;
+    //       await PreferencesUtil.setHeadersGoogleApi(authHeaders);
+    //       httpClient = GoogleHttpClient(authHeaders);
+    //     }else{
+    //       final authHeaderString = PreferencesUtil.getHeaderApiGoogle;
+    //       final authHeaders = json.decode(authHeaderString);
+    //       final header = Map<String, String>.from(authHeaders);
+    //       httpClient = GoogleHttpClient(header);
+    //     }
+    //     final data = YouTubeApi(httpClient!);
+    //     final result = await data.channels.list(
+    //         ['snippet,contentDetails,statistics'], mine: true);
+    //     if(result.items==null){
+    //       return [];
+    //     }
+    //
+    //     return result.items!.map((e) => ChannelModelFromApi.fromApi(channel: e))
+    //         .toList();
+    //   } on Failure catch (error, stackTrace) {
+    //     Error.throwWithStackTrace(Failure(error.message), stackTrace);
+    //   } on PlatformException catch (error, stackTrace) {
+    //     Error.throwWithStackTrace(Failure(error.message!), stackTrace);
+    //   } catch (error, stackTrace) {
+    //     Error.throwWithStackTrace(Failure(error.toString()), stackTrace);
+    //   }
+    // }
 
 
     Future<List<AllVideoModelFromApi>> getVideoFromAccount(
         ChannelModelCred cred) async {
       List<String> idsVideo = [];
       try {
-        //final accessToken=await refreshToken(cred.accountName);
-        final accessToken=await getAccessTokenByRefreshToken(cred.refreshToken);
+        String accessToken='';
+        if(cred.idInvitation.isEmpty){
+          /// only works on android
+           accessToken=await getNewAccessToken(cred.accountName);
+        }else{
+           accessToken=await getAccessTokenByRefreshToken(cred.refreshToken);
+        }
+
         final authHeaders=<String, String>{
           'Authorization': 'Bearer $accessToken',
           'X-Goog-AuthUser': '0',
@@ -371,6 +380,13 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
        }on FirebaseException catch(e,stackTrace){
          Error.throwWithStackTrace( Failure(e.message!), stackTrace);
        }
+    }
+
+
+
+    Future<bool> isActivatedChanelByInvitation(String code)async{
+      final doc=await FirebaseFirestore.instance.collection('codes_invitation').doc(code).get();
+      return doc.exists;
     }
 
 

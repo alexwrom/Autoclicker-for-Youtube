@@ -13,7 +13,7 @@ class MainEvent extends Equatable{
 
 
  }
- class AddChannelEvent extends MainEvent{}
+ class AddChannelWithGoogleEvent extends MainEvent{}
 
  class AddChannelByInvitationEvent extends MainEvent{
    final String codeInvitation;
@@ -24,9 +24,9 @@ class MainEvent extends Equatable{
 
  class GetChannelEvent extends MainEvent{}
  class RemoveChannelEvent extends MainEvent{
-   final int keyHint;
+   final int keyHive;
    final int index;
-    RemoveChannelEvent({required this.keyHint,required this.index});
+    RemoveChannelEvent({required this.keyHive,required this.index});
  }
 
  class GetListVideoFromChannelEvent extends MainEvent{

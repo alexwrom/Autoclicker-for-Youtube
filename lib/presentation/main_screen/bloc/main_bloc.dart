@@ -32,7 +32,7 @@ class MainBloc extends Bloc<MainEvent,MainState>{
   MainBloc():super(MainState.unknown()){
      on<GetChannelEvent>(_getListCredChannel);
      on<GetListVideoFromChannelEvent>(_getListVideoFromChannel);
-     on<AddChannelEvent>(_addChannel,transformer: droppable());
+     on<AddChannelWithGoogleEvent>(_addChannel,transformer: droppable());
      on<AddChannelByInvitationEvent>(_addChannelByCodeInvitation,transformer: droppable());
      on<RemoveChannelEvent>(_removeChannel,transformer: droppable());
   }
@@ -47,14 +47,22 @@ class MainBloc extends Bloc<MainEvent,MainState>{
             CredChannel value = boxCredChannel.get(key);
             listCredChannels.add(ChannelModelCred.fromBoxHive(channel: value));
           }).toList();
-      if(listCredChannels.isEmpty){
-            emit(state.copyWith(mainStatus: MainStatus.empty, userName: name, urlAvatar: ''));
-          }else{
-            emit(state.copyWith(
-                mainStatus: MainStatus.success,
-                listCredChannels: listCredChannels,
-                userName: name,
-                urlAvatar: ''));
+      if (listCredChannels.isEmpty) {
+        emit(state.copyWith(
+            mainStatus: MainStatus.empty, userName: name, urlAvatar: ''));
+      } else {
+        final listFiltered=await _checkListChanelByInvitation(listCredChannels);
+       final isActivatedChannel=await _checkActivatedChanelByInvitation(listCredFiltered: listFiltered,
+       listCredOld: listCredChannels);
+       if(!isActivatedChannel){
+         listCredChannels=listFiltered;
+       }
+       emit(state.copyWith(
+            mainStatus: MainStatus.success,
+            listCredChannels: listCredChannels,
+            userName: name,
+            urlAvatar: '',
+            isChannelDeactivation:isActivatedChannel));
           }
     }on Failure catch (e) {
       emit(state.copyWith(mainStatus: MainStatus.error,error: e.message));
@@ -89,6 +97,7 @@ class MainBloc extends Bloc<MainEvent,MainState>{
           idUpload: result.idUpload,
           idToken: result.idToken,
           accessToken: result.accessToken,
+          idInvitation: result.idInvitation,
           defaultLanguage: result.defaultLanguage))
           .catchError((error) {
         throw const Failure('Error while saving locally..');
@@ -104,7 +113,7 @@ class MainBloc extends Bloc<MainEvent,MainState>{
 
 
 
-  Future<void> _addChannel(AddChannelEvent event,emit)async{
+  Future<void> _addChannel(AddChannelWithGoogleEvent event,emit)async{
     emit(state.copyWith(addCredStatus: AddCredStatus.loading));
     try{
       final result=await _googleApiRepository.addChannel();
@@ -126,6 +135,7 @@ class MainBloc extends Bloc<MainEvent,MainState>{
               idUpload: result.idUpload,
               idToken: result.idToken,
                accessToken: result.accessToken,
+              idInvitation: result.idInvitation,
               defaultLanguage: result.defaultLanguage))
           .catchError((error) {
         throw const Failure('Error while saving locally..');
@@ -142,10 +152,10 @@ class MainBloc extends Bloc<MainEvent,MainState>{
   Future<void> _removeChannel(RemoveChannelEvent event,emit)async{
    emit(state.copyWith(addCredStatus: AddCredStatus.removal));
    await Future.delayed(const Duration(seconds: 2));
-   await boxCredChannel.delete(event.keyHint).catchError((e){
+   await boxCredChannel.delete(event.keyHive).catchError((e){
      emit(state.copyWith(addCredStatus: AddCredStatus.errorRemove,error: 'Сhannel delete error'));
    });
-   await boxVideo.delete(event.keyHint).catchError((e){
+   await boxVideo.delete(event.keyHive).catchError((e){
      emit(state.copyWith(addCredStatus: AddCredStatus.errorRemove,error: 'Сhannel delete error'));
    });
    listCredChannels.removeAt(event.index);
@@ -199,7 +209,34 @@ class MainBloc extends Bloc<MainEvent,MainState>{
       return list;
     }
 
+  Future<List<ChannelModelCred>> _checkListChanelByInvitation(List<ChannelModelCred> listCred)async{
+    try {
+
+      for(int i=0;i<listCred.length;i++){
+            if (listCred[i].idInvitation.isNotEmpty) {
+              final result=await _googleApiRepository.isActivatedChanelByInvitation(listCred[i].idInvitation);
+              if(!result){
+                await boxCredChannel.delete(listCred[i].keyLangCode).catchError((e){
+                     throw const Failure('Сhannel delete error');
+                });
+                await boxVideo.delete(listCred[i].keyLangCode).catchError((e){
+                  throw const Failure('Сhannel delete error');
+                });
+                listCred.remove(listCred[i]);
+              }
+            }
+          }
+      return listCred;
+    } on Failure catch (e) {
+      throw Failure(e.message);
+    }
 
 
+  }
 
- }
+  Future<bool> _checkActivatedChanelByInvitation(
+      {required List<ChannelModelCred> listCredOld,
+      required List<ChannelModelCred> listCredFiltered}) async {
+    return listCredOld.length == listCredFiltered.length;
+  }
+}

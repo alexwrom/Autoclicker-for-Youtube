@@ -12,7 +12,7 @@ abstract class YouTubeRepository{
 
 
 
-    Future<List<ChannelModel>?> getListChanel(bool reload);
+    //Future<List<ChannelModel>?> getListChanel(bool reload);
     Future<ChannelModelCred> addChannel();
     Future<ChannelModelCred> addChannelByCodeInvitation({required String code});
     Future<List<VideoModel>> getVideoFromAccount(ChannelModelCred cred);
@@ -20,5 +20,6 @@ abstract class YouTubeRepository{
     Future<List<Caption>> loadCaptions(String idVideo);
     Future<void> insertCaption({required String idCap,required String idVideo,required String codeLang});
     Future<void> removeCaptions(String idCap);
+    Future<bool> isActivatedChanelByInvitation(String code);
 
   }

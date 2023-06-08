@@ -43,8 +43,7 @@ class _ListChannelAddState extends State<ListChannelAdd> {
              backgroundColor: colorRed,
              child: const Icon(Icons.add,color: Colors.white),
              onPressed: () {
-                 //context.read<MainBloc>().add(AddChannelEvent());
-               context.read<MainBloc>().add(AddChannelByInvitationEvent(codeInvitation: '12345'));
+                 Dialoger.showChannelSelectionMenu(context: context);
            },),
              backgroundColor: colorBackground,
              body: BlocConsumer<MainBloc,MainState>(
@@ -54,6 +53,12 @@ class _ListChannelAddState extends State<ListChannelAdd> {
                   s.addCredStatus.isErrorRemove) {
                 Dialoger.showError(s.error, context);
               }
+
+              if(!s.isChannelDeactivation){
+                Dialoger.showError('One or more channels have been deactivated',context);
+              }
+
+
             },
                  builder: (context,state) {
                    if(state.mainStatus.isLoading||state.addCredStatus.isLoading){
@@ -218,8 +223,7 @@ class _ListChannelAddState extends State<ListChannelAdd> {
                                                  MaterialStateProperty.all(
                                                      colorRed)),
                                              onPressed: () {
-                                               //context.read<MainBloc>().add(AddChannelEvent());
-                                               context.read<MainBloc>().add(AddChannelByInvitationEvent(codeInvitation: '12345'));
+                                              Dialoger.showChannelSelectionMenu(context: context);
                                              },
                                              child: const Text(
                                                  'Add a channel'))
@@ -236,7 +240,7 @@ class _ListChannelAddState extends State<ListChannelAdd> {
                                            return  ItemChannelCred(channelModelCred: state.listCredChannels[index],
                                            index: index,
                                            onDelete: (i){
-                                            Dialoger.showDeleteChannel(context: context,keyHint: state
+                                            Dialoger.showDeleteChannel(context: context,keyHive: state
                                                 .listCredChannels[index]
                                                 .keyLangCode,index:index);
                                           },);

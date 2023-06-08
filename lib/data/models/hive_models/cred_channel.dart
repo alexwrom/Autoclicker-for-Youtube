@@ -26,6 +26,8 @@ class CredChannel{
   final String defaultLanguage;
   @HiveField(9)
   final String refreshToken;
+  @HiveField(10)
+  final String idInvitation;
 
 
 
@@ -39,7 +41,8 @@ class CredChannel{
     required this.accessToken,
     required this.idToken,
     required this.defaultLanguage,
-    required this.refreshToken
+    required this.refreshToken,
+    required this.idInvitation
 
   });
 }
