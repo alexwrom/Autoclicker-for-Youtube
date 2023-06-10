@@ -4,14 +4,15 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dio/adapter.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:googleapis/notebooks/v1.dart';
 import 'package:http/io_client.dart';
 import 'package:googleapis/youtube/v3.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:youtube_clicker/data/models/channel_model_from_api.dart';
 import 'package:youtube_clicker/data/models/cred_by_code_invitation_model.dart';
 import 'package:youtube_clicker/utils/failure.dart';
 import '../../di/locator.dart';
@@ -32,11 +33,9 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
     final _googleSingIn = locator.get<GoogleSignIn>();
     final _dio = locator.get<DioClientInsertCaption>();
     final _dioAuthClient=locator.get<DioAuthClient>();
-    FirebaseAuth? _auth;
 
-    YouTubeApiService(){
-      _auth=FirebaseAuth.instance;
-    }
+
+
 
     
     Future<ChannelModelCredFromApi> addChannelByCodeInvitation({required String code})async{
@@ -77,18 +76,25 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
 
     
     Future<ChannelModelCredFromApi> addChannel()async{
+
       try {
         final googleSignInAccount=  await _googleSingIn.signIn();
         if (_googleSingIn.currentUser == null) {
           throw const Failure('Process stopped...');
         }
+
         final email=_googleSingIn.currentUser!.email;
         final GoogleSignInAuthentication googleSignInAuthentication =
         await googleSignInAccount!.authentication.catchError((error){
           throw const Failure('Error google signin');
         });
+
+
         final accessToken=googleSignInAuthentication.accessToken;
         final  authHeaders = await _googleSingIn.currentUser!.authHeaders;
+        // final id= googleSignInAuthentication.idToken!;
+        //   print('Id Token $id');
+        //   await testGetToken(id);
         httpClient = GoogleHttpClient(authHeaders);
         final data = YouTubeApi(httpClient!);
         final result = await data.channels.list(
@@ -120,59 +126,12 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
 
 
 
-    // Future<List<ChannelModelFromApi>> getListChanel(bool reload) async {
-    //   try {
-    //     if (reload) {
-    //     final googleSignInAccount=  await _googleSingIn.signIn();
-    //       if (_googleSingIn.currentUser == null) {
-    //         throw const Failure('Error auth');
-    //       }
-    //
-    //       final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount!.authentication;
-    //       final AuthCredential credential = GoogleAuthProvider.credential(
-    //         accessToken: googleSignInAuthentication.accessToken,
-    //         idToken: googleSignInAuthentication.idToken,
-    //       );
-    //       final UserCredential userCredential =
-    //       await _auth!.signInWithCredential(credential);
-    //       await PreferencesUtil.setUrlAvatar(userCredential.user!.photoURL!);
-    //       await PreferencesUtil.setUserName(userCredential.user!.displayName!);
-    //       await PreferencesUtil.setEmail(userCredential.user!.email!);
-    //       final  authHeaders = await _googleSingIn.currentUser!.authHeaders;
-    //       await PreferencesUtil.setHeadersGoogleApi(authHeaders);
-    //       httpClient = GoogleHttpClient(authHeaders);
-    //     }else{
-    //       final authHeaderString = PreferencesUtil.getHeaderApiGoogle;
-    //       final authHeaders = json.decode(authHeaderString);
-    //       final header = Map<String, String>.from(authHeaders);
-    //       httpClient = GoogleHttpClient(header);
-    //     }
-    //     final data = YouTubeApi(httpClient!);
-    //     final result = await data.channels.list(
-    //         ['snippet,contentDetails,statistics'], mine: true);
-    //     if(result.items==null){
-    //       return [];
-    //     }
-    //
-    //     return result.items!.map((e) => ChannelModelFromApi.fromApi(channel: e))
-    //         .toList();
-    //   } on Failure catch (error, stackTrace) {
-    //     Error.throwWithStackTrace(Failure(error.message), stackTrace);
-    //   } on PlatformException catch (error, stackTrace) {
-    //     Error.throwWithStackTrace(Failure(error.message!), stackTrace);
-    //   } catch (error, stackTrace) {
-    //     Error.throwWithStackTrace(Failure(error.toString()), stackTrace);
-    //   }
-    // }
-
-
     Future<List<AllVideoModelFromApi>> getVideoFromAccount(
         ChannelModelCred cred) async {
       List<String> idsVideo = [];
       try {
         String accessToken='';
         if(cred.idInvitation.isEmpty){
-          /// only works on android
            accessToken=await getNewAccessToken(cred.accountName);
         }else{
            accessToken=await getAccessTokenByRefreshToken(cred.refreshToken);
@@ -331,7 +290,7 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
 
     Future<String> getNewAccessToken(String email) async {
       try {
-        await _googleSingIn.signInSilently();
+        await _googleSingIn.signInSilently(reAuthenticate: true);
         final GoogleSignInTokenData response =
               await GoogleSignInPlatform.instance.getTokens(
                 email: email,
@@ -388,6 +347,49 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
       final doc=await FirebaseFirestore.instance.collection('codes_invitation').doc(code).get();
       return doc.exists;
     }
+   ///test method
+   Future<void> testGetToken(String tokenId)async{
+     SecurityContext? securityContext;
+      final dio = Dio(
+       BaseOptions(
+         headers: {'Content-type': 'application/json'},
+         baseUrl: 'https://identitytoolkit.googleapis.com/v1',
+         connectTimeout: 15000,
+         receiveTimeout: 10000,
+       ),
+     );
+
+     final httpClientAdapter = dio.httpClientAdapter;
+     if (httpClientAdapter is DefaultHttpClientAdapter) {
+       httpClientAdapter.onHttpClientCreate = (_) => HttpClient(
+         context: securityContext,
+       );
+     }
+    final res= await dio.post('/accounts:signInWithIdp?key=AIzaSyBqcHhrwoO_Cqgq4gI6wrHa-Mb8_5P9bJA',
+     queryParameters: {
+       'postBody': 'id_token=$tokenId&providerId=google.com',
+       'requestUri': 'http://localhost',
+       'returnIdpCredential': true,
+       'returnSecureToken': true
+     });
+
+     if (res.statusCode != 200) {
+       throw 'Refresh token request failed: ${res.statusCode}';
+     }
+
+     final data = Map<String, dynamic>.of(jsonDecode(res.data));
+     if (data.containsKey('refreshToken')) {
+       // here is your refresh token, store it in a secure way
+       print('Token Ref ${data}');
+     } else {
+       throw 'No refresh token in response';
+     }
+   }
+
+
+
+
+
 
 
   }
