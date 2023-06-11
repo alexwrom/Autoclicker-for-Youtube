@@ -3,10 +3,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:simple_speed_dial/simple_speed_dial.dart';
 import 'package:youtube_clicker/presentation/main_screen/widgets/item_channel_cred.dart';
 import 'package:youtube_clicker/presentation/main_screen/widgets/user_data_card.dart';
+import 'package:youtube_clicker/resourses/images.dart';
 
 import '../../components/dialoger.dart';
+import '../../components/floating_buttom_animation.dart';
 import '../../resourses/colors_app.dart';
 import 'bloc/main_bloc.dart';
 import 'bloc/main_event.dart';
@@ -21,6 +24,8 @@ class ListChannelAdd extends StatefulWidget{
 
 class _ListChannelAddState extends State<ListChannelAdd> {
 
+
+
   @override
   void initState() {
     super.initState();
@@ -32,6 +37,7 @@ class _ListChannelAddState extends State<ListChannelAdd> {
   void dispose() {
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
    return BlocBuilder<MainBloc,MainState>(
@@ -39,12 +45,45 @@ class _ListChannelAddState extends State<ListChannelAdd> {
        return AbsorbPointer(
          absorbing: state.mainStatus.isLoading||state.addCredStatus.isRemoval,
          child: Scaffold(
-           floatingActionButton: state.mainStatus.isEmpty||state.mainStatus.isError?null:FloatingActionButton(
-             backgroundColor: colorRed,
-             child: const Icon(Icons.add,color: Colors.white),
-             onPressed: () {
-                 Dialoger.showChannelSelectionMenu(context: context);
-           },),
+           floatingActionButton: state.mainStatus.isError?null:
+           FloatingButtonAnimation(
+             closedForegroundColor: Colors.white,
+             openForegroundColor: Colors.white,
+             closedBackgroundColor: colorRed,
+             openBackgroundColor: colorPrimary,
+             labelsBackgroundColor: Colors.white,
+             speedDialChildren: <SpeedDialChild>[
+               SpeedDialChild(
+                 child: Image.asset(imgCode,width: 30.0,height: 30.0),
+                 backgroundColor: Colors.white,
+                 onPressed: () {
+                   Dialoger.showChannelSelectionMenu(context: context);
+                 },
+                 closeSpeedDialOnPressed: true,
+               ),
+               SpeedDialChild(
+                 closeSpeedDialOnPressed: true,
+                 child: Image.asset(logoGoogle,width: 30.0,height: 30.0),
+                 backgroundColor: Colors.white,
+                 onPressed: () {
+                   context.read<MainBloc>().add(AddChannelWithGoogleEvent());
+                 },
+               ),
+
+             ],
+             child: const Icon(Icons.add),
+           ),
+
+           //
+           // FloatingActionButton(
+           //   backgroundColor: colorRed,
+           //   child: const Icon(Icons.add,color: Colors.white),
+           //   onPressed: () {
+           //
+           //
+           //
+           //       Dialoger.showChannelSelectionMenu(context: context);
+           // },),
              backgroundColor: colorBackground,
              body: BlocConsumer<MainBloc,MainState>(
                  listener: (_,s){
@@ -216,17 +255,6 @@ class _ListChannelAddState extends State<ListChannelAdd> {
                                                fontSize: 20,
                                                fontWeight: FontWeight.w400),
                                          ),
-                                         const SizedBox(height: 10),
-                                         ElevatedButton(
-                                             style: ButtonStyle(
-                                                 backgroundColor:
-                                                 MaterialStateProperty.all(
-                                                     colorRed)),
-                                             onPressed: () {
-                                              Dialoger.showChannelSelectionMenu(context: context);
-                                             },
-                                             child: const Text(
-                                                 'Add a channel'))
                                        ],
                                      ),
                                    ),

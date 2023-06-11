@@ -16,13 +16,15 @@ class SubmitButton extends StatelessWidget {
   final VoidCallback? onTap;
   final String? textButton;
   final double? width;
+  final Color colorsFill;
 
 
 
    const SubmitButton({Key? key,
     this.onTap,
     this.textButton='OK',
-     this.width=double.infinity
+     this.width=double.infinity,
+     this.colorsFill=const Color.fromRGBO(27, 29, 41, 1)
   }):super(key: key);
 
   @override
@@ -32,7 +34,7 @@ class SubmitButton extends StatelessWidget {
       width: width,
       child: ElevatedButton(
         style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all<Color>(colorBackground),
+          backgroundColor: MaterialStateProperty.all<Color>(colorsFill),
             shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                 RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(50),

@@ -78,6 +78,7 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
     Future<ChannelModelCredFromApi> addChannel()async{
 
       try {
+        await _googleSingIn.signOut();
         final googleSignInAccount=  await _googleSingIn.signIn();
         if (_googleSingIn.currentUser == null) {
           throw const Failure('Process stopped...');
@@ -99,7 +100,7 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
         final data = YouTubeApi(httpClient!);
         final result = await data.channels.list(
             ['snippet,contentDetails,statistics'], mine: true);
-        await _googleSingIn.signOut();
+
         if(result.items==null){
           throw const Failure('Channel list is empty');
         }
@@ -335,6 +336,9 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
     Future<CredByCodeInvitationModel> getCredByCodeInvitation({required String code})async{
        try{
          final doc=await FirebaseFirestore.instance.collection('codes_invitation').doc(code).get();
+         if(!doc.exists){
+           throw const Failure('This code is not found');
+         }
          return CredByCodeInvitationModel.fromApi(doc);
        }on FirebaseException catch(e,stackTrace){
          Error.throwWithStackTrace( Failure(e.message!), stackTrace);

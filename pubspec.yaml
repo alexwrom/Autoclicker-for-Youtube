@@ -42,6 +42,7 @@ dependencies:
   googleapis: ^9.2.0
   cloud_firestore: ^4.3.1
   flutter_bloc: ^8.1.1
+  simple_speed_dial: ^0.1.7
   bloc_concurrency: ^0.2.0
   equatable: ^2.0.5
   dio: ^4.0.6
