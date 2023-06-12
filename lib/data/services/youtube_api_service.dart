@@ -30,7 +30,8 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
   class YouTubeApiService {
 
     IOClient? httpClient;
-    final _googleSingIn = locator.get<GoogleSignIn>();
+    // final _googleSingIn = locator.get<GoogleSignIn>();
+    final _googleSingIn = locator.get<GoogleSignInPlatform>();
     final _dio = locator.get<DioClientInsertCaption>();
     final _dioAuthClient=locator.get<DioAuthClient>();
 
@@ -79,20 +80,41 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
 
       try {
         await _googleSingIn.signOut();
+        GoogleSignInPlatform.instance.initWithParams(const SignInInitParameters(
+          scopes: <String>[
+            YouTubeApi.youtubeForceSslScope
+          ],
+        ));
         final googleSignInAccount=  await _googleSingIn.signIn();
-        if (_googleSingIn.currentUser == null) {
+
+
+        // if (_googleSingIn.currentUser == null) {
+        //   throw const Failure('Process stopped...');
+        // }
+        if (googleSignInAccount == null) {
           throw const Failure('Process stopped...');
         }
 
-        final email=_googleSingIn.currentUser!.email;
-        final GoogleSignInAuthentication googleSignInAuthentication =
-        await googleSignInAccount!.authentication.catchError((error){
-          throw const Failure('Error google signin');
-        });
+        //final email=_googleSingIn.currentUser!.email;
+        final email=googleSignInAccount.email;
+        // final GoogleSignInAuthentication googleSignInAuthentication =
+        // await googleSignInAccount!.authentication.catchError((error){
+        //   throw const Failure('Error google signin');
+        // });
+        final GoogleSignInTokenData response =
+        await GoogleSignInPlatform.instance.getTokens(
+          email: email,
+          shouldRecoverAuth: true,
+        );
 
-
-        final accessToken=googleSignInAuthentication.accessToken;
-        final  authHeaders = await _googleSingIn.currentUser!.authHeaders;
+        //final accessToken=googleSignInAuthentication.accessToken;
+        final accessToken=response.accessToken;
+        print('Token Add $accessToken');
+        final authHeaders=<String, String>{
+          'Authorization': 'Bearer $accessToken',
+          'X-Goog-AuthUser': '0',
+        };
+        //final  authHeaders = await _googleSingIn.currentUser!.authHeaders;
         // final id= googleSignInAuthentication.idToken!;
         //   print('Id Token $id');
         //   await testGetToken(id);
@@ -132,10 +154,13 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
       List<String> idsVideo = [];
       try {
         String accessToken='';
+        print('T0 $accessToken ID Channel ${cred.idChannel}');
         if(cred.idInvitation.isEmpty){
            accessToken=await getNewAccessToken(cred.accountName);
+           print('T1 $accessToken');
         }else{
            accessToken=await getAccessTokenByRefreshToken(cred.refreshToken);
+           print('T2 $accessToken');
         }
 
         final authHeaders=<String, String>{
@@ -150,7 +175,7 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
         for (var item in result.items!) {
           idsVideo.add(item.id!.videoId!);
         }
-
+        print('Main videos ${result.items!.length}');
         final ids = idsVideo.toString().split('[')[1].split(']')[0].replaceAll(' ', '');
         final listVideo = await data.videos.list(['snippet,contentDetails,statistics,status'], id: [ids]);
         if(listVideo.items==null){
@@ -290,13 +315,16 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
     }
 
     Future<String> getNewAccessToken(String email) async {
+      print('Get new token $email');
       try {
-        await _googleSingIn.signInSilently(reAuthenticate: true);
+       final o= await _googleSingIn.signInSilently();
+        print('Get new token 1');
         final GoogleSignInTokenData response =
               await GoogleSignInPlatform.instance.getTokens(
                 email: email,
                 shouldRecoverAuth: true,
               );
+        print('Get new token 2');
         return response.accessToken!;
       }on Failure catch (e,stackTrace) {
         Error.throwWithStackTrace(Failure(e.toString()), stackTrace);
@@ -351,13 +379,16 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
       final doc=await FirebaseFirestore.instance.collection('codes_invitation').doc(code).get();
       return doc.exists;
     }
+
+
    ///test method
    Future<void> testGetToken(String tokenId)async{
      SecurityContext? securityContext;
       final dio = Dio(
        BaseOptions(
          headers: {'Content-type': 'application/json'},
-         baseUrl: 'https://identitytoolkit.googleapis.com/v1',
+         //baseUrl: 'https://identitytoolkit.googleapis.com/v1',
+         baseUrl: 'https://www.googleapis.com/oauth2/v2',
          connectTimeout: 15000,
          receiveTimeout: 10000,
        ),
@@ -369,25 +400,30 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
          context: securityContext,
        );
      }
-    final res= await dio.post('/accounts:signInWithIdp?key=AIzaSyBqcHhrwoO_Cqgq4gI6wrHa-Mb8_5P9bJA',
-     queryParameters: {
-       'postBody': 'id_token=$tokenId&providerId=google.com',
-       'requestUri': 'http://localhost',
-       'returnIdpCredential': true,
-       'returnSecureToken': true
-     });
+    // final res= await dio.post('/accounts:signInWithIdp?key=AIzaSyBqcHhrwoO_Cqgq4gI6wrHa-Mb8_5P9bJA',
+    //  queryParameters: {
+    //    'postBody': 'id_token=$tokenId&providerId=google.com',
+    //    'requestUri': 'http://localhost',
+    //    'returnIdpCredential': true,
+    //    'returnSecureToken': true
+    //  });
+     final res= await dio.post('/tokeninfo',
+         queryParameters: {
+           'id_token': tokenId
+         });
 
      if (res.statusCode != 200) {
        throw 'Refresh token request failed: ${res.statusCode}';
      }
 
-     final data = Map<String, dynamic>.of(jsonDecode(res.data));
-     if (data.containsKey('refreshToken')) {
-       // here is your refresh token, store it in a secure way
-       print('Token Ref ${data}');
-     } else {
-       throw 'No refresh token in response';
-     }
+     //final data = Map<String, dynamic>.of(jsonDecode(res.data));
+     print('Data of token ${res.data}');
+     // if (data.containsKey('refreshToken')) {
+     //   // here is your refresh token, store it in a secure way
+     //   print('Token Ref ${data}');
+     // } else {
+     //   throw 'No refresh token in response';
+     // }
    }
 
 

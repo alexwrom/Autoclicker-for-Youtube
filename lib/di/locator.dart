@@ -6,7 +6,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:googleapis/youtube/v3.dart';
 import 'package:youtube_clicker/data/repository/in_app_purchase_repository_impl.dart';
 import 'package:youtube_clicker/domain/repository/in_app_purchase_repository.dart';
-
+import 'package:google_sign_in_platform_interface/google_sign_in_platform_interface.dart';
 import '../data/http_client/dio_auth_client.dart';
 import '../data/http_client/dio_client_insert_caption.dart';
 import '../data/http_client/dio_client_translate.dart';
@@ -39,11 +39,12 @@ import '../presentation/main_screen/cubit/user_data_cubit.dart';
   void setup(){
 
     //auth
-      locator.registerLazySingleton(() => GoogleSignIn(
-        forceCodeForRefreshToken: true,
-          scopes: [
-            YouTubeApi.youtubeForceSslScope]
-      ));
+    //   locator.registerLazySingleton(() => GoogleSignIn(
+    //     forceCodeForRefreshToken: true,
+    //       scopes: [
+    //         YouTubeApi.youtubeForceSslScope]
+    //   ));
+      locator.registerLazySingleton(() => GoogleSignInPlatform.instance);
       locator.registerLazySingleton(() => AuthService());
       locator.registerLazySingleton(() => AuthApiUtil());
       locator.registerFactory<AuthRepository>(() => AuthRepositoryImpl());
