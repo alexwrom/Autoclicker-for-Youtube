@@ -12,6 +12,8 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:googleapis/notebooks/v1.dart';
 import 'package:http/io_client.dart';
 import 'package:googleapis/youtube/v3.dart';
+import 'package:oauth2_client/google_oauth2_client.dart';
+import 'package:oauth2_client/oauth2_helper.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:youtube_clicker/data/models/cred_by_code_invitation_model.dart';
 import 'package:youtube_clicker/utils/failure.dart';
@@ -27,11 +29,12 @@ import '../models/cred_token_model.dart';
 import '../models/video_model_from_api.dart';
 import 'package:google_sign_in_platform_interface/google_sign_in_platform_interface.dart';
 
+
+
   class YouTubeApiService {
 
     IOClient? httpClient;
-    // final _googleSingIn = locator.get<GoogleSignIn>();
-    final _googleSingIn = locator.get<GoogleSignInPlatform>();
+     final _googleSingIn = locator.get<GoogleSignIn>();
     final _dio = locator.get<DioClientInsertCaption>();
     final _dioAuthClient=locator.get<DioAuthClient>();
 
@@ -76,67 +79,104 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
     }
 
     
+    // Future<ChannelModelCredFromApi> addChannel()async{
+    //
+    //   try {
+    //     await _googleSingIn.signOut();
+    //     final googleSignInAccount=  await _googleSingIn.signIn();
+    //     if (_googleSingIn.currentUser == null) {
+    //       throw const Failure('Process stopped...');
+    //     }
+    //
+    //     final email=_googleSingIn.currentUser!.email;
+    //     final GoogleSignInAuthentication googleSignInAuthentication =
+    //     await googleSignInAccount!.authentication.catchError((error){
+    //       throw const Failure('Error google signin');
+    //     });
+    //     final accessToken=googleSignInAuthentication.accessToken;
+    //     final  authHeaders = await _googleSingIn.currentUser!.authHeaders;
+    //     /// testing
+    //     final s=await _googleSingIn.authenticatedClient();
+    //     final y=s!.credentials.refreshToken;//null
+    //     ///testing
+    //
+    //     httpClient = GoogleHttpClient(authHeaders);
+    //     final data = YouTubeApi(httpClient!);
+    //     final result = await data.channels.list(
+    //         ['snippet,contentDetails,statistics'], mine: true);
+    //
+    //     if(result.items==null){
+    //       throw const Failure('Channel list is empty');
+    //     }
+    //
+    //     return ChannelModelCredFromApi.fromApi(
+    //         channel: result.items![0],
+    //         googleAccount: email,
+    //         idTok: '',
+    //         refToken: '',
+    //         iDInvitation: '',
+    //         accessTok: accessToken!
+    //     );
+    //
+    //
+    //   } on Failure catch (error, stackTrace) {
+    //     Error.throwWithStackTrace(Failure(error.message), stackTrace);
+    //   } on PlatformException catch (error, stackTrace) {
+    //     Error.throwWithStackTrace(Failure(error.message!), stackTrace);
+    //   } catch (error, stackTrace) {
+    //     Error.throwWithStackTrace(Failure(error.toString()), stackTrace);
+    //   }
+    // }
+    //
+
+
     Future<ChannelModelCredFromApi> addChannel()async{
+      final cred=await getCredsForGetToken();
+      GoogleOAuth2Client client = GoogleOAuth2Client(
+        customUriScheme: 'com.googleusercontent.apps.tcq', //Must correspond to the AndroidManifest's "android:scheme" attribute
+        redirectUri: 'com.googleusercontent.apps.tcq:/oauth2redirect ', //Can be any URI, but the scheme part must correspond to the customeUriScheme
+      );
 
+      OAuth2Helper oauth2Helper = OAuth2Helper(client,
+          grantType: OAuth2Helper.authorizationCode,
+          clientId: cred.clientId,
+          clientSecret: cred.clientSecret,
+          scopes: [YouTubeApi.youtubeForceSslScope]);
+      var resp = await oauth2Helper.getToken();
+      final t=resp!.refreshToken!;
+      print('Refresh token $t');
+      return ChannelModelCredFromApi.fromApi(
+          channel: Channel(),
+          googleAccount: '',
+          idTok: '',
+          refToken: '',
+          iDInvitation: '',
+          accessTok: ''
+      );
       try {
-        await _googleSingIn.signOut();
-        GoogleSignInPlatform.instance.initWithParams(const SignInInitParameters(
-          scopes: <String>[
-            YouTubeApi.youtubeForceSslScope
-          ],
-        ));
-        final googleSignInAccount=  await _googleSingIn.signIn();
-
-
-        // if (_googleSingIn.currentUser == null) {
-        //   throw const Failure('Process stopped...');
-        // }
-        if (googleSignInAccount == null) {
-          throw const Failure('Process stopped...');
-        }
-
-        //final email=_googleSingIn.currentUser!.email;
-        final email=googleSignInAccount.email;
-        // final GoogleSignInAuthentication googleSignInAuthentication =
-        // await googleSignInAccount!.authentication.catchError((error){
-        //   throw const Failure('Error google signin');
-        // });
-        final GoogleSignInTokenData response =
-        await GoogleSignInPlatform.instance.getTokens(
-          email: email,
-          shouldRecoverAuth: true,
+        final cred=await getCredsForGetToken();
+        GoogleOAuth2Client client = GoogleOAuth2Client(
+          customUriScheme: 'my.test.app', //Must correspond to the AndroidManifest's "android:scheme" attribute
+          redirectUri: 'my.test.app:/oauth2redirect', //Can be any URI, but the scheme part must correspond to the customeUriScheme
         );
 
-        //final accessToken=googleSignInAuthentication.accessToken;
-        final accessToken=response.accessToken;
-        print('Token Add $accessToken');
-        final authHeaders=<String, String>{
-          'Authorization': 'Bearer $accessToken',
-          'X-Goog-AuthUser': '0',
-        };
-        //final  authHeaders = await _googleSingIn.currentUser!.authHeaders;
-        // final id= googleSignInAuthentication.idToken!;
-        //   print('Id Token $id');
-        //   await testGetToken(id);
-        httpClient = GoogleHttpClient(authHeaders);
-        final data = YouTubeApi(httpClient!);
-        final result = await data.channels.list(
-            ['snippet,contentDetails,statistics'], mine: true);
+        OAuth2Helper oauth2Helper = OAuth2Helper(client,
+            grantType: OAuth2Helper.authorizationCode,
+            clientId: cred.clientId,
+            clientSecret: cred.clientSecret,
+            scopes: [YouTubeApi.youtubeForceSslScope]);
 
-        if(result.items==null){
-          throw const Failure('Channel list is empty');
-        }
 
         return ChannelModelCredFromApi.fromApi(
-            channel: result.items![0],
-            googleAccount: email,
+            channel: Channel(),
+            googleAccount: '',
             idTok: '',
             refToken: '',
             iDInvitation: '',
-            accessTok: accessToken!
+            accessTok: ''
         );
 
-       
+
       } on Failure catch (error, stackTrace) {
         Error.throwWithStackTrace(Failure(error.message), stackTrace);
       } on PlatformException catch (error, stackTrace) {
@@ -145,8 +185,6 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
         Error.throwWithStackTrace(Failure(error.toString()), stackTrace);
       }
     }
-
-
 
 
     Future<List<AllVideoModelFromApi>> getVideoFromAccount(
