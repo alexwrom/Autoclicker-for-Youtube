@@ -5,3 +5,6 @@
    String get apiKeyYouTubeIos=>'AIzaSyDAFlhEFuOCSxpOynP3iUVyN1GMTZI2-aQ';
    String get baseUrlAPi=>'https://translate.googleapis.com/translate_a';
    String get baseUrlAuth=>'https://accounts.google.com/o/oauth2';
+   const String androidPlatform='android';
+   const String iosPlatform='ios';
+   const String desktopPlatform='desktop';

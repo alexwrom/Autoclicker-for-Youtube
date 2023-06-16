@@ -2,7 +2,9 @@
 
  import 'package:google_sign_in/google_sign_in.dart';
 
+import '../../data/models/channel_cred_from_api.dart';
 import '../../data/models/hive_models/cred_channel.dart';
+import '../../resourses/constants.dart';
 
 class ChannelModelCred{
 
@@ -17,6 +19,7 @@ class ChannelModelCred{
   final String refreshToken;
   final String defaultLanguage;
   final String idInvitation;
+  final TypePlatformRefreshToken typePlatformRefreshToken;
 
 
 
@@ -31,7 +34,8 @@ class ChannelModelCred{
     required this.keyLangCode,
     required this.refreshToken,
     required this.defaultLanguage,
-    required this.idInvitation
+    required this.idInvitation,
+    required this.typePlatformRefreshToken
   });
 
 
@@ -47,7 +51,12 @@ class ChannelModelCred{
         keyLangCode:channel.keyLangCode,
         refreshToken:  channel.refreshToken,
         idInvitation: channel.idInvitation,
-        defaultLanguage:  channel.defaultLanguage);
+        defaultLanguage:  channel.defaultLanguage,
+    typePlatformRefreshToken: channel.typePlatformRefreshToken==androidPlatform?
+    TypePlatformRefreshToken.android:
+    channel.typePlatformRefreshToken==iosPlatform?
+    TypePlatformRefreshToken.ios:channel.typePlatformRefreshToken==desktopPlatform?
+    TypePlatformRefreshToken.desktop:TypePlatformRefreshToken.desktop);
   }
 
   ChannelModelCred copyWith({
@@ -61,7 +70,8 @@ class ChannelModelCred{
     int? keyLangCode,
     String? refreshToken,
     String? idInvitation,
-    String? defaultLanguage
+    String? defaultLanguage,
+    TypePlatformRefreshToken? typePlatformRefreshToken
   }) {
     return ChannelModelCred(
       nameChannel: nameChannel ?? this.nameChannel,
@@ -74,7 +84,8 @@ class ChannelModelCred{
       keyLangCode: keyLangCode ?? this.keyLangCode,
       refreshToken: refreshToken??this.refreshToken,
       idInvitation: idInvitation??this.idInvitation,
-      defaultLanguage: defaultLanguage??this.defaultLanguage
+      defaultLanguage: defaultLanguage??this.defaultLanguage,
+      typePlatformRefreshToken: typePlatformRefreshToken??this.typePlatformRefreshToken
     );
   }
 }

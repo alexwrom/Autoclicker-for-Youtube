@@ -24,7 +24,7 @@ class ItemChannelCred extends StatelessWidget{
     return GestureDetector(
       onTap: (){
         Navigator.push(context, MaterialPageRoute(builder: (_)=> VideoListPage(channelModelCred: channelModelCred)));
-
+        //onDelete.call(index);
 
       },
       child: Container(

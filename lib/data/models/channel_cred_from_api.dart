@@ -4,6 +4,13 @@
 
 import 'package:googleapis/youtube/v3.dart';
 
+enum TypePlatformRefreshToken{
+   android,
+   ios,
+   desktop
+
+}
+
 class ChannelModelCredFromApi{
    final String nameChannel;
    final String imgBanner;
@@ -15,6 +22,7 @@ class ChannelModelCredFromApi{
    final String defaultLanguage;
    final String refreshToken;
    final String idInvitation;
+   final TypePlatformRefreshToken typePlatformRefreshToken;
 
 
    ChannelModelCredFromApi.fromApi(
@@ -23,7 +31,8 @@ class ChannelModelCredFromApi{
       required String accessTok,
       required String idTok,
       required String refToken,
-      required String iDInvitation})
+      required String iDInvitation,
+      required TypePlatformRefreshToken typePlatformRefreshTok})
       : nameChannel = channel.snippet!.title!,
         imgBanner = channel.snippet!.thumbnails!.medium!.url!,
         idUpload = channel.contentDetails!.relatedPlaylists!.uploads!,
@@ -33,5 +42,6 @@ class ChannelModelCredFromApi{
         accessToken = accessTok,
         refreshToken = refToken,
         idInvitation = iDInvitation,
+        typePlatformRefreshToken=typePlatformRefreshTok,
         accountName = googleAccount;
 }

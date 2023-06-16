@@ -28,13 +28,14 @@ class CredChannelAdapter extends TypeAdapter<CredChannel> {
       defaultLanguage: fields[8] as String,
       refreshToken: fields[9] as String,
       idInvitation: fields[10] as String,
+      typePlatformRefreshToken: fields[11] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, CredChannel obj) {
     writer
-      ..writeByte(11)
+      ..writeByte(12)
       ..writeByte(0)
       ..write(obj.idUpload)
       ..writeByte(1)
@@ -56,7 +57,9 @@ class CredChannelAdapter extends TypeAdapter<CredChannel> {
       ..writeByte(9)
       ..write(obj.refreshToken)
       ..writeByte(10)
-      ..write(obj.idInvitation);
+      ..write(obj.idInvitation)
+      ..writeByte(11)
+      ..write(obj.typePlatformRefreshToken);
   }
 
   @override

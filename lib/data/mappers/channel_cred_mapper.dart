@@ -21,6 +21,7 @@ class ChannelCredMapper{
         defaultLanguage: channelModelCredFromApi.defaultLanguage,
         refreshToken: channelModelCredFromApi.refreshToken,
         keyLangCode: 0,
+    typePlatformRefreshToken: channelModelCredFromApi.typePlatformRefreshToken,
     idInvitation: channelModelCredFromApi.idInvitation);
   }
 }

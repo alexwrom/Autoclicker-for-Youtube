@@ -5,10 +5,12 @@ import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:googleapis/youtube/v3.dart';
 import 'package:hive/hive.dart';
+import 'package:youtube_clicker/data/models/channel_cred_from_api.dart';
 import 'package:youtube_clicker/data/models/hive_models/channel_lang_code.dart';
 import 'package:youtube_clicker/data/services/youtube_api_service.dart';
 import 'package:youtube_clicker/di/locator.dart';
 import 'package:youtube_clicker/domain/repository/youtube_repository.dart';
+import 'package:youtube_clicker/resourses/constants.dart';
 import 'package:youtube_clicker/utils/failure.dart';
 import 'package:youtube_clicker/utils/preferences_util.dart';
 
@@ -88,7 +90,9 @@ class MainBloc extends Bloc<MainEvent,MainState>{
       });
       await boxCredChannel
           .add(CredChannel(
-          refreshToken: result.refreshToken,
+          typePlatformRefreshToken: typeRefreshToken(
+                  typePlatformRefreshToken: result.typePlatformRefreshToken),
+              refreshToken: result.refreshToken,
           keyLangCode: key,
           idChannel: result.idChannel,
           nameChannel: result.nameChannel,
@@ -104,11 +108,26 @@ class MainBloc extends Bloc<MainEvent,MainState>{
       });
 
       listCredChannels.add(result.copyWith(keyLangCode: key));
-      emit(state.copyWith(mainStatus:MainStatus.success,addCredStatus: AddCredStatus.success,listCredChannels: listCredChannels));
+      emit(state.copyWith(
+          mainStatus: MainStatus.success,
+          addCredStatus: AddCredStatus.success,
+          listCredChannels: listCredChannels));
     }on Failure catch (error){
       emit(state.copyWith(addCredStatus: AddCredStatus.error,error: error.message));
     }
 
+  }
+
+  String typeRefreshToken(
+      {required TypePlatformRefreshToken typePlatformRefreshToken}) {
+    switch (typePlatformRefreshToken) {
+      case TypePlatformRefreshToken.ios:
+        return iosPlatform;
+      case TypePlatformRefreshToken.android:
+        return androidPlatform;
+      case TypePlatformRefreshToken.desktop:
+        return desktopPlatform;
+    }
   }
 
 
@@ -126,6 +145,8 @@ class MainBloc extends Bloc<MainEvent,MainState>{
       });
       await boxCredChannel
           .add(CredChannel(
+        typePlatformRefreshToken:  typeRefreshToken(typePlatformRefreshToken:
+        result.typePlatformRefreshToken),
                refreshToken: result.refreshToken,
                keyLangCode: key,
               idChannel: result.idChannel,

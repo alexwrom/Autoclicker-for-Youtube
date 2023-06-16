@@ -8,6 +8,8 @@
 class CredTokenModel{
     final String clientId;
     final String clientSecret;
+    ///index 0 - UrlSchemes 1 - clientID
+    final List<dynamic> credAuthIOS;
 
 
 
@@ -17,11 +19,13 @@ class CredTokenModel{
       return CredTokenModel(
         clientId: doc.get('ClientID'),
         clientSecret: doc.get('Secret'),
+        credAuthIOS: doc.get('CredAuthIOS')
       );
     }
 
     const CredTokenModel({
     required this.clientId,
     required this.clientSecret,
+      required this.credAuthIOS
   });
 }
