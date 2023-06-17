@@ -10,6 +10,7 @@ import 'package:extension_google_sign_in_as_googleapis_auth/extension_google_sig
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:googleapis/identitytoolkit/v3.dart';
 import 'package:googleapis/notebooks/v1.dart';
 import 'package:http/io_client.dart';
 import 'package:googleapis/youtube/v3.dart';
@@ -158,9 +159,8 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
       try {
           final cred=await getCredsForGetToken();
           final oauth2Helper=getOauth2Helper(cred: cred);
-          var response = await oauth2Helper.getToken();
-          print('REsponse ${response!.expirationDate}');
-          final refreshToken=response!.refreshToken!;
+          var response = await oauth2Helper.fetchToken();
+          final refreshToken=response.refreshToken!;
           final accessToken=response.accessToken!;
           final authHeaders=<String, String>{
             'Authorization': 'Bearer $accessToken',
@@ -174,10 +174,10 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
           if(result.items==null){
             throw const Failure('Channel list is empty');
           }
-          await oauth2Helper.disconnect();
+
           return ChannelModelCredFromApi.fromApi(
               channel:result.items![0],
-              googleAccount: '....',
+              googleAccount: '',
               idTok: '',
               typePlatformRefreshTok:  TypePlatformRefreshToken.ios,
               refToken: refreshToken,
@@ -386,7 +386,7 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
                queryParameters: {
                  'client_id': typePlatformRefreshToken==TypePlatformRefreshToken.desktop?
                  cred.clientId:cred.credAuthIOS[1],
-                 //'client_secret':cred.clientSecret,
+                 if(typePlatformRefreshToken==TypePlatformRefreshToken.desktop)'client_secret':cred.clientSecret,
                  'refresh_token':refreshToken,
                  'grant_type':'refresh_token'
                });
@@ -439,12 +439,10 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
          redirectUri: '${cred.credAuthIOS[0]}:/oauthredirect'
        );
        OAuth2Helper oauth2Helper = OAuth2Helper(client,
-           accessTokenParams: {
-           'access_type':'offline',
-           'prompt':'consent'},
            grantType: OAuth2Helper.authorizationCode,
            clientId: cred.credAuthIOS[1],
            scopes: [YouTubeApi.youtubeForceSslScope]);
+
        return oauth2Helper;
 
      }
@@ -454,6 +452,8 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
 
 
   }
+
+
 
 
 
