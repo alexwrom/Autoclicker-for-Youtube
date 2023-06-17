@@ -19,6 +19,9 @@ class DioAuthClient{
           baseUrl: baseUrlAuth,
           connectTimeout: 15000,
           receiveTimeout: 10000,
+             headers:  {
+        'Content-Type': 'application/x-www-form-urlencoded'
+        }
         ),
       );
 

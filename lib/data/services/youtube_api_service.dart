@@ -159,6 +159,7 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
           final cred=await getCredsForGetToken();
           final oauth2Helper=getOauth2Helper(cred: cred);
           var response = await oauth2Helper.getToken();
+          print('REsponse ${response!.expirationDate}');
           final refreshToken=response!.refreshToken!;
           final accessToken=response.accessToken!;
           final authHeaders=<String, String>{
@@ -378,21 +379,21 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
     Future<String> getAccessTokenByRefreshToken(
         {required String refreshToken,
       required TypePlatformRefreshToken typePlatformRefreshToken})async{
-      print('Platform $typePlatformRefreshToken Refresh $refreshToken');
       final cred=await getCredsForGetToken();
+      print('Platform $typePlatformRefreshToken Refresh $refreshToken Client ID ${cred.credAuthIOS[1]}');
        try {
            final token=await _dioAuthClient.init().post('/token',
                queryParameters: {
                  'client_id': typePlatformRefreshToken==TypePlatformRefreshToken.desktop?
                  cred.clientId:cred.credAuthIOS[1],
-                 'client_secret':cred.clientSecret,
+                 //'client_secret':cred.clientSecret,
                  'refresh_token':refreshToken,
                  'grant_type':'refresh_token'
                });
            return token.data['access_token'];
 
        }on DioError catch (e,stackTrace) {
-         print('ERROR REFRESH TOKEN ${e.message}');
+         print('ERROR REFRESH TOKEN ${e}');
          Error.throwWithStackTrace(const Failure('Error refresh token'), stackTrace);
 
        }on FirebaseException catch(e,stackTrace){
@@ -434,13 +435,13 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
 
     OAuth2Helper getOauth2Helper({required CredTokenModel cred}){
        GoogleOAuth2Client client = GoogleOAuth2Client(
-         customUriScheme: cred.credAuthIOS[0], //Must correspond to the AndroidManifest's "android:scheme" attribute
-         redirectUri: '${cred.credAuthIOS[0]}:/oauthredirect', //Can be any URI, but the scheme part must correspond to the customeUriScheme
+         customUriScheme: cred.credAuthIOS[0],
+         redirectUri: '${cred.credAuthIOS[0]}:/oauthredirect'
        );
        OAuth2Helper oauth2Helper = OAuth2Helper(client,
            accessTokenParams: {
            'access_type':'offline',
-           'include_granted_scopes':'true'},
+           'prompt':'consent'},
            grantType: OAuth2Helper.authorizationCode,
            clientId: cred.credAuthIOS[1],
            scopes: [YouTubeApi.youtubeForceSslScope]);
