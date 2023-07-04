@@ -29,10 +29,6 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>975260836202-o7scr8gn03erodt9n08gg8qjp7lbjrmk.apps.googleusercontent.com</string>
-				<string>975260836202-c0a8n3hp5v81h839orf7js9hu08a71j2.apps.googleusercontent.com</string>
-				<string>975260836202-f6tt46as3vhn9gb4jbi4vrlv7srfeg0o.apps.googleusercontent.com</string>
-				<string>975260836202-2nref5qnanrdkb36do1ff6phop58i942.apps.googleusercontent.com</string>
 				<string>com.googleusercontent.apps.975260836202-f6tt46as3vhn9gb4jbi4vrlv7srfeg0o</string>
 				<string>com.googleusercontent.apps.975260836202-86at90b6bok7ldkdra2c13vqmkg1hbi7</string>
 				<string>com.googleusercontent.apps.975260836202-o7scr8gn03erodt9n08gg8qjp7lbjrmk</string>
