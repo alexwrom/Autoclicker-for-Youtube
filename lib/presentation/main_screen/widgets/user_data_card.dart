@@ -56,7 +56,7 @@ class _UserDataCardState extends State<UserDataCard> {
                   ),),
                 child: GestureDetector(
                   onTap: (){
-
+                    Navigator.push(context, MaterialPageRoute(builder: (_)=>MembershipPage()));
                   },
                   child: Container(
                     alignment: Alignment.centerRight,

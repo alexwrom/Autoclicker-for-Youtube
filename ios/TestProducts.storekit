@@ -20,7 +20,7 @@
           "locale" : "ru"
         }
       ],
-      "productID" : "basic_buy",
+      "productID" : "basic_pro",
       "referenceName" : "Basic",
       "type" : "Consumable"
     },
@@ -40,7 +40,7 @@
           "locale" : "ru"
         }
       ],
-      "productID" : "little",
+      "productID" : "little_pro",
       "referenceName" : "Little",
       "type" : "Consumable"
     },
@@ -60,7 +60,7 @@
           "locale" : "ru"
         }
       ],
-      "productID" : "medium_buy",
+      "productID" : "medium_pro",
       "referenceName" : "Medium",
       "type" : "Consumable"
     }

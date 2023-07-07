@@ -33,9 +33,9 @@ class ProductPurchaseFromApi{
      currencySymbol=productDetails.currencySymbol,
      isActive=false,
      titlePriceOneTransfer=documentSnapshot.get('titlePriceOneTransfer'),
-     limitTranslation=documentSnapshot.get('limitTranslation'),
+     limitTranslation=documentSnapshot.get('limitTraslation'),
      titleLimitTranslation=documentSnapshot.get('titleLimitTranslation'),
       titlePrice=documentSnapshot.get('titlePrice'),
-     isSale=documentSnapshot.get('isSale'),
+     isSale=documentSnapshot.get('isSale'),//
      priceSale=documentSnapshot.get('priceSale');
 }

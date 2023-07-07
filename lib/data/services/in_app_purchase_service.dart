@@ -31,18 +31,6 @@ class InAppPurchaseService{
     Future<List<ProductPurchaseFromApi>> getProducts() async {
       List<ProductPurchaseFromApi> products=[];
       Set<String> idsProd={};
-      _firebaseFirestore=FirebaseFirestore.instance;
-      final bool isAvailable = await _inAppPurchase.isAvailable();
-      if (!isAvailable) {
-        return [];
-      }
-      CollectionReference collectionRef= _firebaseFirestore!.collection('products');
-      QuerySnapshot querySnapshot = await collectionRef.get();
-      final listProdFromFirebase = querySnapshot.docs.map((doc) => doc).toList();
-
-      for(int i=0;i<listProdFromFirebase.length;i++){
-        idsProd.add(listProdFromFirebase[i].id.trim());
-      }
 
       try {
         _firebaseFirestore=FirebaseFirestore.instance;
@@ -50,16 +38,17 @@ class InAppPurchaseService{
         if (!isAvailable) {
                 return [];
               }
-        CollectionReference collectionRef= _firebaseFirestore!.collection('products');
+        CollectionReference collectionRef= _firebaseFirestore!.collection('products_ios');
         QuerySnapshot querySnapshot = await collectionRef.get();
         final listProdFromFirebase = querySnapshot.docs.map((doc) => doc).toList();
-         print('List ptod IDS ${listProdFromFirebase.length}');
+         print('List ptod IDS ${listProdFromFirebase.length} ID ${listProdFromFirebase[0].id}');
         for(int i=0;i<listProdFromFirebase.length;i++){
           idsProd.add(listProdFromFirebase[i].id.trim());
         }
         final ProductDetailsResponse productDetailResponse =
               await _inAppPurchase.queryProductDetails(idsProd);
         if(productDetailResponse.error != null){
+          print('Get store Error product ${productDetailResponse.error!.message}');
            throw Failure(productDetailResponse.error!.message);
         }
         print('List ptod Det ${productDetailResponse.productDetails}');
@@ -92,7 +81,7 @@ class InAppPurchaseService{
       await  clearTransactionsIos();
       var purchaseParam = PurchaseParam(
         productDetails: product,
-        //applicationUserName: userEmail,
+
       );
       final res = await _inAppPurchase.buyConsumable(purchaseParam: purchaseParam,autoConsume: true);
       if (!res) {
@@ -151,7 +140,7 @@ class InAppPurchaseService{
 
 
     }
-
+     ///not used
     Future<void> _updateFileConfigFreeTrialPeriod() async {
        final ts=DateTime.now().millisecondsSinceEpoch;
       String dir = (await getExternalStorageDirectory())!.path;
