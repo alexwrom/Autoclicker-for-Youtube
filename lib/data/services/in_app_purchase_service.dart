@@ -123,13 +123,13 @@ class InAppPurchaseService{
 
 
     Future<void> updateBalance({required int resultBalance})async{
+
       try {
         final uid=PreferencesUtil.getEmail;
-        await _updateFileConfigFreeTrialPeriod();
         _firebaseFirestore=FirebaseFirestore.instance;
         await _firebaseFirestore!.collection('userpc').doc(uid).update({
           'countTranslate':resultBalance
-        });
+       });
       } on FirebaseException catch(error,stackTrace){
         Error.throwWithStackTrace(Failure(error.message!), stackTrace);
       } on Failure catch(error,stackTrace){
