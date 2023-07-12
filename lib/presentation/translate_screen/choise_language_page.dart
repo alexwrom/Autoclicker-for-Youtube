@@ -31,6 +31,7 @@ class _ChoiceLanguagePageState extends State<ChoiceLanguagePage> {
 
 
    late List<String> _choiceCodeLanguageList;
+   Map<String,String> _codeLanguageMap={};
    final boxVideo=Hive.box('video_box');
    //dynamic _keyHiveVideo;
   @override
@@ -67,23 +68,31 @@ class _ChoiceLanguagePageState extends State<ChoiceLanguagePage> {
                      SingleChildScrollView(
                         child: Padding(
                           padding: const EdgeInsets.only(left: 30,right: 15),
-                          child: Column(
-                            children: List.generate(ListTranslate.codeListTranslate.length, (index){
-                                return _ItemLanguage(
-                                  listChoice:_choiceCodeLanguageList,
-                                    codeLanguage: ListTranslate.langCode(index),
-                                    title: ListTranslate.langName(index, Local.en),
-                                    index: index,
-                                    callback: (i){
-                                      var code=ListTranslate.langCode(i!['index']);
-                                      if(i['add']){
-                                        _addChoiceCodeLanguage(widget.credChannel.keyLangCode,code,widget.idVideo);
-                                      }else{
-                                        _removeChoiceCodeLanguage(widget.credChannel.keyLangCode,code,widget.idVideo);
-                                      }
+                          child: FutureBuilder<List<String>>(
+                            future:  _sortListLanguagesByABC(ListTranslate.codeListTranslate),
+                            builder: (context,list) {
+                              if(!list.hasData){
+                                return Container();
+                              }
+                              return Column(
+                                children: List.generate(ListTranslate.codeListTranslate.length, (index){
+                                    return _ItemLanguage(
+                                      listChoice:_choiceCodeLanguageList,
+                                        codeLanguage: _languageCodeByLanguage(list.data![index]),
+                                        title: list.data![index],
+                                        index: index,
+                                        callback: (i){
+                                          var code=ListTranslate.langCode(i!['index']);
+                                          if(i['add']){
+                                            _addChoiceCodeLanguage(widget.credChannel.keyLangCode,code,widget.idVideo);
+                                          }else{
+                                            _removeChoiceCodeLanguage(widget.credChannel.keyLangCode,code,widget.idVideo);
+                                          }
 
-                                    },);
-                            }),
+                                        },);
+                                }),
+                              );
+                            }
                           ),
                         ),
                      ),
@@ -115,6 +124,24 @@ class _ChoiceLanguagePageState extends State<ChoiceLanguagePage> {
           );
   }
 
+
+   Future<List<String>> _sortListLanguagesByABC(Map defList)async{
+    List<String> translateList=[];
+     for (int i=0;i<defList.length; i++) {
+      var key=defList.keys.elementAt(i);
+      var lang=defList[key]![0].toString();
+      var langTrans=lang.tr();
+      translateList.add(langTrans);
+      _codeLanguageMap[langTrans]=key;
+     }
+     translateList.sort();
+     return translateList;
+
+   }
+
+    String _languageCodeByLanguage(String language){
+       return _codeLanguageMap[language]??'';
+   }
    List<String> _getListChoiceCodeLanguage(int keyLangCode){
        List<String> codesList=[];
        ChannelLangCode value = boxVideo.get(keyLangCode);
@@ -196,6 +223,7 @@ class _ItemLanguageState extends State<_ItemLanguage> {
         fillColor: MaterialStatePropertyAll(colorRed),
         value: _value,
         onChanged: (bool? value) {
+          print('Code ${widget.codeLanguage}');
               setState(() {
                 _value=value!;
                 widget.callback({
