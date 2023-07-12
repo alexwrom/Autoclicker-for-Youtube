@@ -3,6 +3,7 @@
 
 
   import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:youtube_clicker/domain/models/channel_model.dart';
@@ -72,7 +73,7 @@ class ItemChannel extends StatelessWidget{
                  SizedBox(
                    width: 270,
                    height: 35,
-                   child: Text(channelModel.description.isEmpty?'Channel description missing....':channelModel.description,
+                   child: Text(channelModel.description.isEmpty?'Channel description missing....'.tr():channelModel.description,
                      overflow: TextOverflow.ellipsis,
                      maxLines: 2,
                      style:const TextStyle(

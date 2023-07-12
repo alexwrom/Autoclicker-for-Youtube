@@ -1,6 +1,7 @@
 
 
-  import 'package:flutter/material.dart';
+  import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_countdown_timer/countdown_timer_controller.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
@@ -145,13 +146,26 @@ class _EnterCodeVerificationEmailState extends State<EnterCodeVerificationEmail>
                                      return Container();
                                    }
                                  }
-                                 return Text(
-                                   'Code lifetime: ${time.sec??'00'} sec.',
-                                   style: TextStyle(
-                                       color: colorRed,
-                                       fontWeight: FontWeight.w500,
-                                       fontSize: 18
-                                   ),);
+                                 return Row(
+                                   crossAxisAlignment: CrossAxisAlignment.center,
+                                   mainAxisAlignment: MainAxisAlignment.center,
+                                   children: [
+                                     Text(
+                                       'Code lifetime:'.tr(),
+                                       style: TextStyle(
+                                           color: colorRed,
+                                           fontWeight: FontWeight.w500,
+                                           fontSize: 18
+                                       ),),
+                                     Text(
+                                       ' ${time.sec??'00'} sec.',
+                                       style: TextStyle(
+                                           color: colorRed,
+                                           fontWeight: FontWeight.w500,
+                                           fontSize: 18
+                                       ),),
+                                   ],
+                                 );
                                },
                              )
                            },

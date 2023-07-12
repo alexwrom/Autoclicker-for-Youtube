@@ -4,6 +4,7 @@
 
 
   import 'package:auto_size_text/auto_size_text.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -54,8 +55,8 @@ class _MembershipPageState extends State<MembershipPage> {
             }
 
             if(stateLis.memebStatus.isPurchased){
-              Dialoger.showInfoDialog(context, 'Subscribed successfully!',
-                'Transfers accrued $_currentLimit', false, () {
+              Dialoger.showBuyDialog(context, 'Subscribed successfully!'.tr(),
+                '$_currentLimit', false, () {
                       Navigator.pop(context);
                   });
           }
@@ -67,7 +68,7 @@ class _MembershipPageState extends State<MembershipPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                     state.memebStatus.isError?'An unknown error has occurred':'Product list is empty',
+                     state.memebStatus.isError?'An unknown error has occurred':'Product list is empty'.tr(),
                          style:const TextStyle(
                            color: Colors.grey,
                            fontSize: 16
@@ -81,7 +82,7 @@ class _MembershipPageState extends State<MembershipPage> {
                         onPressed: (){
                          Navigator.pop(context);
                         },
-                        child:const Text('Back'))
+                        child: Text('Back'.tr()))
                   ],
                 ),
               );
@@ -122,8 +123,8 @@ class _MembershipPageState extends State<MembershipPage> {
                       children: [
                         Image.asset(almas,width: 30,height: 40,color: Colors.amber),
                         const SizedBox(width: 20),
-                       const Text('Purchasing translation \npackages',
-                          style: TextStyle(
+                        Text('Purchasing translation packages'.tr(),
+                          style: const TextStyle(
                               color: Colors.amber,
                               fontWeight: FontWeight.w400,
                               fontSize: 32
@@ -210,8 +211,8 @@ class _MembershipPageState extends State<MembershipPage> {
                                         borderRadius: BorderRadius.circular(20)
                                       ))
                                     ),
-                                      child: const Text('Buy',
-                                          style:  TextStyle(
+                                      child:  Text('Buy'.tr(),
+                                          style:  const TextStyle(
                                               color: Colors.white,
                                               fontWeight: FontWeight.w500,
                                               fontSize: 18)),),
@@ -228,11 +229,21 @@ class _MembershipPageState extends State<MembershipPage> {
                             elevation: 10,
                           bannerPosition: CornerBannerPosition.topLeft,
                           bannerColor: colorRed,
-                          child: Text('Sale ${state.listDetails[index].priceSale}%',
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text('Sale'.tr(),
                         style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w500,
-                        fontSize: 16))),
+                        fontSize: 16)),
+                              Text(' ${state.listDetails[index].priceSale}%',
+                                  style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 16)),
+                            ],
+                          )),
                           ),
                       ),
                       ],

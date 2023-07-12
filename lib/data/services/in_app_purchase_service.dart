@@ -117,11 +117,6 @@ class InAppPurchaseService{
 
 
 
-
-
-
-
-
     Future<void> updateBalance({required int resultBalance})async{
 
       try {
@@ -140,28 +135,7 @@ class InAppPurchaseService{
 
 
     }
-     ///not used
-    Future<void> _updateFileConfigFreeTrialPeriod() async {
-       final ts=DateTime.now().millisecondsSinceEpoch;
-      String dir = (await getExternalStorageDirectory())!.path;
-      final fileConfig = '$dir/config.json';
-      final fileExists=await File(fileConfig).exists();
-      if(fileExists){
-        final jsonString=await File(fileConfig).readAsString();
-       final Map<String,dynamic> jsonConfig=jsonDecode(jsonString);
-       jsonConfig.update('timestampPurchase', (value) => ts);
-        final jsonNewString=jsonEncode(jsonConfig);
-         await File(fileConfig).writeAsString(jsonNewString);
 
-      }else{
-        final ts=DateTime.now().millisecondsSinceEpoch;
-        final jsonConfig={'timeStampAuth':0,
-          'timestampPurchase':ts};
-        final jsonString=jsonEncode(jsonConfig);
-        final f = await File(fileConfig).create();
-        await f.writeAsString(jsonString);
-      }
-    }
 
 
 }

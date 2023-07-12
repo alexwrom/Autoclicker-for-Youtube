@@ -4,6 +4,7 @@
 import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
@@ -37,7 +38,7 @@ class TranslatePage extends StatefulWidget{
 
 class _TranslatePageState extends State<TranslatePage> {
 
-   String _textButton='Translate title and description';
+   String _textButton='Translate title and description'.tr();
    late TranslateBloc _translateBloc;
    List<String> _listCodeLanguage=[];
    final boxVideo=Hive.box('video_box');
@@ -50,7 +51,7 @@ class _TranslatePageState extends State<TranslatePage> {
     
     final _h=MediaQuery.of(context).size.height/3;
     if(widget.videoModel.description.isEmpty){
-      _textButton='Translate title';
+      _textButton='Translate title'.tr();
     }
     final balance=context.read<UserDataCubit>().state.userData.numberOfTrans;
     return Scaffold(
@@ -146,8 +147,8 @@ class _TranslatePageState extends State<TranslatePage> {
                                 padding: const EdgeInsets.only(left: 10,top: 5,bottom: 5,right: 10),
                                 child: Row(
                                   children: [
-                                    const Text('Selected translations:',
-                                      style: TextStyle(
+                                     Text('Selected translations:'.tr(),
+                                      style: const TextStyle(
                                           color: Colors.grey,
                                           fontSize: 16,
                                           fontWeight: FontWeight.w400
@@ -156,8 +157,7 @@ class _TranslatePageState extends State<TranslatePage> {
                                     ValueListenableBuilder<int>(
                                       valueListenable: notifiCodeList,
                                         builder: (context,value,child) {
-                                          print('State Code Lang ${value}');
-                                        return Text('${value}',
+                                        return Text('$value',
                                           style:const TextStyle(
                                               color: Colors.white,
                                               fontSize: 18,
@@ -206,7 +206,7 @@ class _TranslatePageState extends State<TranslatePage> {
                                           bottomRight: Radius.circular(5),
                                           bottomLeft: Radius.circular(5))
                                   ),
-                                  child: const Text('Title:',style: TextStyle(
+                                  child:  Text('Title:'.tr(),style: const TextStyle(
                                       color: Colors.white,
                                       fontSize: 14,
                                       fontWeight: FontWeight.w700
@@ -245,8 +245,8 @@ class _TranslatePageState extends State<TranslatePage> {
                                             bottomRight: Radius.circular(5),
                                             bottomLeft: Radius.circular(5))
                                     ),
-                                    child: const Text('Description:',
-                                        style: TextStyle(
+                                    child:  Text('Description:'.tr(),
+                                        style: const TextStyle(
                                         color: Colors.white,
                                         fontSize: 14,
                                         fontWeight: FontWeight.w700
@@ -309,10 +309,10 @@ class _TranslatePageState extends State<TranslatePage> {
                                     if(state.captionStatus.isSuccess){
                                       if(_listCodeLanguage.isNotEmpty){
                                         if(state.translateStatus.isForbidden){
-                                          Dialoger.showNotTranslate(context,'The balance of active transfers is over');
+                                          Dialoger.showNotTranslate(context,'The balance of active transfers is over'.tr());
                                         }else{
                                           if(balance<_listCodeLanguage.length){
-                                            Dialoger.showNotTranslate(context,'You don\'t have enough translations');
+                                            Dialoger.showNotTranslate(context,'You don\'t have enough translations'.tr());
                                           }else{
                                             Dialoger.showGetStartedTranslate(context,_listCodeLanguage.length, () {
                                               _translateBloc.add(InsertSubtitlesEvent(
@@ -324,24 +324,24 @@ class _TranslatePageState extends State<TranslatePage> {
                                         }
 
                                       }else{
-                                        Dialoger.showMessageSnackBar('No languages selected for translation', context);
+                                        Dialoger.showMessageSnackBar('No languages selected for translation'.tr(), context);
                                       }
                                     }else if(state.captionStatus.isLoading){
-                                      Dialoger.showMessageSnackBar('The titles haven\'t loaded yet', context);
+                                      Dialoger.showMessageSnackBar('The titles haven\'t loaded yet'.tr(), context);
                                     }else if(state.captionStatus.isError){
-                                      Dialoger.showInfoDialog(context, 'Error!',
-                                          'There were errors loading subtitles. Subtitle translation is not available. Try again later',true,(){});
+                                      Dialoger.showInfoDialog(context, 'Error!'.tr(),
+                                          'There were errors loading subtitles. Subtitle translation is not available. Try again later'.tr(),true,(){});
                                     }else if(state.captionStatus.isEmpty){
-                                      Dialoger.showInfoDialog(context, 'Titles missing!',
-                                          'There are no subtitles. Download basic subtitles in Youtube Studio if you need them',false,(){});
+                                      Dialoger.showInfoDialog(context, 'Titles missing!'.tr(),
+                                          'There are no subtitles. Download basic subtitles in Youtube Studio if you need them'.tr(),false,(){});
                                     }
                                   }
 
 
 
                                 },
-                                child:const Text('Translate subtitle',
-                                  style: TextStyle(
+                                child: Text('Translate subtitle'.tr(),
+                                  style: const TextStyle(
                                       color: Colors.white,
                                       fontSize: 16,
                                       fontWeight: FontWeight.w500
@@ -366,18 +366,18 @@ class _TranslatePageState extends State<TranslatePage> {
     if (widget.videoModel.defaultLanguage.isEmpty&&widget.credChannel.defaultLanguage.isEmpty) {
       Dialoger.showInfoDialog(
           context,
-          'There are no localization settings on the channel',
-          'You need to set the language of the title and description of the video in your channel settings',
+          'There are no localization settings on the channel'.tr(),
+          'You need to set the language of the title and description of the video in your channel settings'.tr(),
           false,
           () {});
     } else {
       if(!state.captionStatus.isTranslating&&!state.translateStatus.isTranslating){
         if(_listCodeLanguage.isNotEmpty){
           if(state.translateStatus.isForbidden){
-            Dialoger.showNotTranslate(context,'The balance of active transfers is over');
+            Dialoger.showNotTranslate(context,'The balance of active transfers is over'.tr());
           }else{
             if(balance<_listCodeLanguage.length){
-              Dialoger.showNotTranslate(context,'You don\'t have enough translations');
+              Dialoger.showNotTranslate(context,'You don\'t have enough translations'.tr());
             }else{
               Dialoger.showGetStartedTranslate(context,_listCodeLanguage.length, () {
                 _translateBloc.add(StartTranslateEvent(
@@ -389,14 +389,14 @@ class _TranslatePageState extends State<TranslatePage> {
 
           }
         }else{
-          Dialoger.showMessageSnackBar('No languages selected for translation', context);
+          Dialoger.showMessageSnackBar('No languages selected for translation'.tr(), context);
         }
       }
     }
   }
 
   Widget _progressIndicator(TranslateStatus status,String progress,double percent){
-    String text='Loading localization...';
+    String text='Loading localization...'.tr();
     if(status.isTranslating){
       return Center(child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -424,7 +424,7 @@ class _TranslatePageState extends State<TranslatePage> {
     }
 
     if(status.isSuccess){
-      text='Localization completed successfully';
+      text='Localization completed successfully'.tr();
       return Center(child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -440,7 +440,7 @@ class _TranslatePageState extends State<TranslatePage> {
     }
 
     if(status.isError){
-      text='An error occurred during the download process';
+      text='An error occurred during the download process'.tr();
       return Center(child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

@@ -19,6 +19,8 @@ import 'data/models/hive_models/cred_channel.dart';
 import 'data/models/hive_models/channel_lang_code.dart';
 import 'presentation/splash_screen/splash_page.dart';
 import 'utils/app_theme.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 Future<void> initHive()async{
   final path=(await getApplicationDocumentsDirectory()).path;
@@ -39,9 +41,20 @@ void main()async  {
   await Firebase.initializeApp();
   await PreferencesUtil.init();
   await initHive();
-
+  await EasyLocalization.ensureInitialized();
   di.setup();
-  runApp(const MyApp());
+  runApp(EasyLocalization(
+      supportedLocales: const [
+        Locale('ru', 'RU'),
+        Locale('en', 'EN'),
+        Locale('de', 'DE'),
+        Locale('uk', 'UA'),
+        Locale('fr', 'FR')
+      ],
+      path: 'lib/assets/translations', // <-- change the path of the translation files
+      fallbackLocale: const Locale('en', 'EN'),
+      child: const MyApp()
+  ),);
 }
 
 
@@ -63,6 +76,9 @@ class MyApp extends StatelessWidget {
         theme: AppTheme.light,
         home: const App(),
         debugShowCheckedModeBanner: false,
+        localizationsDelegates: context.localizationDelegates,
+        supportedLocales: context.supportedLocales,
+        locale: context.locale,
         builder: (context,child)=>ResponsiveWrapper.builder(
           child,
           maxWidth:1200,

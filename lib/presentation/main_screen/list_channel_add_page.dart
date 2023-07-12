@@ -1,5 +1,6 @@
 
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -94,7 +95,7 @@ class _ListChannelAddState extends State<ListChannelAdd> {
               }
 
               if(!s.isChannelDeactivation){
-                Dialoger.showError('One or more channels have been deactivated',context);
+                Dialoger.showError('One or more channels have been deactivated'.tr(),context);
               }
 
 
@@ -112,7 +113,7 @@ class _ListChannelAddState extends State<ListChannelAdd> {
                          children:  [
                            const Icon(Icons.error_outline,color: Colors.grey),
                            const SizedBox(height: 10),
-                           const Text('Data loading error',style: TextStyle(
+                            Text('Data loading error'.tr(),style: const TextStyle(
                                color: Colors.grey,
                                fontSize: 16,
                                fontWeight: FontWeight.w400
@@ -125,7 +126,7 @@ class _ListChannelAddState extends State<ListChannelAdd> {
                                onPressed: (){
                                  context.read<MainBloc>().add(GetChannelEvent());
                                },
-                               child:const Text('Reload page'))
+                               child: Text('Reload page'.tr()))
                          ],
                        ),
                      );
@@ -201,8 +202,8 @@ class _ListChannelAddState extends State<ListChannelAdd> {
                                                  borderRadius: BorderRadius.circular(30),
                                                  color: colorRed
                                              ),
-                                             child:const Text('My channels',
-                                               style: TextStyle(
+                                             child: Text('My channels'.tr(),
+                                               style: const TextStyle(
                                                    color: Colors.white,
                                                    fontSize: 14,
                                                    fontWeight: FontWeight.w400
@@ -220,9 +221,9 @@ class _ListChannelAddState extends State<ListChannelAdd> {
                                                      child: CircularProgressIndicator(color: colorRed),
                                                    ),
                                                    const SizedBox(width: 20),
-                                                   const Text(
-                                                     'Deleting a channel...',
-                                                     style: TextStyle(
+                                                    Text(
+                                                     'Deleting a channel...'.tr(),
+                                                     style: const TextStyle(
                                                          color: Colors.white,
                                                          fontSize: 14,
                                                          fontWeight: FontWeight.w400
@@ -248,9 +249,9 @@ class _ListChannelAddState extends State<ListChannelAdd> {
                                          const Icon(Icons.hourglass_empty,
                                              color: Colors.grey, size: 50),
                                          const SizedBox(height: 20),
-                                         const Text(
-                                           "Saved channel list is empty",
-                                           style: TextStyle(
+                                          Text(
+                                           "Saved channel list is empty".tr(),
+                                           style: const TextStyle(
                                                color: Colors.grey,
                                                fontSize: 20,
                                                fontWeight: FontWeight.w400),

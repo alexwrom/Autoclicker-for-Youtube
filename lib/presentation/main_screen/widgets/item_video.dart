@@ -2,6 +2,7 @@
 
 
   import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:youtube_clicker/domain/models/channel_model_cred.dart';
@@ -89,7 +90,7 @@ class ItemVideo extends StatelessWidget{
                   SizedBox(
                     width: _width/1.8,
                     height: 35,
-                    child: Text(videoModel.description.isEmpty?'Video description missing....':videoModel.description,
+                    child: Text(videoModel.description.isEmpty?'Video description missing....'.tr():videoModel.description,
                       overflow: TextOverflow.ellipsis,
                       maxLines: 2,
                       style:const TextStyle(

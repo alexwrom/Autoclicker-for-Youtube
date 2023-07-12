@@ -1,5 +1,6 @@
 
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
@@ -53,7 +54,7 @@ class _ChoiceLanguagePageState extends State<ChoiceLanguagePage> {
                 },
                     icon: const Icon(Icons.arrow_back,color: Colors.white)),
                 const SizedBox(width: 10),
-                  const  Text('Choose a language for translation',style: TextStyle(
+                    Text('Choose a language for translation'.tr(),style: const TextStyle(
                         color: Colors.white,
                         fontSize: 18,
                         fontWeight: FontWeight.w700
@@ -100,8 +101,8 @@ class _ChoiceLanguagePageState extends State<ChoiceLanguagePage> {
                            onPressed:(){
                             Navigator.pop(context);
                            },
-                           child:const Text('Back',
-                             style: TextStyle(
+                           child: Text('Back'.tr(),
+                             style: const TextStyle(
                                  color: Colors.white,
                                  fontSize: 16,
                                  fontWeight: FontWeight.w500

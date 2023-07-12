@@ -203,12 +203,14 @@ class MainBloc extends Bloc<MainEvent,MainState>{
            return;
          }
          //getVideosIsNotPublished(videos);
-         final listVideo=getVideosFromChannel(videos, event);
-         emit(state.copyWith(videoListStatus: VideoListStatus.success,addCredStatus: AddCredStatus.unknown,videoFromChannel: listVideo));
+         //final listVideo=getVideosFromChannel(videos, event);
+         emit(state.copyWith(videoListStatus: VideoListStatus.success,addCredStatus: AddCredStatus.unknown,videoFromChannel: videos));
        }on Failure catch (e) {
          emit(state.copyWith(videoListStatus: VideoListStatus.error,error: e.message));
        }
     }
+
+
 
   List<VideoModel> getVideosFromChannel(List<VideoModel> videos, GetListVideoFromChannelEvent event) {
       List<VideoModel> list=[];

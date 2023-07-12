@@ -3,6 +3,7 @@
 
 
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../components/buttons.dart';
@@ -22,9 +23,9 @@ class _ForgotPageState extends State<ForgotPage> {
 
 
   late TextEditingController _emailController;
-  String _text='Enter the address provided during registration.';
-  String _textButton='Reset the password';
-  String _textHint='Email';
+  String _text='Enter the address provided during registration.'.tr();
+  String _textButton='Reset the password'.tr();
+  String _textHint='Email'.tr();
   String _email='';
 
 
@@ -48,22 +49,22 @@ class _ForgotPageState extends State<ForgotPage> {
               },
           builder: (context,state) {
             if(state.authStatus==AuthStatus.sendToEmail){
-              _text='Enter a new password';
-              _textButton='Save new password';
-              _textHint='New password';
+              _text='Enter a new password'.tr();
+              _textButton='Save new password'.tr();
+              _textHint='New password'.tr();
               _email=_emailController.text;
               _emailController.clear();
               context.read<AuthBloc>().add(Unknown());
             }
 
             if(state.authStatus==AuthStatus.successNewPass){
-                return const Center(
+                return  Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children:[
-                       Icon(Icons.check_circle_outline_rounded,color: Colors.green,size: 120),
-                       SizedBox(height: 20,),
-                       Text('Password changed successfully',style: TextStyle(
+                       const Icon(Icons.check_circle_outline_rounded,color: Colors.green,size: 120),
+                       const SizedBox(height: 20,),
+                       Text('Password changed successfully'.tr(),style: const TextStyle(
                           color: Colors.white,
                           fontSize: 20,
                           fontWeight: FontWeight.w700)),
@@ -81,7 +82,7 @@ class _ForgotPageState extends State<ForgotPage> {
                   children: [
                      Icon(Icons.lock_reset_rounded,color: colorRed,size: 80),
                     const SizedBox(height: 80),
-                    const Text('Reset the password',style: TextStyle(
+                     Text('Reset the password'.tr(),style: const TextStyle(
                   color: Colors.white,
                   fontSize: 20,
                   fontWeight: FontWeight.w700)),
@@ -146,7 +147,6 @@ class _ForgotPageState extends State<ForgotPage> {
   @override
   void dispose() {
     super.dispose();
-    print('Disponse');
     _emailController.dispose();
 
   }

@@ -5,6 +5,7 @@
 
 
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:youtube_clicker/presentation/auth_screen/singin_page.dart';
@@ -152,12 +153,12 @@ class _AuthPageState extends State  with TickerProviderStateMixin{
                                     color: colorRed,
                                     borderRadius: BorderRadius.circular(50)
                                 ),
-                                tabs: const [
+                                tabs:  [
                                   Tab(
-                                    text: 'LogIn',
+                                    text: 'LogIn'.tr(),
                                   ),
                                   Tab(
-                                    text: 'SingIn',
+                                    text: 'SingIn'.tr(),
                                   ),
                                 ],
 

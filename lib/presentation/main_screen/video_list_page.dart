@@ -4,6 +4,7 @@
 
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -110,9 +111,9 @@ class _VideoListPageState extends State<VideoListPage> with WidgetsBindingObserv
                            const Icon(Icons.hourglass_empty,
                                color: Colors.grey, size: 50),
                            const SizedBox(height: 20),
-                           const Text(
-                             "No published videos found",
-                             style: TextStyle(
+                            Text(
+                             "No published videos found".tr(),
+                             style: const TextStyle(
                                  color: Colors.grey,
                                  fontSize: 20,
                                  fontWeight: FontWeight.w400),
@@ -123,12 +124,12 @@ class _VideoListPageState extends State<VideoListPage> with WidgetsBindingObserv
                       if(state.videoListStatus.isError){
                         return  Padding(
                           padding:  EdgeInsets.only(top:center),
-                          child:  const Center(child:
+                          child:   Center(child:
                             Column(
                               children:[
-                                 Icon(Icons.error_outline,color: Colors.grey,size: 50),
-                                 SizedBox(height: 10),
-                                 Text('Data loading error',style: TextStyle(
+                                 const Icon(Icons.error_outline,color: Colors.grey,size: 50),
+                                 const SizedBox(height: 10),
+                                 Text('Data loading error'.tr(),style: const TextStyle(
                                     color: Colors.grey,
                                     fontSize: 20,
                                     fontWeight: FontWeight.w400
@@ -157,8 +158,8 @@ class _VideoListPageState extends State<VideoListPage> with WidgetsBindingObserv
                                   borderRadius: BorderRadius.circular(30),
                                   color: colorRed
                               ),
-                              child:const Text('Channel video',
-                                style: TextStyle(
+                              child: Text('Channel video'.tr(),
+                                style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 14,
                                     fontWeight: FontWeight.w400

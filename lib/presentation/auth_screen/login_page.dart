@@ -4,6 +4,7 @@
 
 
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:youtube_clicker/utils/preferences_util.dart';
@@ -69,7 +70,7 @@ class _LogInPageState extends State<LogInPage> {
               children: [
                 EmailFieldLogin(controller: _emailController),
                 const SizedBox(height: 10),
-                PassFieldLogin(controller: _passController,textHint: 'Password',),
+                PassFieldLogin(controller: _passController,textHint: 'Password'.tr(),),
                 const SizedBox(height: 50),
                 stateAuth.authStatus==AuthStatus.processLogIn?
                 SizedBox(width:40,height:40,child:  CircularProgressIndicator(color: colorBackground)):
@@ -80,14 +81,14 @@ class _LogInPageState extends State<LogInPage> {
                       FocusScope.of(context).unfocus();
                       context.read<AuthBloc>().add(LogInEvent(email: _emailController.text,password: _passController.text));
                     },
-                      textButton: 'LogIn',),
+                      textButton: 'LogIn'.tr(),),
                     const SizedBox(height: 50),
                     GestureDetector(
                       onTap: (){
                          Navigator.of(context).push(MaterialPageRoute(builder: (_)=>const ForgotPage()));
                       },
-                      child: const Text('Forgot password',
-                        style: TextStyle(
+                      child:  Text('Forgot password'.tr(),
+                        style: const TextStyle(
                             decoration: TextDecoration.underline,
                             color: Colors.white,fontWeight: FontWeight.w400,fontSize: 17),),
                     )

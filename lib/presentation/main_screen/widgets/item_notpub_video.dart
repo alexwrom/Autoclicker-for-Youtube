@@ -2,6 +2,7 @@
 
 
   import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:youtube_clicker/utils/parse_time_duration.dart';
@@ -88,7 +89,7 @@ class ItemNotPubVideo extends StatelessWidget{
                   SizedBox(
                     width: 270,
                     height: 35,
-                    child: Text(videoNotPublished.description.isEmpty?'Video description missing....':videoNotPublished.description,
+                    child: Text(videoNotPublished.description.isEmpty?'Video description missing....'.tr():videoNotPublished.description,
                       overflow: TextOverflow.ellipsis,
                       maxLines: 2,
                       style:const TextStyle(

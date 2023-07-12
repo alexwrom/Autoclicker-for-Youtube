@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:ui';
 
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -28,11 +29,11 @@ class Dialoger {
   static void showLogOut({required BuildContext context}){
     bool isRemoveAccount=false;
     showCustomDialog(
-      textButtonCancel: 'Close',
+      textButtonCancel: 'Close'.tr(),
       textButtonAccept: 'Ok',
       textButtonColor: Colors.white,
       contextUp: context,
-      title: 'Sign out?',
+      title: 'Sign out?'.tr(),
       titleColor: Platform.isIOS?colorPrimary:Colors.white,
       content:   ActionDialogLogOut(
         callback: (isDeleteAcc){
@@ -50,13 +51,13 @@ class Dialoger {
 
   static void showDeleteChannel({required BuildContext context,required int keyHive,required int index}){
     showCustomDialog(
-        textButtonCancel: 'Close',
-        textButtonAccept: 'Delete',
+        textButtonCancel: 'Close'.tr(),
+        textButtonAccept: 'Delete'.tr(),
         textButtonColor: Colors.white,
         contextUp: context,
-        title: 'Delete channel?',
+        title: 'Delete channel?'.tr(),
         titleColor: Platform.isIOS?colorPrimary:Colors.white,
-        content:  Text('Channel data is deleted from local storage',
+        content:  Text('Channel data is deleted from local storage'.tr(),
           style: TextStyle(
             color: Platform.isIOS?colorPrimary:Colors.grey,
 
@@ -77,16 +78,25 @@ class Dialoger {
 
   static void showGetStartedTranslate(BuildContext context,int numberTranslate, VoidCallback callback) {
     showCustomDialog(
-      textButtonCancel: 'Cancel',
-      textButtonAccept: 'To begin',
+      textButtonCancel: 'Cancel'.tr(),
+      textButtonAccept: 'To begin'.tr(),
       textButtonColor: Colors.white,
       contextUp: context,
-      title: 'Translate?',
+      title: 'Translate?'.tr(),
       titleColor: Platform.isIOS?colorPrimary:Colors.white,
-      content:  Text('Your transfer balance will be debited - $numberTranslate',
-        style:  TextStyle(
-            color: Platform.isIOS?colorPrimary:Colors.grey
-        ),),
+      content:  Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text('Your transfer balance will be debited'.tr(),
+            style:  TextStyle(
+                color: Platform.isIOS?colorPrimary:Colors.grey
+            ),),
+          Text(' - $numberTranslate',
+            style:  TextStyle(
+                color: Platform.isIOS?colorPrimary:Colors.grey
+            ),),
+        ],
+      ),
       voidCallback: (){
           callback();
       }
@@ -96,13 +106,13 @@ class Dialoger {
 
   static void showNotTranslate(BuildContext context,String title) {
     showCustomDialog(
-      textButtonCancel: 'Close',
-      textButtonAccept: 'To the store',
+      textButtonCancel: 'Close'.tr(),
+      textButtonAccept: 'To the store'.tr(),
       contextUp: context,
       title: title,
       titleColor: const Color.fromRGBO(212,32,60, 1),
       content:  Text(
-        'Choose the appropriate offer for further work with translations',
+        'Choose the appropriate offer for further work with translations'.tr(),
         style: TextStyle(
           color: Platform.isIOS?colorPrimary:Colors.white
         ),
@@ -231,6 +241,35 @@ class Dialoger {
     );
   }
 
+  static void showBuyDialog(BuildContext context,String title,String count,bool isError,VoidCallback voidCallback) {
+    showCustomDialog(
+        textButtonCancel: 'Ok',
+        textButtonAccept: '',
+        contextUp: context,
+        title: title,
+        titleColor: isError?colorRed:Platform.isIOS?colorPrimary:Colors.white,
+        content:  Row(
+          crossAxisAlignment:  CrossAxisAlignment.center,
+          children: [
+            Text('Transfers accrued'.tr(),style: TextStyle(
+                color: Platform.isIOS?colorPrimary:Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.normal
+            ),),
+            Text(' $count',style: TextStyle(
+                color: Platform.isIOS?colorPrimary:Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.normal
+            ),),
+          ],
+        ),
+        voidCallback: (){
+          voidCallback();
+        }
+
+    );
+  }
+
   static void showChannelSelectionMenu({required BuildContext context}){
      showModalBottomSheet(
        isScrollControlled: true,
@@ -247,7 +286,7 @@ class Dialoger {
 
   static void showNotSignedIn() {
     Fluttertoast.showToast(
-      msg: 'Sign in or Sign up to continue.',
+      msg: 'Sign in or Sign up to continue.'.tr(),
       fontSize: 16.0,
       gravity: ToastGravity.CENTER,
     );
@@ -316,16 +355,16 @@ class _BodyChannelSelectionMenuState extends State<BodyChannelSelectionMenu> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const Text('Add channel with invitation code',
+             Text('Add channel with invitation code'.tr(),
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                   color: Colors.white,
                   fontSize: 30.0
               ),),
             const SizedBox(height: 20.0),
             const Divider(),
             const SizedBox(height: 20.0),
-            CodeField(controller: _codeController,textHint: 'Enter the invitation code'),
+            CodeField(controller: _codeController,textHint: 'Enter the invitation code'.tr()),
             const SizedBox(height: 20.0),
             Center(
               child: SubmitButton(
@@ -336,11 +375,11 @@ class _BodyChannelSelectionMenuState extends State<BodyChannelSelectionMenu> {
                   widget.onAddChannelByCode.call(_codeController.text);
                   Navigator.pop(context);
                 }else{
-                  Dialoger.showMessage('Enter the invitation code');
+                  Dialoger.showMessage('Enter the invitation code'.tr());
                 }
 
               },
-                textButton: 'Add a channel',),
+                textButton: 'Add a channel'.tr(),),
             ),
           ],
         ),
@@ -369,7 +408,7 @@ class _ActionDialogLogOutState extends State<ActionDialogLogOut> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Your data is saved on the server',
+            Text('Your data is saved on the server'.tr(),
               style: TextStyle(
                 color: Platform.isIOS?colorPrimary:Colors.grey,
 
@@ -400,7 +439,7 @@ class _ActionDialogLogOutState extends State<ActionDialogLogOut> {
                   })
                 },
 
-                Text('Sign out and delete account?',
+                Text('Sign out and delete account?'.tr(),
                   style: TextStyle(
                     fontSize: 12,
                     color: Platform.isIOS?colorPrimary:Colors.grey,

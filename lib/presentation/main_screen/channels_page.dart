@@ -1,5 +1,6 @@
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:youtube_clicker/presentation/main_screen/bloc/main_bloc.dart';
@@ -50,7 +51,7 @@ class _ChannelsPageState extends State<ChannelsPage> {
                 children:  [
                   const Icon(Icons.error_outline,color: Colors.grey),
                   const SizedBox(height: 10),
-                 const Text('Data loading error',style: TextStyle(
+                  Text('Data loading error'.tr(),style: const TextStyle(
                       color: Colors.grey,
                       fontSize: 16,
                       fontWeight: FontWeight.w400
@@ -63,7 +64,7 @@ class _ChannelsPageState extends State<ChannelsPage> {
                      onPressed: (){
                        context.read<MainBloc>().add(GetChannelEvent());
                      },
-                     child:const Text('Reload page'))
+                     child: Text('Reload page'.tr()))
                 ],
               ),
             );
@@ -96,7 +97,7 @@ class _ChannelsPageState extends State<ChannelsPage> {
                             child: GestureDetector(
                               onTap:(){
                                 final uid=PreferencesUtil.getUid;
-                                  Dialoger.showInfoDialog(context, 'Your id', uid, false, () { });
+                                  Dialoger.showInfoDialog(context, 'Your id'.tr(), uid, false, () { });
                               },
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(25.0),
@@ -151,8 +152,8 @@ class _ChannelsPageState extends State<ChannelsPage> {
                                     borderRadius: BorderRadius.circular(30),
                                     color: colorRed
                                 ),
-                                child:const Text('My channels',
-                                  style: TextStyle(
+                                child: Text('My channels'.tr(),
+                                  style: const TextStyle(
                                       color: Colors.white,
                                       fontSize: 14,
                                       fontWeight: FontWeight.w400
@@ -169,9 +170,9 @@ class _ChannelsPageState extends State<ChannelsPage> {
                                 const Icon(Icons.hourglass_empty,
                                     color: Colors.grey, size: 50),
                                 const SizedBox(height: 20),
-                                const Text(
-                                  "This account has no channels",
-                                  style: TextStyle(
+                                 Text(
+                                  "This account has no channels".tr(),
+                                  style: const TextStyle(
                                       color: Colors.grey,
                                       fontSize: 20,
                                       fontWeight: FontWeight.w400),
@@ -188,8 +189,8 @@ class _ChannelsPageState extends State<ChannelsPage> {
                                       //     .add(LogOutEvent());
                                       Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=>const AuthPage()));
                                     },
-                                    child: const Text(
-                                        'Sign in with another account'))
+                                    child:  Text(
+                                        'Sign in with another account'.tr()))
                               ],
                             ),
                           ),
@@ -215,8 +216,8 @@ class _ChannelsPageState extends State<ChannelsPage> {
                                     borderRadius: BorderRadius.circular(30),
                                     color: colorRed
                                 ),
-                                child:const Text('Other videos of the account',
-                                  style: TextStyle(
+                                child: Text('Other videos of the account'.tr(),
+                                  style: const TextStyle(
                                       color: Colors.white,
                                       fontSize: 14,
                                       fontWeight: FontWeight.w400

@@ -4,6 +4,7 @@
 
 
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:youtube_clicker/presentation/auth_screen/enter_code_verification_page.dart';
@@ -56,9 +57,9 @@ class _SingInPageState extends State<SingInPage> {
            children: [
              EmailFieldLogin(controller: _emailController,),
              const SizedBox(height: 10),
-             PassFieldLogin(controller: _passController,textHint: 'Password',),
+             PassFieldLogin(controller: _passController,textHint: 'Password'.tr(),),
              const SizedBox(height: 10),
-             PassFieldLogin(controller: _passConfirmController,textHint: 'Confirm password'),
+             PassFieldLogin(controller: _passConfirmController,textHint: 'Confirm password'.tr()),
              const SizedBox(height: 40),
           BlocConsumer<AuthBloc,AuthState>(
             listener: (_,snap){
@@ -79,7 +80,7 @@ class _SingInPageState extends State<SingInPage> {
                  FocusScope.of(context).unfocus();
                  context.read<AuthBloc>().add(SendCodeEmail(email: _emailController.text, password: _passController.text,repPass: _passConfirmController.text));
                  },
-                   textButton: 'SingIn');
+                   textButton: 'SingIn'.tr());
             }
           ),
 
