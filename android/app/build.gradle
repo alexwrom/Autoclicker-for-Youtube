@@ -64,8 +64,8 @@ android {
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-build-configuration.
         minSdkVersion 19
         targetSdkVersion 33
-        versionCode 5
-        versionName ="1.0.0"
+        versionCode 6
+        versionName ="1.0.2"
         multiDexEnabled = true
         signingConfig signingConfigs.release
     }

@@ -82,7 +82,7 @@ class _ChoiceLanguagePageState extends State<ChoiceLanguagePage> {
                                         title: list.data![index],
                                         index: index,
                                         callback: (i){
-                                          var code=ListTranslate.langCode(i!['index']);
+                                          var code=_languageCodeByLanguage(list.data![i!['index']]);
                                           if(i['add']){
                                             _addChoiceCodeLanguage(widget.credChannel.keyLangCode,code,widget.idVideo);
                                           }else{
