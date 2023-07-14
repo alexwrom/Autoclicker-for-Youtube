@@ -44,6 +44,7 @@ class _MembershipPageState extends State<MembershipPage> {
 
   @override
   Widget build(BuildContext context) {
+   final _w=MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: colorBackground,
       body: BlocProvider(
@@ -123,12 +124,15 @@ class _MembershipPageState extends State<MembershipPage> {
                       children: [
                         Image.asset(almas,width: 30,height: 40,color: Colors.amber),
                         const SizedBox(width: 20),
-                        Text('Purchasing translation packages'.tr(),
-                          style: const TextStyle(
-                              color: Colors.amber,
-                              fontWeight: FontWeight.w400,
-                              fontSize: 32
-                          ),)
+                        SizedBox(
+                          width: _w/1.3,
+                          child: Text('Purchasing translation packages'.tr(),
+                            style: const TextStyle(
+                                color: Colors.amber,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 32
+                            ),),
+                        )
                       ],
                     ),
                   ),
@@ -221,30 +225,25 @@ class _MembershipPageState extends State<MembershipPage> {
                             ),
                           ),
 
-                      Visibility(
-                        visible:state.listDetails[index].isSale,
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 10,top: 10),
-                          child:  CornerBanner(
-                            elevation: 10,
-                          bannerPosition: CornerBannerPosition.topLeft,
-                          bannerColor: colorRed,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text('Sale'.tr(),
-                        style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 16)),
-                              Text(' ${state.listDetails[index].priceSale}%',
-                                  style: const TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 16)),
-                            ],
-                          )),
+                      Positioned(
+                        top: 10.0,
+                        left: 10.0,
+                        child: Visibility(
+                          visible:state.listDetails[index].isSale,
+                          child: SizedBox(
+                            width: 70,
+                            child: CornerBanner(
+                              elevation: 0,
+                            bannerPosition: CornerBannerPosition.topLeft,
+                            bannerColor: colorRed,
+                            child: Text('- ${state.listDetails[index].priceSale}%',
+                                style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 16),
+                            textAlign: TextAlign.center)),
                           ),
+                        ),
                       ),
                       ],
                       );

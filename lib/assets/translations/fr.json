@@ -1,4 +1,11 @@
 {
+
+  "Enter email": "Entrez votre e-mail",
+  "Enter password":    "Entrer le mot de passe",
+  "Repeat password":    "Répéter le mot de passe",
+  "Password mismatch":    "Non concordance des mots de passe",
+  "This user already exists":    "Cet utilisateur existe déjà",
+  "Incorrect code":    "Code incorrect",
   "LogIn": "Connexion",
   "SingIn": "SingIn",
   "Password": "Mot de passe",

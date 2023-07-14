@@ -2,6 +2,12 @@
 
 
 {
+  "Enter email": "Введите адрес электронной почты",
+  "Enter password":    "Введите пароль",
+  "Repeat password":    "Повторите пароль",
+  "Password mismatch":    "Пароли не совпадают",
+  "This user already exists":    "Это пользователь уже существует",
+  "Incorrect code":    "Неверный код",
   "LogIn": "Войти",
   "SingIn": "Зарегистрироваться",
   "Password": "Пароль",

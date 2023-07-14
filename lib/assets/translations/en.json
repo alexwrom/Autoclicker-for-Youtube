@@ -1,6 +1,12 @@
 
 
 {
+  "Enter email": "Enter email",
+  "Enter password": "Enter password",
+  "Repeat password": "Repeat password",
+  "Password mismatch": "Password mismatch",
+  "This user already exists": "This user already exists",
+  "Incorrect code": "Incorrect code",
   "LogIn": "LogIn",
   "SingIn": "SingIn",
   "Password": "Password",

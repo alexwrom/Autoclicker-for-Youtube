@@ -19,6 +19,7 @@ import 'data/models/hive_models/cred_channel.dart';
 import 'data/models/hive_models/channel_lang_code.dart';
 import 'presentation/splash_screen/splash_page.dart';
 import 'utils/app_theme.dart';
+import 'dart:ui' as ui;
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:easy_localization/easy_localization.dart';
 
@@ -45,14 +46,14 @@ void main()async  {
   di.setup();
   runApp(EasyLocalization(
       supportedLocales: const [
-        Locale('ru', 'RU'),
-        Locale('en', 'EN'),
-        Locale('de', 'DE'),
-        Locale('uk', 'UA'),
-        Locale('fr', 'FR')
+        Locale('ru'),
+        Locale('en'),
+        Locale('de'),
+        Locale('uk'),
+        Locale('fr')
       ],
       path: 'lib/assets/translations', // <-- change the path of the translation files
-      fallbackLocale: const Locale('en', 'EN'),
+      fallbackLocale: const Locale('en'),
       child: const MyApp()
   ),);
 }
@@ -148,19 +149,11 @@ class _AppState extends State<App> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    initLanguage();
+
 
 
   }
 
-  initLanguage()async{
-    // if(ui.window.locale.toString()=='ru_RU'){
-    //   await context.setLocale(const Locale('ru','RU'));
-    //
-    // }else{
-    //   await context.setLocale(const Locale('en','EN'));
-    // }
-  }
 
 
 }

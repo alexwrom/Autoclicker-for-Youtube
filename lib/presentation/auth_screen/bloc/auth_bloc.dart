@@ -5,6 +5,7 @@
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/widgets.dart';
 import 'package:hive/hive.dart';
@@ -88,18 +89,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
      emit(state.copyWith(authStatus: AuthStatus.processSingIn));
      try {
        if(event.email.isEmpty){
-              throw const Failure('Enter email');
+              throw  Failure('Enter email'.tr());
             }else if(event.password.isEmpty){
-              throw const Failure('Enter password');
+              throw  Failure('Enter password'.tr());
             }else if(event.repPass.isEmpty){
-              throw const Failure('Repeat password');
+              throw  Failure('Repeat password'.tr());
             }else if(event.password!=event.repPass){
-              throw const Failure('Password mismatch');
+              throw  Failure('Password mismatch'.tr());
             }
        await FirebaseAuth.instance.signInAnonymously();
        DocumentSnapshot userDoc=await FirebaseFirestore.instance.collection('userpc').doc(event.email).get();
        if(userDoc.exists){
-         throw const Failure('This user already exists');
+         throw  Failure('This user already exists'.tr());
        }else{
          final code =  (Random().nextInt(60000)+10000).toString();
          final ts=DateTime.now().millisecondsSinceEpoch.toString();
@@ -190,7 +191,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
      try{
        final code=PreferencesUtil.getCOdeVerificationEmail[0];
        if(event.code!=code){
-         throw const Failure('Incorrect code');
+         throw  Failure('Incorrect code'.tr());
        }
        await _authRepository.singIn(pass: event.password,email: event.email);
        emit(state.copyWith(authStatus: AuthStatus.authenticated));

@@ -1,4 +1,10 @@
 {
+  "Enter email": "Введіть адресу електронної пошти",
+  "Enter password":    "Введіть пароль",
+  "Repeat password":    "Повторити пароль",
+  "Password mismatch":    "Невідповідність пароля",
+  "This user already exists":    "Цей користувач уже існує",
+  "Incorrect code":    "Неправильний код",
   "LogIn": "Вхід",
   "SingIn": "Ввійти",
   "Password": "Пароль",

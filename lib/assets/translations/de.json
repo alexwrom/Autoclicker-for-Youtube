@@ -1,4 +1,10 @@
 {
+  "Enter email": "Email eingeben",
+  "Enter password":    "Passwort eingeben",
+  "Repeat password":    "Passwort wiederholen",
+  "Password mismatch":    "Die Passwörter stimmen nicht überein",
+  "This user already exists":    "Dieser Benutzer existiert bereits",
+  "Incorrect code":    "Falscher Code",
   "LogIn": "Anmeldung",
   "SingIn": "SingIn",
   "Password": "Passwort",
