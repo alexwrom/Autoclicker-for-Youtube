@@ -241,9 +241,9 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
         ChannelModelCred channelModelCred,
         Map<String, VideoLocalization> map) async {
       try {
-        String defLang='en';
-        if(videoModel.defaultLanguage.isEmpty){
-            defLang=channelModelCred.defaultLanguage;
+        String defLang=channelModelCred.defaultLanguage;
+        if(defLang.isEmpty){
+            defLang='en';
         }
         final authHeaderString = PreferencesUtil.getHeaderApiGoogle;
         final authHeaders = json.decode(authHeaderString);

@@ -108,7 +108,6 @@ class AuthService{
   }
 
    Future<bool> forgotPass({required String email,required String newPass}) async{
-     print('Service Forgot ${email} ${newPass}');
      try{
        if(email.isEmpty){
          throw  Failure('Enter email');
@@ -154,7 +153,9 @@ class AuthService{
        }
 
        await _auth!.signInAnonymously();
+
        DocumentSnapshot userDoc=await _firebaseFirestore!.collection('userpc').doc(email).get();
+
        if(!userDoc.exists){
          throw const Failure('User is not found');
        }else{

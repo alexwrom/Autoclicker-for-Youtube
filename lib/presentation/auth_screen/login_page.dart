@@ -15,6 +15,7 @@ import '../../components/dialoger.dart';
 import '../../components/text_fields.dart';
 import '../../resourses/colors_app.dart';
 import '../main_screen/channels_page.dart';
+import '../main_screen/list_channel_add_page.dart';
 import 'bloc/auth_bloc.dart';
 import 'forgot_page.dart';
 
