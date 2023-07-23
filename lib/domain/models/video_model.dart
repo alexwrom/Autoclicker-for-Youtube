@@ -16,6 +16,7 @@
    final bool isPublic;
    final String categoryId;
    final String defaultLanguage;
+   final String defaultAudioLanguage;
 
    const VideoModel({
      required this.categoryId,
@@ -33,5 +34,6 @@
     required this.urlBanner,
     required this.videoPublishedAt,
     required this.channelTitle,
+     required this.defaultAudioLanguage
   });
 }

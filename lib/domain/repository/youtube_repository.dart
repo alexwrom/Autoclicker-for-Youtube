@@ -17,9 +17,9 @@ abstract class YouTubeRepository{
     Future<ChannelModelCred> addChannelByCodeInvitation({required String code});
     Future<List<VideoModel>> getVideoFromAccount(ChannelModelCred cred);
     Future<int> updateLocalization(VideoModel videoModel,ChannelModelCred channelModelCred,Map<String,VideoLocalization> map);
-    Future<List<Caption>> loadCaptions(String idVideo);
-    Future<void> insertCaption({required String idCap,required String idVideo,required String codeLang});
-    Future<void> removeCaptions(String idCap);
+    Future<List<Caption>> loadCaptions(String idVideo,ChannelModelCred cred);
+    Future<bool> insertCaption({required String idCap,required String idVideo,required String codeLang});
+    Future<bool> removeCaptions(String idCap);
     Future<bool> isActivatedChanelByInvitation(String code);
 
   }

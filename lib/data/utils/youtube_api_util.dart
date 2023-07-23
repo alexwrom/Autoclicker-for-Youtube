@@ -51,16 +51,16 @@ class YouTubeApiUtil{
 
     }
 
-    Future<List<Caption>> loadCaptions(String idVideo)async{
-      return await _youTubeApi.loadCaptions(idVideo);
+    Future<List<Caption>> loadCaptions(String idVideo,ChannelModelCred cred)async{
+      return await _youTubeApi.loadCaptions(idVideo,cred);
     }
 
-    Future<void> insertCaption({required String idCap,required String idVideo,required String codeLang})async{
+    Future<bool> insertCaption({required String idCap,required String idVideo,required String codeLang})async{
       return await _youTubeApi.insertCaption(idCap: idCap, idVideo: idVideo, codeLang: codeLang);
     }
 
-    Future<void> removeCaptions(String idCap)async{
-      await _youTubeApi.removeCaptions(idCap);
+    Future<bool> removeCaptions(String idCap)async{
+     return await _youTubeApi.removeCaptions(idCap);
     }
 
     Future<ChannelModelCred> addChannel()async{

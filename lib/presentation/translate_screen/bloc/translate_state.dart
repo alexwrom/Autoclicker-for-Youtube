@@ -15,6 +15,7 @@
     error,
     success,
     translating,
+    completeTranslate,
     unknown,
     empty,
 
@@ -32,6 +33,7 @@
     bool get isSuccess=>this==CaptionStatus.success;
     bool get isTranslating=>this==CaptionStatus.translating;
     bool get isEmpty=>this==CaptionStatus.empty;
+    bool get isCompleteTranslate=>this==CaptionStatus.completeTranslate;
 
   }
 
@@ -44,18 +46,26 @@ class TranslateState extends Equatable{
     final double progressTranslateDouble;
     final String error;
     final String messageStatus;
+    final List<String> listCodeLanguageNotSuccessful;
 
 
-   const TranslateState(this.translateStatus,this.captionStatus, this.progressTranslate,this.error,this.progressTranslateDouble,this.messageStatus);
+   const TranslateState(
+      this.translateStatus,
+      this.captionStatus,
+      this.progressTranslate,
+      this.error,
+      this.progressTranslateDouble,
+      this.messageStatus,
+       this.listCodeLanguageNotSuccessful);
 
     factory TranslateState.unknown(){
-        return const TranslateState(TranslateStatus.unknown,CaptionStatus.unknown,'0%','',0.0,'---');
+        return const TranslateState(TranslateStatus.unknown,CaptionStatus.unknown,'0%','',0.0,'---',[]);
     }
 
 
 
   @override
-  List<Object?> get props => [translateStatus,captionStatus,progressTranslate,error,progressTranslateDouble,messageStatus];
+  List<Object?> get props => [translateStatus,captionStatus,progressTranslate,error,progressTranslateDouble,messageStatus,listCodeLanguageNotSuccessful];
 
     TranslateState copyWith({
     TranslateStatus? translateStatus,
@@ -63,7 +73,8 @@ class TranslateState extends Equatable{
     String? progressTranslate,
     String? error,
       double? progressTranslateDouble,
-      String? messageStatus
+      String? messageStatus,
+      List<String>? listCodeLanguageNotSuccessful
   }) {
     return TranslateState(
     translateStatus ?? this.translateStatus,
@@ -71,7 +82,8 @@ class TranslateState extends Equatable{
        progressTranslate ?? this.progressTranslate,
        error ?? this.error,
         progressTranslateDouble ?? this.progressTranslateDouble,
-      messageStatus??this.messageStatus
+      messageStatus??this.messageStatus,
+      listCodeLanguageNotSuccessful?? this.listCodeLanguageNotSuccessful
     );
   }
 }

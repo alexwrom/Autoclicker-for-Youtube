@@ -199,15 +199,7 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
         ChannelModelCred cred) async {
       List<String> idsVideo = [];
       try {
-        String accessToken='';
-        if(cred.typePlatformRefreshToken==TypePlatformRefreshToken.android){
-           accessToken=await getNewAccessToken(cred.accountName);
-        }else{
-           accessToken=await getAccessTokenByRefreshToken(refreshToken: cred.refreshToken,
-           typePlatformRefreshToken: cred.typePlatformRefreshToken);
-
-        }
-
+        String accessToken = await _getAccessToken(cred);
         final authHeaders=<String, String>{
           'Authorization': 'Bearer $accessToken',
           'X-Goog-AuthUser': '0',
@@ -226,6 +218,7 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
         if(listVideo.items==null){
           return [];
         }
+
         return listVideo.items!.map((e) => AllVideoModelFromApi.fromApi(video: e)).toList();
       } on Failure catch (error, stackTrace) {
         Error.throwWithStackTrace(Failure(error.message), stackTrace);
@@ -234,6 +227,18 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
       } catch (error, stackTrace) {
         Error.throwWithStackTrace(Failure('$error'), stackTrace);
       }
+    }
+
+    Future<String> _getAccessToken(ChannelModelCred cred) async {
+       String accessToken='';
+      if(cred.typePlatformRefreshToken==TypePlatformRefreshToken.android){
+         accessToken=await getNewAccessToken(cred.accountName);
+      }else{
+         accessToken=await getAccessTokenByRefreshToken(refreshToken: cred.refreshToken,
+         typePlatformRefreshToken: cred.typePlatformRefreshToken);
+
+      }
+      return accessToken;
     }
 
 
@@ -256,7 +261,7 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
                 description: videoModel.description,
                 title: videoModel.title,
                 categoryId: videoModel.categoryId,
-                defaultLanguage: defLang
+                defaultLanguage: defLang,
             ),
             localizations: map
         ), ['localizations,snippet,status']);
@@ -282,11 +287,16 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
     }
 
 
-    Future<List<Caption>> loadCaptions(String idVideo) async {
+    Future<List<Caption>> loadCaptions(String idVideo,ChannelModelCred cred) async {
 
       try {
-        final authHeaderString = PreferencesUtil.getHeaderApiGoogle;
-        final authHeaders = json.decode(authHeaderString);
+        String accessToken = await _getAccessToken(cred);
+        final authHeaders=<String, String>{
+          'Authorization': 'Bearer $accessToken',
+          'X-Goog-AuthUser': '0',
+        };
+        // final authHeaderString = PreferencesUtil.getHeaderApiGoogle;
+        // final authHeaders = json.decode(authHeaderString);
         final header = Map<String, String>.from(authHeaders);
         httpClient = GoogleHttpClient(header);
         final api = YouTubeApi(httpClient!);
@@ -300,25 +310,28 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
         Error.throwWithStackTrace(Failure(error.toString()), stackTrace);
       }
     }
-
-    Future<void> removeCaptions(String idCap) async {
+     //todo void on bool
+    Future<bool> removeCaptions(String idCap) async {
 
       try {
         final api = YouTubeApi(httpClient!);
          await api.captions.delete(idCap);
-
-      } on Failure catch (error, stackTrace) {
-        Error.throwWithStackTrace(Failure(error.message), stackTrace);
-      } on PlatformException catch (error, stackTrace) {
-        Error.throwWithStackTrace(Failure(error.message!), stackTrace);
-      } catch (error, stackTrace) {
-        Error.throwWithStackTrace(Failure(error.toString()), stackTrace);
+         return true;
+      } on Failure catch (error) {
+        print('Error Remove 1 ${error.message}');
+        return false;
+      } on PlatformException catch (error) {
+        print('Error Remove 2 ${error.message}');
+        return false;
+      } catch (error) {
+        print('Error Remove 3 ${error.toString()}');
+        return false;
       }
     }
 
 
 
-    Future<void> insertCaption({required String idCap, required String idVideo, required String codeLang}) async {
+    Future<bool> insertCaption({required String idCap, required String idVideo, required String codeLang}) async {
       try {
         final authHeaderString = PreferencesUtil.getHeaderApiGoogle;
         final authHeaders = json.decode(authHeaderString);
@@ -328,7 +341,6 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
         final caption = await _dio.init().get('/$idCap', queryParameters: {
           'tlang': codeLang, 'tfmt': 'sbv'
         });
-
         String dir = (await getTemporaryDirectory()).path;
         final f1 = '$dir/captions.sbv';
         final f = await File(f1).create();
@@ -343,19 +355,19 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
           ),
         ), ['snippet'],
             uploadMedia: media);
-
-      } on Failure catch (error, stackTrace) {
-
-        Error.throwWithStackTrace(Failure(error.message), stackTrace);
-      } on PlatformException catch (error, stackTrace) {
-
-        Error.throwWithStackTrace(Failure(error.message!), stackTrace);
-      } on DioError catch (error, stackTrace) {
-
-        Error.throwWithStackTrace(Failure.fromDioError(error), stackTrace);
-      } catch (error, stackTrace) {
-
-        Error.throwWithStackTrace(Failure(error.toString()), stackTrace);
+        return true;
+      } on Failure catch (error) {
+        print('Error Insert 1 ${error.message}');
+        return false;
+      } on PlatformException catch (error) {
+        print('Error Insert 2 ${error.message}');
+       return false;
+      } on DioError catch (error) {
+        print('Error Insert 3 ${error.message}');
+        return false;
+      } catch (error) {
+        print('Error Insert 4 ${error.toString()}');
+        return false;
       }
     }
 

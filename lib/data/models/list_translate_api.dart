@@ -5,7 +5,6 @@
 
       static Map<String,List> codeListTranslate={
 
-
 				"af": ["Afrikaans"],
 				"ak": ["Akan"],
 				"sq": ["Albanian"],

@@ -39,20 +39,29 @@ class TranslateEvent extends Equatable{
 
      class GetSubtitlesEvent extends TranslateEvent{
 
+       final ChannelModelCred cred;
+       final String defaultAudioLanguage;
      final String videoId;
 
      GetSubtitlesEvent({
+       required this.defaultAudioLanguage,
+       required this.cred,
      required this.videoId,
      });
     }
 
   class InsertSubtitlesEvent extends TranslateEvent{
-
+    final ChannelModelCred cred;
+    final String defaultAudioLanguage;
     final List<String> codesLang;
     final String idVideo;
+    final bool repeatTranslate;
 
     InsertSubtitlesEvent({
+      required this.cred,
+      required this.defaultAudioLanguage,
       required this.codesLang,
-      required this.idVideo
+      required this.idVideo,
+      required this.repeatTranslate
     });
   }

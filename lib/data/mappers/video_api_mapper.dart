@@ -11,6 +11,7 @@ class VideoMapper{
 
     static VideoModel fromApi({required AllVideoModelFromApi videoNotPublishedModelFromApi}){
       return VideoModel(
+        defaultAudioLanguage: videoNotPublishedModelFromApi.defaultAudioLanguage,
         categoryId: videoNotPublishedModelFromApi.categoryId,
         defaultLanguage: videoNotPublishedModelFromApi.defaultLanguage,
         urlBannerMax: videoNotPublishedModelFromApi.urlBannerMax,

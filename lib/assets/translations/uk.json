@@ -78,6 +78,12 @@
   "Delete channel?": "Видалити канал?",
   "Delete": "Видалити",
   "Sign out?": "Вийти з аккаунта?",
+
+  "There were problems with these languages when installing subtitles.": "Під час встановлення субтитрів виникли проблеми з цими мовами.",
+  "Repeat translation": "Повторити переклад",
+  "Session ended": "Сеанс закінчився",
+  "Check if translation is possible in YouTube Studio": "Перевірте, чи можливий переклад у студії YouTube",
+
   "Azerbaijani": "Азербайджанська",
   "Aymara": "Аймара",
   "Akan": "Акан",

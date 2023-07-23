@@ -48,7 +48,7 @@ class _TranslatePageState extends State<TranslatePage> {
 
   @override
   Widget build(BuildContext context) {
-    
+
     final _h=MediaQuery.of(context).size.height/3;
     if(widget.videoModel.description.isEmpty){
       _textButton='Translate title'.tr();
@@ -70,8 +70,25 @@ class _TranslatePageState extends State<TranslatePage> {
           child: BlocConsumer<TranslateBloc,TranslateState>(
             listener: (_,stateLis){
               if(stateLis.translateStatus.isError){
-                Dialoger.showError(stateLis.error, context);
+                if(stateLis.listCodeLanguageNotSuccessful.isNotEmpty){
+                  Dialoger.showErrorCompleteTranslate(
+                      listErrorCompleteTranslate:stateLis.listCodeLanguageNotSuccessful,
+                      context: context,
+                       callRepeatTranslate: (){
+                         _translateBloc.add(InsertSubtitlesEvent(
+                           cred: widget.credChannel,
+                           repeatTranslate: true,
+                             defaultAudioLanguage: widget.videoModel.defaultAudioLanguage,
+                             codesLang: stateLis.listCodeLanguageNotSuccessful,
+                             idVideo: widget.videoModel.idVideo));
+                       });
+                }else{
+                  Dialoger.showError(stateLis.error, context);
+                }
+
               }
+
+
 
 
             },
@@ -316,7 +333,10 @@ class _TranslatePageState extends State<TranslatePage> {
                                           }else{
                                             Dialoger.showGetStartedTranslate(context,_listCodeLanguage.length, () {
                                               _translateBloc.add(InsertSubtitlesEvent(
+                                                  cred: widget.credChannel,
+                                                  defaultAudioLanguage: widget.videoModel.defaultAudioLanguage,
                                                   codesLang: _listCodeLanguage,
+                                                  repeatTranslate: false,
                                                   idVideo: widget.videoModel.idVideo));
                                             });
                                           }
@@ -463,7 +483,9 @@ class _TranslatePageState extends State<TranslatePage> {
   void initState() {
     super.initState();
     _translateBloc=TranslateBloc(cubitUserData: context.read<UserDataCubit>());
-    _translateBloc.add(GetSubtitlesEvent(videoId: widget.videoModel.idVideo));
+    _translateBloc.add(GetSubtitlesEvent(
+      defaultAudioLanguage: widget.videoModel.defaultAudioLanguage,
+        videoId: widget.videoModel.idVideo,cred: widget.credChannel));
     print('Get Id key ${widget.credChannel.keyLangCode}');
     final ChannelLangCode value = boxVideo.get(widget.credChannel.keyLangCode);
     _listCodeLanguage=value.codeLanguage;

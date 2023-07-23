@@ -18,6 +18,8 @@ class AllVideoModelFromApi{
      final String status;
      final String categoryId;
      final String defaultLanguage;
+     final String defaultAudioLanguage;
+
 
 
       AllVideoModelFromApi.fromApi({required Video video}):
@@ -59,7 +61,10 @@ class AllVideoModelFromApi{
         commentCount = video.statistics == null
             ? ''
             : video.statistics!.commentCount ?? '',
-        status = video.status == null ? '' : video.status!.privacyStatus ?? '';
+        status = video.status == null ? '' : video.status!.privacyStatus ?? '',
+        defaultAudioLanguage=video.snippet==null?'':
+        video.snippet!.defaultAudioLanguage??'';
+
 }
 
 

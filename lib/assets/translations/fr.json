@@ -77,9 +77,15 @@
   "To begin": "Pour commencer",
   "Cancel": "Annuler",
   "Channel data is deleted from local storage": "Les données de la chaîne sont supprimées du stockage local",
-  "Delete channel?": "Supprimer la chaîne ?",
+  "Delete channel?": "Supprimer la chaîne?",
   "Delete": "Supprimer",
   "Sign out?": "Se déconnecter?",
+
+  "There were problems with these languages when installing subtitles.": "Il y a eu des problèmes avec ces langues lors de l'installation des sous-titres.",
+  "Repeat translation": "Répéter la traduction",
+  "Session ended": "Session terminée",
+  "Check if translation is possible in YouTube Studio": "Vérifier si la traduction est possible dans YouTube Studio",
+
   "Azerbaijani": "Azerbaïdjanais",
   "Aymara": "Aymara",
   "Akan": "Akan",

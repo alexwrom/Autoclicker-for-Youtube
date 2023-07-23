@@ -5,6 +5,7 @@
 
 
    import 'package:bloc_concurrency/bloc_concurrency.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:googleapis/youtube/v3.dart';
 import 'package:hive/hive.dart';
@@ -37,6 +38,7 @@ class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
     int _indexDesc=0;
     String? idCap;
     List<Caption> _listCap=[];
+    List<String> _listRemoveCode=[];
 
      TranslateBloc({required this.cubitUserData}):super(TranslateState.unknown()){
         on<StartTranslateEvent>(_initTranslate,transformer: droppable());
@@ -49,17 +51,23 @@ class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
 
      Future<void> _getCaption(GetSubtitlesEvent event,emit)async{
         idCap='';
-
         if(cubitUserData.state.userData.numberOfTrans==0){
           emit(state.copyWith(translateStatus: TranslateStatus.forbidden));
         }
         emit(state.copyWith(captionStatus: CaptionStatus.loading));
         try {
-        _listCap= await _youTubeRepository.loadCaptions(event.videoId);
+        _listCap= await _youTubeRepository.loadCaptions(event.videoId,event.cred);
         if(_listCap.isEmpty){
           emit(state.copyWith(captionStatus: CaptionStatus.empty));
         }else{
-          idCap=_listCap[0].id;
+          final defLang=event.defaultAudioLanguage.split('-')[0];
+          for(var cap in _listCap){
+            if(cap.snippet!.language==defLang){
+              idCap=cap.id;
+              break;
+            }
+          }
+
           emit(state.copyWith(captionStatus: CaptionStatus.success));
         }
 
@@ -74,24 +82,32 @@ class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
          emit(state.copyWith(translateStatus: TranslateStatus.forbidden));
        }else{
          emit(state.copyWith(translateStatus: TranslateStatus.translating,progressTranslate: '0%',progressTranslateDouble: 0.0));
-         final listCode=event.codesLang;
-         int operationAll=listCode.length;
-         int opTick=operationAll;
 
          try {
-           for (var element in _listCap) {
-             if(listCode.contains(element.snippet!.language)){
-                 await _youTubeRepository.removeCaptions(element.id!);
+           final defLang=event.defaultAudioLanguage.split('-')[0];
+           final listCodeLang=event.codesLang;
+           List<String> listCodeLanguageNotSuccessful = [];
+           listCodeLang.remove(defLang);
+           int operationAll=listCodeLang.length;
+           int opTick=operationAll;
 
-             }
+        if (event.repeatTranslate) {
+          _listCap.clear();
+          _listCap =
+              await _youTubeRepository.loadCaptions(event.idVideo, event.cred);
+        }
+        for (var element in _listCap) {
+          if (listCodeLang.contains(element.snippet!.language)) {
+            await _youTubeRepository.removeCaptions(element.id!);
+          }
+        }
 
-           }
-
-
-           for(int i=0;i<operationAll;i++){
+        for(int i=0;i<operationAll;i++){
              opTick--;
-            await _youTubeRepository.insertCaption(idCap: idCap!, idVideo: event.idVideo, codeLang:listCode[i]);
-            // await Future.delayed(Duration(seconds: 2));
+           final result= await _youTubeRepository.insertCaption(idCap: idCap!, idVideo: event.idVideo, codeLang:listCodeLang[i]);
+            if(!result){
+              listCodeLanguageNotSuccessful.add(listCodeLang[i]);
+            }
              emit(state.copyWith(
                  translateStatus: TranslateStatus.translating,
                  progressTranslateDouble:
@@ -99,13 +115,24 @@ class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
                  progressTranslate:
                  _getProgress(opTick, operationAll),messageStatus: 'Status CAP $i'));
              if(opTick==0){
-               await cubitUserData.updateBalance(listCode.length);
-               emit(state.copyWith(translateStatus: TranslateStatus.success,messageStatus: 'Status CAP $i'));
-             }
+               final l1=listCodeLang.length;
+               final l2=listCodeLanguageNotSuccessful.length;
+               final resultCountSuccessTranslate= l1-l2;
+               await cubitUserData.updateBalance(resultCountSuccessTranslate);
+               if(l2>0){
+                 emit(state.copyWith(
+                   listCodeLanguageNotSuccessful: listCodeLanguageNotSuccessful,
+                     translateStatus: TranslateStatus.error,error:'Error!'.tr()));
+               }else{
+                 emit(state.copyWith(
+                     translateStatus: TranslateStatus.success,
+                     messageStatus: 'Status CAP $i'));
+               }
+
+          }
 
            }
          }on Failure catch (e) {
-           print('Error ${e.message}');
            emit(state.copyWith(translateStatus: TranslateStatus.error,error: e.message));
          }
        }
@@ -113,6 +140,8 @@ class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
 
 
      }
+
+
 
 
      Future<void> _initTranslate(StartTranslateEvent event,emit)async{

@@ -12,11 +12,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:youtube_clicker/components/text_fields.dart';
 import 'package:youtube_clicker/presentation/membership_screen/membership_page.dart';
+import 'package:youtube_clicker/presentation/translate_screen/bloc/translate_bloc.dart';
 
+import '../data/models/list_translate_api.dart';
 import '../presentation/auth_screen/auth_page.dart';
 import '../presentation/auth_screen/bloc/auth_bloc.dart';
 import '../presentation/main_screen/bloc/main_bloc.dart';
 import '../presentation/main_screen/bloc/main_event.dart';
+import '../presentation/translate_screen/bloc/translate_event.dart';
 import '../resourses/colors_app.dart';
 import 'buttons.dart';
 
@@ -24,6 +27,28 @@ import 'buttons.dart';
 
 
 class Dialoger {
+
+
+  static void showErrorCompleteTranslate({
+    required List<String> listErrorCompleteTranslate,
+    required BuildContext context,
+    required Function callRepeatTranslate}){
+    showCustomDialog(
+        textButtonCancel: 'Close'.tr(),
+        textButtonAccept: '',
+        textButtonColor: Colors.white,
+        contextUp: context,
+        title: 'There were problems with these languages when installing subtitles.'.tr(),
+        titleColor: Platform.isIOS?colorPrimary:Colors.white,
+        content:   ActionDialogErrorTranslate(
+          listCodeLanguageErrorComplete: listErrorCompleteTranslate,
+        ),
+        voidCallback: (){
+          callRepeatTranslate.call();
+
+        }
+    );
+  }
 
 
   static void showLogOut({required BuildContext context}){
@@ -155,13 +180,14 @@ class Dialoger {
               borderRadius: BorderRadius.circular(20.0)),
           //title: titleWidget,
           content: Container(
-            height: 200,
+            //height: 200,
             padding: const EdgeInsets.only(left: 30.0,right: 30.0,top: 15.0,bottom: 15.0),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20.0),
               color: colorPrimary,
             ),
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -451,4 +477,76 @@ class _ActionDialogLogOutState extends State<ActionDialogLogOut> {
         ),
     );
   }
+}
+
+class ActionDialogErrorTranslate extends StatefulWidget{
+  const ActionDialogErrorTranslate({super.key,required this.listCodeLanguageErrorComplete});
+
+
+  final List<String> listCodeLanguageErrorComplete;
+
+  @override
+  State<ActionDialogErrorTranslate> createState() => _ActionDialogErrorTranslateState();
+}
+
+class _ActionDialogErrorTranslateState extends State<ActionDialogErrorTranslate> {
+
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            _parseListCodeLanguage(widget.listCodeLanguageErrorComplete),
+            style: TextStyle(
+                color: colorRed,
+                fontSize: 18,
+                fontWeight: FontWeight.w500
+            ),
+          ),
+          const SizedBox(height: 10.0),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '* ',
+                style: TextStyle(
+                    color: colorGrey,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400
+                ),
+              ),
+              Expanded(
+                child: Text(
+                  'Check if translation is possible in YouTube Studio'.tr(),
+                  style: TextStyle(
+                      color: colorGrey,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      )
+    );
+  }
+
+
+  String _parseListCodeLanguage(List<String> listCodeLanguageErrorComplete){
+    final  listMap=ListTranslate.codeListTranslate;
+    List<String> listResult=[];
+    for(var code in listCodeLanguageErrorComplete){
+      String language=listMap[code]![0];
+      listResult.add(language.tr());
+    }
+    String lisToString=listResult.toString().split('[')[1].split(']')[0];
+    return lisToString;
+  }
+
 }

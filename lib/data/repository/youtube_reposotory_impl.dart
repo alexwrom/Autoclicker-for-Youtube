@@ -32,18 +32,18 @@ class YouTubeRepositoryImpl extends YouTubeRepository{
   }
 
   @override
-  Future<List<Caption>> loadCaptions(String idVideo)async {
-    return await _youTubeApiUtil.loadCaptions(idVideo);
+  Future<List<Caption>> loadCaptions(String idVideo,ChannelModelCred cred)async {
+    return await _youTubeApiUtil.loadCaptions(idVideo,cred);
   }
 
   @override
-  Future<void> insertCaption({required String idCap, required String idVideo, required String codeLang})async {
+  Future<bool> insertCaption({required String idCap, required String idVideo, required String codeLang})async {
    return await _youTubeApiUtil.insertCaption(idCap: idCap, idVideo: idVideo, codeLang: codeLang);
   }
 
   @override
-  Future<void> removeCaptions(String idCap) async{
-    await _youTubeApiUtil.removeCaptions(idCap);
+  Future<bool> removeCaptions(String idCap) async{
+   return await _youTubeApiUtil.removeCaptions(idCap);
   }
 
   @override
