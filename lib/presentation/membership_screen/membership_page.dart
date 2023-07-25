@@ -230,19 +230,19 @@ class _MembershipPageState extends State<MembershipPage> {
                         left: 10.0,
                         child: Visibility(
                           visible:state.listDetails[index].isSale,
+                          child: CornerBanner(
+                            elevation: 0,
+                          bannerPosition: CornerBannerPosition.topLeft,
+                          bannerColor: colorRed,
                           child: SizedBox(
-                            width: 70,
-                            child: CornerBanner(
-                              elevation: 0,
-                            bannerPosition: CornerBannerPosition.topLeft,
-                            bannerColor: colorRed,
+                            width:80.0,
                             child: Text('- ${state.listDetails[index].priceSale}%',
                                 style: const TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.w500,
                                     fontSize: 16),
-                            textAlign: TextAlign.center)),
-                          ),
+                            textAlign: TextAlign.center),
+                          )),
                         ),
                       ),
                       ],
