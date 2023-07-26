@@ -155,10 +155,10 @@ class AuthService{
        await _auth!.signInAnonymously();
 
        DocumentSnapshot userDoc=await _firebaseFirestore!.collection('userpc').doc(email).get();
-
        if(!userDoc.exists){
          throw const Failure('User is not found');
        }else{
+         print('PassEnter $pass Pass Storage ${userDoc.get('password')} Email $email');
          if(userDoc.get('password')==pass){
            await PreferencesUtil.setUserName(email);
            await PreferencesUtil.setEmail(email);
@@ -193,16 +193,16 @@ class AuthService{
          throw const Failure('This user already exists');
        }else{
          await PreferencesUtil.setUserName(email);
-         final ts=DateTime.now().millisecondsSinceEpoch;
-         String dir = (await getExternalStorageDirectory())!.path;
-         final fileConfig = '$dir/config.json';
-         final fileExists=await File(fileConfig).exists();
-         if(!fileExists){
-           final jsonString=jsonEncode({'timeStampAuth':ts,
-             'timestampPurchase':0});
-           final f = await File(fileConfig).create();
-           await f.writeAsString(jsonString);
-         }
+         // final ts=DateTime.now().millisecondsSinceEpoch;
+         // String dir = (await getExternalStorageDirectory())!.path;
+         // final fileConfig = '$dir/config.json';
+         // final fileExists=await File(fileConfig).exists();
+         // if(!fileExists){
+         //   final jsonString=jsonEncode({'timeStampAuth':ts,
+         //     'timestampPurchase':0});
+         //   final f = await File(fileConfig).create();
+         //   await f.writeAsString(jsonString);
+         // }
          await _firebaseFirestore!.collection('userpc').doc(email).set({
            'countTranslate':800,
            'password':pass,
