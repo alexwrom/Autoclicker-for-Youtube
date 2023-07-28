@@ -102,7 +102,6 @@ class AuthService{
       Error.throwWithStackTrace(Failure(error.message!), stackTrace);
     }
 
-     //todo сделать авторизацию через apple
 
 
   }
@@ -153,7 +152,6 @@ class AuthService{
        }
 
        await _auth!.signInAnonymously();
-
        DocumentSnapshot userDoc=await _firebaseFirestore!.collection('userpc').doc(email).get();
        if(!userDoc.exists){
          throw const Failure('User is not found');
@@ -193,16 +191,6 @@ class AuthService{
          throw const Failure('This user already exists');
        }else{
          await PreferencesUtil.setUserName(email);
-         // final ts=DateTime.now().millisecondsSinceEpoch;
-         // String dir = (await getExternalStorageDirectory())!.path;
-         // final fileConfig = '$dir/config.json';
-         // final fileExists=await File(fileConfig).exists();
-         // if(!fileExists){
-         //   final jsonString=jsonEncode({'timeStampAuth':ts,
-         //     'timestampPurchase':0});
-         //   final f = await File(fileConfig).create();
-         //   await f.writeAsString(jsonString);
-         // }
          await _firebaseFirestore!.collection('userpc').doc(email).set({
            'countTranslate':800,
            'password':pass,
@@ -220,6 +208,8 @@ class AuthService{
      }on PlatformException catch(error,stackTrace){
        print('Error 3 Auth ${error.message}');
        Error.throwWithStackTrace(Failure(error.message!), stackTrace);
+     } catch (error, stackTrace){
+       Error.throwWithStackTrace(Failure(error.toString()), stackTrace);
      }
 
 

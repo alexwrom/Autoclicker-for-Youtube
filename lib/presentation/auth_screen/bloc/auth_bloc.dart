@@ -211,7 +211,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
      emit(state.copyWith(authStatus: AuthStatus.processLogIn));
      try{
        final result= await _authRepository.logIn(pass: event.password,email: event.email);
-
        if(result){
          emit(state.copyWith(authStatus: AuthStatus.authenticated));
        }

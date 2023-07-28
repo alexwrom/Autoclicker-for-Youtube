@@ -73,14 +73,14 @@ class _EnterCodeVerificationEmailState extends State<EnterCodeVerificationEmail>
              builder: (context,state) {
 
                if(state.authStatus==AuthStatus.authenticated){
-                 return const Center(
+                 return  Center(
                    child: Column(
                      crossAxisAlignment: CrossAxisAlignment.center,
                      mainAxisAlignment: MainAxisAlignment.center,
                      children:[
-                       Icon(Icons.check_circle_outline_rounded,color: Colors.green,size: 120),
-                       SizedBox(height: 20,),
-                       Text('Registration successfully completed',style: TextStyle(
+                       const Icon(Icons.check_circle_outline_rounded,color: Colors.green,size: 120),
+                       const SizedBox(height: 20,),
+                       Text('Registration successfully completed'.tr(),style: const TextStyle(
                            color: Colors.white,
                            fontSize: 20,
                            fontWeight: FontWeight.w700)),
@@ -114,7 +114,7 @@ class _EnterCodeVerificationEmailState extends State<EnterCodeVerificationEmail>
                          children: [
                            Icon(Icons.email_outlined,color: colorGrey,size: 120),
                            const SizedBox(height: 80),
-                           const Text('Enter the code from the letter',style: TextStyle(
+                            Text('Enter the code from the letter'.tr(),style: const TextStyle(
                                color: Colors.white,
                                fontSize: 20,
                                fontWeight: FontWeight.w700)),
@@ -136,7 +136,7 @@ class _EnterCodeVerificationEmailState extends State<EnterCodeVerificationEmail>
                                    }
                                    context.read<AuthBloc>().add(SingInEvent(email: email, password: password, code: code));
                                  },
-                                 textButton: 'SingIn'),
+                                 textButton: 'SingIn'.tr()),
                              const SizedBox(height: 50),
                              CountdownTimer(
                                controller: _timerController,
