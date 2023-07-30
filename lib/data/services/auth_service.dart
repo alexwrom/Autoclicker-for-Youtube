@@ -1,10 +1,8 @@
 
-import 'dart:convert';
 import 'dart:io';
 
 
 
-import 'package:path_provider/path_provider.dart';
 import 'package:youtube_clicker/utils/preferences_util.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -91,14 +89,14 @@ class AuthService{
 
 
     } on FirebaseAuthException catch(error,stackTrace){
-        print('Error Auth ${error.message}');
+
       Error.throwWithStackTrace(Failure.fromAuthApiError(error), stackTrace);
 
     } on Failure catch(error,stackTrace){
-        print('Error 2 Auth ${error.message}');
+
       Error.throwWithStackTrace(Failure(error.message), stackTrace);
     }on PlatformException catch(error,stackTrace){
-        print('Error 3 Auth ${error.message}');
+
       Error.throwWithStackTrace(Failure(error.message!), stackTrace);
     }
 
@@ -109,9 +107,9 @@ class AuthService{
    Future<bool> forgotPass({required String email,required String newPass}) async{
      try{
        if(email.isEmpty){
-         throw  Failure('Enter email');
+         throw  const Failure('Enter email');
        }else if(newPass.isEmpty){
-         throw   Failure('Enter a new password');
+         throw   const Failure('Enter a new password');
        }
        if(newPass.contains('abc')){
          await _auth!.signInAnonymously();
@@ -156,7 +154,7 @@ class AuthService{
        if(!userDoc.exists){
          throw const Failure('User is not found');
        }else{
-         print('PassEnter $pass Pass Storage ${userDoc.get('password')} Email $email');
+
          if(userDoc.get('password')==pass){
            await PreferencesUtil.setUserName(email);
            await PreferencesUtil.setEmail(email);
@@ -199,14 +197,14 @@ class AuthService{
        }
 
      } on FirebaseAuthException catch(error,stackTrace){
-       print('Error Auth ${error.message}');
+
        Error.throwWithStackTrace(Failure.fromAuthApiError(error), stackTrace);
 
      } on Failure catch(error,stackTrace){
-       print('Error 2 Auth ${error.message}');
+
        Error.throwWithStackTrace(Failure(error.message), stackTrace);
      }on PlatformException catch(error,stackTrace){
-       print('Error 3 Auth ${error.message}');
+
        Error.throwWithStackTrace(Failure(error.message!), stackTrace);
      } catch (error, stackTrace){
        Error.throwWithStackTrace(Failure(error.toString()), stackTrace);

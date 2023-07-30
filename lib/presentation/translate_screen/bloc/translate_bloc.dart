@@ -4,11 +4,11 @@
 
 
 
-   import 'package:bloc_concurrency/bloc_concurrency.dart';
+
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:googleapis/youtube/v3.dart';
-import 'package:hive/hive.dart';
 import 'package:youtube_clicker/domain/models/video_model.dart';
 import 'package:youtube_clicker/presentation/translate_screen/bloc/translate_event.dart';
 import 'package:youtube_clicker/presentation/translate_screen/bloc/translate_state.dart';
@@ -20,12 +20,13 @@ import '../../../domain/repository/translate_repository.dart';
 import '../../../domain/repository/youtube_repository.dart';
 import '../../main_screen/cubit/user_data_cubit.dart';
 
+
 class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
 
 
     final _translateRepository=locator.get<TranslateRepository>();
     final _youTubeRepository=locator.get<YouTubeRepository>();
-    final cubitUserData;
+    late UserDataCubit cubitUserData;
     final Map<String,VideoLocalization> _mapUpdateLocalisation={};
     final List<String> _titleTranslate=[];
     final List<String> _descTranslate=[];
@@ -38,7 +39,7 @@ class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
     int _indexDesc=0;
     String? idCap;
     List<Caption> _listCap=[];
-    List<String> _listRemoveCode=[];
+    final List<String> _oldCodeList=[];
 
      TranslateBloc({required this.cubitUserData}):super(TranslateState.unknown()){
         on<StartTranslateEvent>(_initTranslate,transformer: droppable());
@@ -85,19 +86,29 @@ class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
 
          try {
            final defLang=event.defaultAudioLanguage.split('-')[0];
-           final listCodeLang=event.codesLang;
+           var listCodeLang=event.codesLang;
+           if(_oldCodeList.isEmpty){
+             _oldCodeList.addAll(listCodeLang);
+           }
            List<String> listCodeLanguageNotSuccessful = [];
            listCodeLang.remove(defLang);
            int operationAll=listCodeLang.length;
            int opTick=operationAll;
 
-        if (event.repeatTranslate) {
-          _listCap.clear();
-          _listCap =
-              await _youTubeRepository.loadCaptions(event.idVideo, event.cred);
-        }
-        for (var element in _listCap) {
-          if (listCodeLang.contains(element.snippet!.language)) {
+
+           if(_oldCodeList.length==listCodeLang.length){
+
+             _listCap.clear();
+             _listCap = await _youTubeRepository.loadCaptions(event.idVideo, event.cred);
+           }
+
+
+           for (var element in _listCap) {
+          var codeLangFromSubtitle=element.snippet!.language;
+          if(codeLangFromSubtitle!.contains('-')){
+            codeLangFromSubtitle=codeLangFromSubtitle.split('-')[0];
+          }
+          if (listCodeLang.contains(codeLangFromSubtitle)) {
             await _youTubeRepository.removeCaptions(element.id!);
           }
         }

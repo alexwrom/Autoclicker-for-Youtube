@@ -86,6 +86,10 @@
   "Session ended": "Sitzung beendet",
   "Check if translation is possible in YouTube Studio": "Prüfen Sie, ob eine Übersetzung in YouTube Studio möglich ist",
 
+  "Exit without deleting": "Beenden ohne zu löschen",
+  "Delete account?": "Konto löschen?",
+  "After logging out of the account, it will be permanently deleted from the project database": "Nach dem Abmelden vom Konto wird es dauerhaft aus der Projektdatenbank gelöscht",
+
   "Azerbaijani": "Aserbaidschanisch",
   "Aymara": "Aymara",
   "Akan": "Akan",

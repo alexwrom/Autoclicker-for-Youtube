@@ -43,10 +43,11 @@ class Dialoger {
         content:   ActionDialogErrorTranslate(
           listCodeLanguageErrorComplete: listErrorCompleteTranslate,
         ),
-        voidCallback: (){
+        voidCallbackAccept: (){
           callRepeatTranslate.call();
 
-        }
+        },
+        voidCallbackCancel: (){}
     );
   }
 
@@ -65,14 +66,53 @@ class Dialoger {
           isRemoveAccount=isDeleteAcc;
         },
       ),
-      voidCallback: (){
-        context.read<AuthBloc>().add(LogOutEvent(isDeleteAcc: isRemoveAccount));
-        Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=>const AuthPage()));
-      }
+      voidCallbackAccept: (){
+        if(isRemoveAccount){
+            _showAcceptRemoveAccount(context: context);
+        }else{
+          context.read<AuthBloc>().add(const LogOutEvent(isDeleteAcc: false));
+          Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=>const AuthPage()));
+        }
+
+      },
+      voidCallbackCancel: (){}
     );
 
 
   }
+
+
+   static void _showAcceptRemoveAccount({required BuildContext context}){
+
+    showCustomDialog(
+        textButtonCancel: 'Exit without deleting'.tr(),
+        textButtonAccept: 'Delete'.tr(),
+        textButtonColor: Colors.white,
+        contextUp: context,
+        title: 'Delete account?'.tr(),
+        titleColor: Platform.isIOS?colorPrimary:Colors.white,
+        content: Text('After logging out of the account, it will be permanently deleted from the project database'.tr(),
+          style: TextStyle(
+            color: Platform.isIOS?colorPrimary:Colors.grey,
+
+          ),),
+        voidCallbackAccept: (){
+            context.read<AuthBloc>().add(const LogOutEvent(isDeleteAcc: true));
+            Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=>const AuthPage()));
+
+
+        },
+        voidCallbackCancel: (){
+          print('isDeleteAcc: false');
+          //context.read<AuthBloc>().add(const LogOutEvent(isDeleteAcc: false));
+          Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=>const AuthPage()));
+        }
+    );
+
+
+  }
+
+
 
   static void showDeleteChannel({required BuildContext context,required int keyHive,required int index}){
     showCustomDialog(
@@ -87,12 +127,14 @@ class Dialoger {
             color: Platform.isIOS?colorPrimary:Colors.grey,
 
           ),),
-        voidCallback: (){
-
+        voidCallbackAccept: (){
           context.read<MainBloc>().add(
               RemoveChannelEvent(
                   keyHive: keyHive,
                   index: index));
+        },
+        voidCallbackCancel: (){
+
         }
     );
 
@@ -122,9 +164,12 @@ class Dialoger {
             ),),
         ],
       ),
-      voidCallback: (){
+      voidCallbackAccept: (){
           callback();
-      }
+      },
+        voidCallbackCancel: (){
+
+        }
 
     );
   }
@@ -142,9 +187,13 @@ class Dialoger {
           color: Platform.isIOS?colorPrimary:Colors.white
         ),
       ),
-      voidCallback: (){
+      voidCallbackAccept: (){
           Navigator.of(context).push(MaterialPageRoute(builder: (_)=>MembershipPage()));
-      }
+      },
+        voidCallbackCancel: (){
+
+        }
+
 
     );
   }
@@ -154,7 +203,8 @@ class Dialoger {
     required String title,
     required String textButtonCancel,
     required String textButtonAccept,
-    required VoidCallback voidCallback,
+    required VoidCallback voidCallbackAccept,
+    required VoidCallback voidCallbackCancel,
     Color? textButtonColor=const Color.fromRGBO(212,32,60, 1),
     Color? titleColor,
     Widget? content,
@@ -203,7 +253,7 @@ class Dialoger {
                       ),),
                       onPressed: () {
                         Navigator.pop(context);
-                        voidCallback();
+                        voidCallbackAccept();
                       },
                     ),
                     TextButton(
@@ -212,7 +262,8 @@ class Dialoger {
 
                       )),
                       onPressed: () {
-                           Navigator.pop(context);
+                            Navigator.pop(context);
+                           voidCallbackCancel();
                       },
                     ),
 
@@ -230,6 +281,7 @@ class Dialoger {
             TextButton(
               child:  Text(textButtonCancel),
               onPressed: (){
+                voidCallbackCancel();
                 Navigator.pop(context);
               },
             ),
@@ -238,7 +290,7 @@ class Dialoger {
                 child:  Text(textButtonAccept),
                 onPressed: () {
                   Navigator.pop(context);
-                  voidCallback();
+                  voidCallbackAccept();
                 },
               )
             }
@@ -260,9 +312,13 @@ class Dialoger {
         fontSize: 16,
         fontWeight: FontWeight.normal
       ),),
-      voidCallback: (){
+      voidCallbackAccept: (){
         voidCallback();
+      },
+      voidCallbackCancel: (){
+
       }
+
 
     );
   }
@@ -289,8 +345,11 @@ class Dialoger {
             ),),
           ],
         ),
-        voidCallback: (){
+        voidCallbackAccept: (){
           voidCallback();
+        },
+        voidCallbackCancel: (){
+
         }
 
     );

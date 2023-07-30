@@ -87,6 +87,9 @@
   "Repeat translation": "Повторить перевод",
   "Session ended": "Сессия завершена",
   "Check if translation is possible in YouTube Studio": "Проверьте, возможен ли перевод в студии YouTube",
+  "Exit without deleting": "Выйти без удаления",
+  "Delete account?":   "Удалить аккаунт?",
+  "After logging out of the account, it will be permanently deleted from the project database":   "После выхода из аккаунта он будет безвозвратно удален из базы данных проекта",
 
   "Azerbaijani": "Азербайджанский",
   "Aymara": "Аймара",
