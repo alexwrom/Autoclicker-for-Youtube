@@ -279,7 +279,7 @@ class Dialoger {
           content: content,
           actions: <Widget>[
             TextButton(
-              child:  Text(textButtonCancel),
+              child:  Text(textButtonCancel,textAlign: TextAlign.center,),
               onPressed: (){
                 voidCallbackCancel();
                 Navigator.pop(context);
@@ -287,7 +287,7 @@ class Dialoger {
             ),
             if(textButtonAccept.isNotEmpty)...{
               TextButton(
-                child:  Text(textButtonAccept),
+                child:  Text(textButtonAccept,textAlign: TextAlign.center),
                 onPressed: () {
                   Navigator.pop(context);
                   voidCallbackAccept();

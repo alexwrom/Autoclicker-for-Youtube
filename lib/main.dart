@@ -19,8 +19,6 @@ import 'data/models/hive_models/cred_channel.dart';
 import 'data/models/hive_models/channel_lang_code.dart';
 import 'presentation/splash_screen/splash_page.dart';
 import 'utils/app_theme.dart';
-import 'dart:ui' as ui;
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 Future<void> initHive()async{

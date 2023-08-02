@@ -41,10 +41,10 @@ dependencies:
   easy_localization: ^3.0.2
   google_sign_in: ^6.1.4
   googleapis_auth: ^1.4.1
-  firebase_auth: ^4.2.5
-  firebase_core: ^2.4.1
+  firebase_auth: ^4.7.2
+  firebase_core: ^2.15.0
   googleapis: ^9.2.0
-  cloud_firestore: ^4.3.1
+  cloud_firestore: ^4.8.4
   flutter_bloc: ^8.1.1
   simple_speed_dial: ^0.1.7
   bloc_concurrency: ^0.2.0
