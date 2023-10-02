@@ -19,6 +19,7 @@ class AllVideoModelFromApi{
      final String categoryId;
      final String defaultLanguage;
      final String defaultAudioLanguage;
+     final List<String> tags;
 
 
 
@@ -63,7 +64,8 @@ class AllVideoModelFromApi{
             : video.statistics!.commentCount ?? '',
         status = video.status == null ? '' : video.status!.privacyStatus ?? '',
         defaultAudioLanguage=video.snippet==null?'':
-        video.snippet!.defaultAudioLanguage??'';
+        video.snippet!.defaultAudioLanguage??'',
+       tags = video.snippet == null ? [] : video.snippet!.tags ?? [];
 
 }
 

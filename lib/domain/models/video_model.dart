@@ -17,6 +17,7 @@
    final String categoryId;
    final String defaultLanguage;
    final String defaultAudioLanguage;
+   final List<String> tags;
 
    const VideoModel({
      required this.categoryId,
@@ -34,6 +35,7 @@
     required this.urlBanner,
     required this.videoPublishedAt,
     required this.channelTitle,
-     required this.defaultAudioLanguage
+     required this.defaultAudioLanguage,
+     required this.tags
   });
 }

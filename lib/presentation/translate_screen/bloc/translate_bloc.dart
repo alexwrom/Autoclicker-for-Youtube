@@ -101,7 +101,23 @@ class TranslateBloc extends Bloc<TranslateEvent,TranslateState>{
              _listCap.clear();
              _listCap = await _youTubeRepository.loadCaptions(event.idVideo, event.cred);
            }
+            String fullDefLang = event.defaultAudioLanguage;
+            bool isExist = false;
 
+           for (var element in _listCap) {
+             var codeLangFromSubtitle = element.snippet!.language;
+             if (codeLangFromSubtitle == fullDefLang)
+               {
+                 isExist = true;
+                 break;
+               }
+           }
+           if (!isExist)
+             {emit(state.copyWith(
+                 listCodeLanguageNotSuccessful: listCodeLanguageNotSuccessful,
+                 translateStatus: TranslateStatus.error,error:'There are no subtitles. Download basic subtitles in Youtube Studio if you need them'.tr()));
+             return;
+             }
 
            for (var element in _listCap) {
           var codeLangFromSubtitle=element.snippet!.language;

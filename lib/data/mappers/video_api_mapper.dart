@@ -26,7 +26,8 @@ class VideoMapper{
           duration: videoNotPublishedModelFromApi.duration,
           viewCount: videoNotPublishedModelFromApi.viewCount,
           likeCount: videoNotPublishedModelFromApi.likeCount,
-          commentCount: videoNotPublishedModelFromApi.commentCount);
+          commentCount: videoNotPublishedModelFromApi.commentCount,
+          tags: videoNotPublishedModelFromApi.tags);
 
     }
 
