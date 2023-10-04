@@ -2,15 +2,12 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:TestProducts.storekit">
-   </FileRef>
-   <FileRef
-      location = "group:StoreKitTestCertificate.cer">
-   </FileRef>
-   <FileRef
-      location = "group:Runner.xcodeproj">
+      location = "group:/Users/aliaksandrsamasiuk/Documents/you_clicker/ios/Runner.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:Pods/Pods.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Runner.xcodeproj">
    </FileRef>
 </Workspace>
