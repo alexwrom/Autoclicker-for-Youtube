@@ -16,8 +16,6 @@ import '../http_client/dio_client_translate.dart';
 
 
   Future<String> translate(String code,String text)async{
-    final s=text.replaceAll('.', '@');
-    final s1=s.replaceAll('\n', '*');
 
     try{
       final res=await _dio.init().get('/single',queryParameters: {
@@ -25,11 +23,15 @@ import '../http_client/dio_client_translate.dart';
         'sl':'auto',
         'tl':code,
         'dt':'t',
-        'q':s1,
+        'q':text,
       });
-      final r=res.data[0][0][0].toString().replaceAll('@', '.');
-      final r1=r.replaceAll('*','\n');
-      return r1;
+      var r = '';
+      var n = (res.data[0] as List).length;
+      for (var i = 0; i <= n - 1; i++)
+       {
+         r = r + res.data[0][i][0].toString();
+       }
+      return r;
     }on DioError catch(error,stackTrace){
       Error.throwWithStackTrace(Failure.fromDioError(error), stackTrace);
     }
