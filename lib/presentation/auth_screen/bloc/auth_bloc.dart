@@ -98,7 +98,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
               throw  Failure('Password mismatch'.tr());
             }
        await FirebaseAuth.instance.signInAnonymously();
-       DocumentSnapshot userDoc=await FirebaseFirestore.instance.collection('userpc').doc(event.email).get();
+       DocumentSnapshot userDoc=await FirebaseFirestore.instance.collection('userpc').doc(event.email.toLowerCase()).get();
        if(userDoc.exists){
          throw  Failure('This user already exists'.tr());
        }else{

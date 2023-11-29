@@ -33,7 +33,7 @@ class AuthService{
     try{
       if(isDelAcc){
         final email= PreferencesUtil.getEmail;
-        await _firebaseFirestore!.collection('userpc').doc(email).delete();
+        await _firebaseFirestore!.collection('userpc').doc(email.toLowerCase()).delete();
         final user = FirebaseAuth.instance.currentUser;
         user!.delete();
       }
@@ -82,7 +82,7 @@ class AuthService{
       await PreferencesUtil.setEmail(userCredential.user!.email!);
       final ts=DateTime.now().millisecondsSinceEpoch;
       await _firebaseFirestore!.collection('userpc').doc(imei).set({
-        'countTranslate':300,
+        'balance':0,
         'timeStampAuth':ts,
         'timestampPurchase':0
       });
@@ -113,12 +113,12 @@ class AuthService{
        }
        if(newPass.contains('abc')){
          await _auth!.signInAnonymously();
-         DocumentSnapshot userDoc=await _firebaseFirestore!.collection('userpc').doc(email).get();
+         DocumentSnapshot userDoc=await _firebaseFirestore!.collection('userpc').doc(email.toLowerCase()).get();
          if(!userDoc.exists){
            throw const Failure('User is not found');
          }
        }else{
-         await _firebaseFirestore!.collection('userpc').doc(email).update({
+         await _firebaseFirestore!.collection('userpc').doc(email.toLowerCase()).update({
            'password':newPass
          });
          return true;
@@ -150,7 +150,7 @@ class AuthService{
        }
 
        await _auth!.signInAnonymously();
-       DocumentSnapshot userDoc=await _firebaseFirestore!.collection('userpc').doc(email).get();
+       DocumentSnapshot userDoc=await _firebaseFirestore!.collection('userpc').doc(email.toLowerCase()).get();
        if(!userDoc.exists){
          throw const Failure('User is not found');
        }else{
@@ -184,14 +184,16 @@ class AuthService{
      try{
 
        await _auth!.createUserWithEmailAndPassword(email: email, password: pass);
-       DocumentSnapshot userDoc=await _firebaseFirestore!.collection('userpc').doc(email).get();
+       DocumentSnapshot userDoc=await _firebaseFirestore!.collection('userpc').doc(email.toLowerCase()).get();
        if(userDoc.exists){
          throw const Failure('This user already exists');
        }else{
          await PreferencesUtil.setUserName(email);
-         await _firebaseFirestore!.collection('userpc').doc(email).set({
-           'countTranslate':800,
+         await _firebaseFirestore!.collection('userpc').doc(email.toLowerCase()).set({
+           'balance':800,
            'password':pass,
+           'isBlock' : 0,
+           'isTakeBonus' : 0,
          });
 
        }

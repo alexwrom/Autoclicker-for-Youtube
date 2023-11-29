@@ -122,8 +122,8 @@ class InAppPurchaseService{
       try {
         final uid=PreferencesUtil.getEmail;
         _firebaseFirestore=FirebaseFirestore.instance;
-        await _firebaseFirestore!.collection('userpc').doc(uid).update({
-          'countTranslate':resultBalance
+        await _firebaseFirestore!.collection('userpc').doc(uid.toLowerCase()).update({
+          'balance':resultBalance
        });
       } on FirebaseException catch(error,stackTrace){
         Error.throwWithStackTrace(Failure(error.message!), stackTrace);

@@ -24,9 +24,9 @@ void main() {
 
 
 }
-String _getOnePriceTranslate(String price,int countTranslate){
+String _getOnePriceTranslate(String price,int balance){
   double p=double.parse(price);
-  double r=p/countTranslate;
+  double r=p/balance;
   return r.toString().substring(0,4);
 }
 

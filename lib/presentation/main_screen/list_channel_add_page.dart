@@ -150,8 +150,25 @@ class _ListChannelAddState extends State<ListChannelAdd> {
                              children: [
                                Row(
                                  children: [
-                                   const Icon(Icons.perm_identity_rounded,size: 30,color: Colors.white),
-                                   const SizedBox(width: 10),
+                                   GestureDetector(
+                                     onTap: (){
+                                       //Сюда метод
+                                     },
+                                     child: Container(
+                                       alignment: Alignment.centerRight,
+                                       width: 40,
+                                       height: 40,
+                                       child: Container(
+                                         width: 35,
+                                         height: 35,
+                                         decoration: BoxDecoration(
+                                             shape: BoxShape.circle,
+                                             color: colorBackground
+                                         ),
+                                         child:const Icon(Icons.play_arrow,color: Colors.white),
+                                       ),
+                                     ),
+                                   ),const SizedBox(width: 10),
                                    SizedBox(
                                      width: MediaQuery.of(context).size.width/2,
                                      child: Text(state.userName,

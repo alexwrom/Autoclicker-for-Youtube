@@ -102,9 +102,9 @@ class MemberShipBloc extends Bloc<MemberShipEvent,MemberShipState>{
       }
 
 
-  String _getOnePriceTranslate(double price,int countTranslate){
+  String _getOnePriceTranslate(double price,int balance){
 
-    double r=price/countTranslate;
+    double r=price/balance;
     return (r*100.0).toString().substring(0,3);
   }
 
