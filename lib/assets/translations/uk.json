@@ -78,7 +78,9 @@
   "Delete channel?": "Видалити канал?",
   "Delete": "Видалити",
   "Sign out?": "Вийти з аккаунта?",
-
+  "Temporary account blocking. During the lockout, your balance is maintained and will not be reset after 30 days of account inactivity. Continue?": "Тимчасове блокування облікового запису. Під час блокування ваш баланс зберігається і не буде скинутий через 30 днів бездіяльності облікового запису. Продовжити?",
+  "You cannot perform any activities while your account is suspended. Unpause and continue working.": "Ви не можете виконувати жодні дії, поки ваш обліковий запис призупинено. Скасувати паузу та продовжити роботу.",
+   "Remove account from temporary blocking?": "Зняти обліковий запис з тимчасового блокування?",
   "There were problems with these languages when installing subtitles.": "Під час встановлення субтитрів виникли проблеми з цими мовами.",
   "Repeat translation": "Повторити переклад",
   "Session ended": "Сеанс закінчився",

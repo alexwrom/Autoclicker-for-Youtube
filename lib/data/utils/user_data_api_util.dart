@@ -25,5 +25,9 @@ class UserDataApiUtil{
       return await _api.updateBalance(balance: balance, uid: uid);
     }
 
+    Future<void> blockAccountUser({required bool unlock}) async {
+      await _api.blockAccountUser(unlock: unlock);
+    }
+
 
   }

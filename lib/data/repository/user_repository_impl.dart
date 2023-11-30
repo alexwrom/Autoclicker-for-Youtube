@@ -19,5 +19,10 @@ class UserRepositoryImpl extends UserRepository{
     return await _util.updateBalance(balance: balance, uid: uid);
   }
 
+  @override
+  Future<void> blockAccountUser({required bool unlock}) async {
+   await _util.blockAccountUser(unlock: unlock);
+  }
+
 
   }

@@ -11,10 +11,12 @@ import 'package:youtube_clicker/presentation/main_screen/widgets/item_channel.da
 import 'package:youtube_clicker/presentation/main_screen/widgets/item_notpub_video.dart';
 import 'package:youtube_clicker/presentation/main_screen/widgets/user_data_card.dart';
 import '../../components/dialoger.dart';
+import '../../domain/models/user_data.dart';
 import '../../resourses/colors_app.dart';
 import '../../utils/preferences_util.dart';
 import '../auth_screen/auth_page.dart';
 import '../auth_screen/bloc/auth_bloc.dart';
+import 'cubit/user_data_cubit.dart';
 
 class ChannelsPage extends StatefulWidget{
   const ChannelsPage({super.key,this.reAuth=true});
@@ -26,6 +28,9 @@ class ChannelsPage extends StatefulWidget{
 }
 
 class _ChannelsPageState extends State<ChannelsPage> {
+
+
+  late UserData userData;
 
 
   @override
@@ -62,7 +67,7 @@ class _ChannelsPageState extends State<ChannelsPage> {
                        backgroundColor: MaterialStateProperty.all(colorRed)
                      ),
                      onPressed: (){
-                       context.read<MainBloc>().add(GetChannelEvent());
+                       context.read<MainBloc>().add(GetChannelEvent(user: userData));
                      },
                      child: Text('Reload page'.tr()))
                 ],
@@ -256,7 +261,7 @@ class _ChannelsPageState extends State<ChannelsPage> {
   @override
   void initState() {
     super.initState();
-    context.read<MainBloc>().add(GetChannelEvent());
+
 
   }
 
@@ -265,7 +270,11 @@ class _ChannelsPageState extends State<ChannelsPage> {
     super.dispose();
   }
 
-
+  @override
+  void didChangeDependencies() {
+    userData = context.watch<UserDataCubit>().state.userData;
+    context.read<MainBloc>().add(GetChannelEvent(user: userData));
+  }
 }
 
 

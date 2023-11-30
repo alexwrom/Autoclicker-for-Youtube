@@ -9,6 +9,8 @@ import 'package:youtube_clicker/data/models/channel_cred_from_api.dart';
 import 'package:youtube_clicker/data/models/hive_models/channel_lang_code.dart';
 import 'package:youtube_clicker/data/services/youtube_api_service.dart';
 import 'package:youtube_clicker/di/locator.dart';
+import 'package:youtube_clicker/domain/models/user_data.dart';
+import 'package:youtube_clicker/domain/repository/user_repository.dart';
 import 'package:youtube_clicker/domain/repository/youtube_repository.dart';
 import 'package:youtube_clicker/resourses/constants.dart';
 import 'package:youtube_clicker/utils/failure.dart';
@@ -17,12 +19,15 @@ import 'package:youtube_clicker/utils/preferences_util.dart';
 import '../../../data/models/hive_models/cred_channel.dart';
 import '../../../domain/models/channel_model_cred.dart';
 import '../../../domain/models/video_model.dart';
+import '../cubit/user_data_cubit.dart';
 import 'main_event.dart';
 import 'main_state.dart';
 
 class MainBloc extends Bloc<MainEvent,MainState>{
 
   final _googleApiRepository=locator.get<YouTubeRepository>();
+  final userRepository = locator.get<UserRepository>();
+  final UserDataCubit _cubitUser ;
   List<VideoModel> videoListNotPublished=[];
   List<VideoModel> videoListFromChannel=[];
   List<VideoModel> allListVideoAccount=[];
@@ -31,19 +36,39 @@ class MainBloc extends Bloc<MainEvent,MainState>{
   final boxVideo=Hive.box('video_box');
 
 
-  MainBloc():super(MainState.unknown()){
+  MainBloc(this._cubitUser):super(MainState.unknown()){
      on<GetChannelEvent>(_getListCredChannel);
      on<GetListVideoFromChannelEvent>(_getListVideoFromChannel);
      on<AddChannelWithGoogleEvent>(_addChannel,transformer: droppable());
      on<AddChannelByInvitationEvent>(_addChannelByCodeInvitation,transformer: droppable());
      on<RemoveChannelEvent>(_removeChannel,transformer: droppable());
+     on<BlockAccountEvent>(_blockAccountUser);
   }
+
+
+
+  Future<void> _blockAccountUser(BlockAccountEvent event,emit) async {
+
+    try{
+      emit(state.copyWith(statusBlockAccount: StatusBlockAccount.loading));
+      await userRepository.blockAccountUser(unlock: event.unlock);
+      UserData userData = _cubitUser.state.userData;
+      userData = userData.copyWith(isBlock:event.unlock?0:1);
+      _cubitUser.state.copyWith(userData: userData);
+      emit(state.copyWith(statusBlockAccount: StatusBlockAccount.success,blockedAccount: !event.unlock));
+
+    }on Failure catch(e){
+      emit(state.copyWith(statusBlockAccount: StatusBlockAccount.error,error: e.message));
+    }
+  }
+
 
 
   Future<void> _getListCredChannel(GetChannelEvent event,emit)async{
     emit(state.copyWith(mainStatus: MainStatus.loading));
     try {
       listCredChannels.clear();
+      final blockedAccount = event.user.isBlock==1;
       final name= PreferencesUtil.getUserName;
       boxCredChannel.keys.map((key) {
             CredChannel value = boxCredChannel.get(key);
@@ -51,7 +76,7 @@ class MainBloc extends Bloc<MainEvent,MainState>{
           }).toList();
       if (listCredChannels.isEmpty) {
         emit(state.copyWith(
-            mainStatus: MainStatus.empty, userName: name, urlAvatar: ''));
+            mainStatus: MainStatus.empty, userName: name, urlAvatar: '',blockedAccount: blockedAccount));
       } else {
         final listFiltered=await _checkListChanelByInvitation(listCredChannels);
        final isActivatedChannel=await _checkActivatedChanelByInvitation(listCredFiltered: listFiltered,
@@ -64,6 +89,7 @@ class MainBloc extends Bloc<MainEvent,MainState>{
             listCredChannels: listCredChannels,
             userName: name,
             urlAvatar: '',
+           blockedAccount: blockedAccount,
             isChannelDeactivation:isActivatedChannel));
           }
     }on Failure catch (e) {

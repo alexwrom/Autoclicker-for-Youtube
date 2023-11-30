@@ -23,6 +23,15 @@ enum VideoListStatus{
 }
 
 
+enum StatusBlockAccount{
+  unknown,
+  error,
+  loading,
+  success,
+
+}
+
+
 
 enum AddCredStatus{
   unknown,
@@ -66,10 +75,17 @@ extension VideoListStatusExt on VideoListStatus{
 
   }
 
+  extension StatusBlockAccountExt on StatusBlockAccount{
+  bool get isLoading => this == StatusBlockAccount.loading;
+  bool get isSuccess => this == StatusBlockAccount.success;
+  bool get isError => this ==  StatusBlockAccount.error;
+  }
+
  class MainState extends Equatable{
 
    final MainStatus mainStatus;
    final AddCredStatus addCredStatus;
+   final StatusBlockAccount statusBlockAccount;
    final VideoListStatus videoListStatus;
    final List<ChannelModel> channelList;
    final List<VideoModel> videoNotPubList;
@@ -78,6 +94,7 @@ extension VideoListStatusExt on VideoListStatus{
    final String error;
    final String userName;
    final String urlAvatar;
+   final bool blockedAccount;
    final bool isChannelDeactivation;
 
 
@@ -86,16 +103,18 @@ extension VideoListStatusExt on VideoListStatus{
       this.listCredChannels,
       this.mainStatus,
       this.addCredStatus,
+      this.statusBlockAccount,
       this.channelList,
       this.error,
       this.userName,
       this.urlAvatar,
       this.videoNotPubList,
       this.videoFromChannel,
-       this.isChannelDeactivation);
+       this.isChannelDeactivation,
+       this.blockedAccount);
 
-  factory MainState.unknown(){
-     return const MainState(VideoListStatus.unknown,[],MainStatus.unknown,AddCredStatus.unknown, [],'','','',[],[],true);
+   factory MainState.unknown(){
+     return const MainState(VideoListStatus.unknown,[],MainStatus.unknown,AddCredStatus.unknown,StatusBlockAccount.unknown, [],'','','',[],[],true,false);
    }
 
 
@@ -108,13 +127,15 @@ extension VideoListStatusExt on VideoListStatus{
         listCredChannels,
         mainStatus,
         addCredStatus,
+        statusBlockAccount,
         channelList,
         error,
         userName,
         urlAvatar,
         videoNotPubList,
         videoFromChannel,
-        isChannelDeactivation
+        isChannelDeactivation,
+        blockedAccount
       ];
 
   MainState copyWith({
@@ -128,20 +149,24 @@ extension VideoListStatusExt on VideoListStatus{
       String? urlAvatar,
      List<VideoModel>? videoNotPubList,
      List<VideoModel>? videoFromChannel,
-    bool? isChannelDeactivation
+    bool? isChannelDeactivation,
+    StatusBlockAccount? statusBlockAccount,
+    bool? blockedAccount,
   }) {
     return MainState(
       videoListStatus??this.videoListStatus,
       listCredChannels??this.listCredChannels,
       mainStatus?? this.mainStatus,
       addCredStatus??this.addCredStatus,
+      statusBlockAccount??this.statusBlockAccount,
       channelList ?? this.channelList,
       error?? this.error,
       userName??this.userName,
       urlAvatar??this.urlAvatar,
       videoNotPubList??this.videoNotPubList,
       videoFromChannel??this.videoFromChannel,
-        isChannelDeactivation??this.isChannelDeactivation
+        isChannelDeactivation??this.isChannelDeactivation,
+      blockedAccount??this.blockedAccount
     );
   }
 }

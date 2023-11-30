@@ -5,6 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:simple_speed_dial/simple_speed_dial.dart';
+import 'package:youtube_clicker/domain/models/user_data.dart';
+import 'package:youtube_clicker/presentation/main_screen/video_list_page.dart';
 import 'package:youtube_clicker/presentation/main_screen/widgets/item_channel_cred.dart';
 import 'package:youtube_clicker/presentation/main_screen/widgets/user_data_card.dart';
 import 'package:youtube_clicker/resourses/images.dart';
@@ -15,6 +17,7 @@ import '../../resourses/colors_app.dart';
 import 'bloc/main_bloc.dart';
 import 'bloc/main_event.dart';
 import 'bloc/main_state.dart';
+import 'cubit/user_data_cubit.dart';
 
 class ListChannelAdd extends StatefulWidget{
   const ListChannelAdd({super.key});
@@ -26,11 +29,23 @@ class ListChannelAdd extends StatefulWidget{
 class _ListChannelAddState extends State<ListChannelAdd> {
 
 
+  late UserData userData;
+
+
 
   @override
   void initState() {
     super.initState();
-    context.read<MainBloc>().add(GetChannelEvent());
+
+
+  }
+
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    userData = context.watch<UserDataCubit>().state.userData;
+    context.read<MainBloc>().add(GetChannelEvent(user:userData));
 
   }
 
@@ -90,7 +105,8 @@ class _ListChannelAddState extends State<ListChannelAdd> {
                  listener: (_,s){
               if (s.mainStatus.isError ||
                   s.addCredStatus.isError ||
-                  s.addCredStatus.isErrorRemove) {
+                  s.addCredStatus.isErrorRemove||
+                  s.statusBlockAccount.isError) {
                 Dialoger.showError(s.error, context);
               }
 
@@ -124,7 +140,7 @@ class _ListChannelAddState extends State<ListChannelAdd> {
                                    backgroundColor: MaterialStateProperty.all(colorRed)
                                ),
                                onPressed: (){
-                                 context.read<MainBloc>().add(GetChannelEvent());
+                                 context.read<MainBloc>().add(GetChannelEvent(user: userData));
                                },
                                child: Text('Reload page'.tr()))
                          ],
@@ -139,7 +155,7 @@ class _ListChannelAddState extends State<ListChannelAdd> {
                        children: [
                          Container(
                            height: 120,
-                           padding: const EdgeInsets.only(top: 40,left: 20,right: 20),
+                           padding: const EdgeInsets.only(top: 40,left: 10,right: 10),
                            decoration: BoxDecoration(
                                color: colorPrimary,
                                borderRadius: const BorderRadius.only(bottomRight: Radius.circular(20),
@@ -152,9 +168,12 @@ class _ListChannelAddState extends State<ListChannelAdd> {
                                  children: [
                                    GestureDetector(
                                      onTap: (){
-                                       //Сюда метод
+                                       Dialoger.showBlockAccountDialog(context: context,
+                                           isBlockedAccount:state.blockedAccount);
                                      },
-                                     child: Container(
+                                     child:
+                                     !state.statusBlockAccount.isLoading?
+                                     Container(
                                        alignment: Alignment.centerRight,
                                        width: 40,
                                        height: 40,
@@ -165,8 +184,16 @@ class _ListChannelAddState extends State<ListChannelAdd> {
                                              shape: BoxShape.circle,
                                              color: colorBackground
                                          ),
-                                         child:const Icon(Icons.play_arrow,color: Colors.white),
+                                         child:
+                                         Icon(state.blockedAccount?Icons.pause:
+                                         Icons.play_arrow,color: Colors.white),
                                        ),
+                                     ):const Padding(
+                                       padding: EdgeInsets.only(left: 10),
+                                       child: SizedBox(
+                                           width: 30,
+                                           height: 30,
+                                           child: CircularProgressIndicator(color: Colors.white,strokeWidth: 1.5)),
                                      ),
                                    ),const SizedBox(width: 10),
                                    SizedBox(
@@ -285,8 +312,20 @@ class _ListChannelAddState extends State<ListChannelAdd> {
                                          ...List.generate(state.listCredChannels.length, (index){
                                            return  ItemChannelCred(channelModelCred: state.listCredChannels[index],
                                            index: index,
+                                           onAction: (credChannel){
+                                             if(state.blockedAccount){
+                                               Dialoger.showInfoDialog(context,
+                                                 '','You cannot perform any activities while your account is suspended. Unpause and continue working.'.tr(),true,(){
+
+                                                   }
+                                               );
+                                               return;
+                                             }
+                                             Navigator.push(context,
+                                                 MaterialPageRoute(builder: (_)=> VideoListPage(channelModelCred: credChannel)));
+                                           },
                                            onDelete: (i){
-                                            Dialoger.showDeleteChannel(context: context,keyHive: state
+                                             Dialoger.showDeleteChannel(context: context,keyHive: state
                                                 .listCredChannels[index]
                                                 .keyLangCode,index:index);
                                           },);

@@ -7,11 +7,11 @@ class UserDataFromApi{
 
 
    final int numberOfTrans;
-   // final int timeStampAuth;
-   // final  int timeStampPurchase;
+   final int isBlock;
+
 
   UserDataFromApi.fromApi({required DocumentSnapshot documentSnapshot}):
-        numberOfTrans=documentSnapshot.get('balance');
-        // timeStampAuth=configMap['timeStampAuth']??0,
-        // timeStampPurchase=configMap['timestampPurchase']??0;
+        numberOfTrans=documentSnapshot.get('balance'),
+        isBlock= documentSnapshot.get('isBlock');
+
  }

@@ -57,8 +57,15 @@ void main()async  {
 }
 
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final UserDataCubit userDataCubit = UserDataCubit();
 
   // This widget is the root of your application.
   @override
@@ -66,10 +73,10 @@ class MyApp extends StatelessWidget {
 
     return MultiBlocProvider(
       providers: [
+        BlocProvider<UserDataCubit>(create: (_)=>userDataCubit),
         BlocProvider<AuthBloc>(create: (_)=>AuthBloc()),
         BlocProvider<AppBloc>(create: (_) => AppBloc()),
-        BlocProvider<MainBloc>(create: (_)=>MainBloc()),
-        BlocProvider<UserDataCubit>(create: (_)=>UserDataCubit())
+        BlocProvider<MainBloc>(create: (_)=>MainBloc(userDataCubit)),
       ],
       child: MaterialApp(
         theme: AppTheme.light,

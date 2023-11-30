@@ -10,9 +10,9 @@ class UserDataMapper{
 
     static UserData fromApi({required UserDataFromApi userDataFromApi}){
       return UserData(
-        userDataFromApi.numberOfTrans);
-        // userDataFromApi.timeStampAuth,
-        // userDataFromApi.timeStampPurchase);
+        userDataFromApi.numberOfTrans,
+        userDataFromApi.isBlock);
+
   }
 
   }

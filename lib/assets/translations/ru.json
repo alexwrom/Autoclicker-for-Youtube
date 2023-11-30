@@ -89,8 +89,10 @@
   "Check if translation is possible in YouTube Studio": "Проверьте, возможен ли перевод в студии YouTube",
   "Exit without deleting": "Выйти без удаления",
   "Delete account?":   "Удалить аккаунт?",
+  "Remove account from temporary blocking?": "Снять аккаунт с временной блокировки?",
+  "Temporary account blocking. During the lockout, your balance is maintained and will not be reset after 30 days of account inactivity. Continue?": "Временная блокировка аккаунта. Во время блокировки ваш баланс сохраняется и не будет сброшен через 30 дней бездействия аккаунта. Продолжить?",
   "After logging out of the account, it will be permanently deleted from the project database":   "После выхода из аккаунта он будет безвозвратно удален из базы данных проекта",
-
+  "You cannot perform any activities while your account is suspended. Unpause and continue working.": "Вы не можете выполнять какие-либо действия, пока ваша учетная запись приостановлена. Снимите паузу и продолжите работу.",
   "Azerbaijani": "Азербайджанский",
   "Aymara": "Аймара",
   "Akan": "Акан",

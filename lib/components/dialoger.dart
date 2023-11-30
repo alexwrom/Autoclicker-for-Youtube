@@ -29,6 +29,28 @@ import 'buttons.dart';
 class Dialoger {
 
 
+  static void showBlockAccountDialog({required BuildContext context, required bool isBlockedAccount}){
+
+    showCustomDialog(
+        textButtonCancel: 'Close'.tr(),
+        textButtonAccept: 'Ok',
+        textButtonColor: Colors.white,
+        contextUp: context,
+        title: !isBlockedAccount?
+        'Temporary account blocking. During the lockout, your balance is maintained and will not be reset after 30 days of account inactivity. Continue?'.tr():
+        'Remove account from temporary blocking?'.tr(),
+        titleColor: Platform.isIOS?colorPrimary:Colors.white,
+        content: Container(),
+        voidCallbackAccept: (){
+         context.read<MainBloc>().add(BlockAccountEvent(unlock: isBlockedAccount));
+         },
+        voidCallbackCancel: (){}
+    );
+
+
+  }
+
+
   static void showErrorCompleteTranslate({
     required List<String> listErrorCompleteTranslate,
     required BuildContext context,

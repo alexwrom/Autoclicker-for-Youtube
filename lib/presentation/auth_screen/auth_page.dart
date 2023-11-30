@@ -134,15 +134,20 @@ class _AuthPageState extends State  with TickerProviderStateMixin{
                         ),
                         const SizedBox(height: 50),
                         Column(
+                          mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Container(
-                              width: 300,
+                             // width: 300,
+                              height: 50.0,
                               decoration: BoxDecoration(
                                   color: colorBackground,
                                   borderRadius: BorderRadius.circular(50)
                               ),
                               child: TabBar(
+                                dividerColor: Colors.transparent,
+                                indicatorSize: TabBarIndicatorSize.tab,
+                                padding: const EdgeInsets.all(3),
                                 controller: _tabControllerMain,
                                 labelStyle: const TextStyle(
                                     fontWeight: FontWeight.w700
@@ -151,6 +156,7 @@ class _AuthPageState extends State  with TickerProviderStateMixin{
                                 unselectedLabelColor: colorGrey,
                                 indicator: BoxDecoration(
                                     color: colorRed,
+                                    shape: BoxShape.rectangle,
                                     borderRadius: BorderRadius.circular(50)
                                 ),
                                 tabs:  [

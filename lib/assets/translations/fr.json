@@ -80,7 +80,9 @@
   "Delete channel?": "Supprimer la chaîne?",
   "Delete": "Supprimer",
   "Sign out?": "Se déconnecter?",
-
+  "Temporary account blocking. During the lockout, your balance is maintained and will not be reset after 30 days of account inactivity. Continue?":
+  "Blocage temporaire du compte. Pendant le verrouillage, votre solde est maintenu et ne sera pas réinitialisé après 30 jours d'inactivité du compte. Continuer?",
+  "Remove account from temporary blocking?": "Supprimer le compte du blocage temporaire?",
   "There were problems with these languages when installing subtitles.": "Il y a eu des problèmes avec ces langues lors de l'installation des sous-titres.",
   "Repeat translation": "Répéter la traduction",
   "Session ended": "Session terminée",
@@ -88,7 +90,7 @@
   "Exit without deleting": "Quitter sans supprimer",
   "Delete account?": "Supprimer le compte?",
   "After logging out of the account, it will be permanently deleted from the project database":  "Après la déconnexion du compte, il sera définitivement supprimé de la base de données du projet",
-
+  "You cannot perform any activities while your account is suspended. Unpause and continue working.": "Vous ne pouvez effectuer aucune activité pendant que votre compte est suspendu. Reprenez la pause et continuez à travailler.",
   "Azerbaijani": "Azerbaïdjanais",
   "Aymara": "Aymara",
   "Akan": "Akan",

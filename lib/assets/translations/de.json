@@ -80,12 +80,14 @@
   "Delete": "Löschen",
   "Sign out?": "Austragen?",
 
-
+   "You cannot perform any activities while your account is suspended. Unpause and continue working.": "Während Ihr Konto gesperrt ist, können Sie keine Aktivitäten ausführen. Unterbrechen Sie die Pause und arbeiten Sie weiter.",
   "There were problems with these languages when installing subtitles.": "Bei diesen Sprachen gab es Probleme bei der Installation von Untertiteln.",
   "Repeat translation": "Übersetzung wiederholen",
   "Session ended": "Sitzung beendet",
   "Check if translation is possible in YouTube Studio": "Prüfen Sie, ob eine Übersetzung in YouTube Studio möglich ist",
-
+  "Temporary account blocking. During the lockout, your balance is maintained and will not be reset after 30 days of account inactivity. Continue?":
+  "Vorübergehende Kontosperrung. Während der Sperrung bleibt Ihr Guthaben erhalten und wird nach 30 Tagen Inaktivität des Kontos nicht zurückgesetzt. Weitermachen?",
+  "Remove account from temporary blocking?": "Konto aus der vorübergehenden Sperrung entfernen?",
   "Exit without deleting": "Beenden ohne zu löschen",
   "Delete account?": "Konto löschen?",
   "After logging out of the account, it will be permanently deleted from the project database": "Nach dem Abmelden vom Konto wird es dauerhaft aus der Projektdatenbank gelöscht",

@@ -11,11 +11,13 @@ import '../video_list_page.dart';
 class ItemChannelCred extends StatelessWidget{
   const ItemChannelCred({super.key,required this.channelModelCred,
   required this.onDelete,
+    required this.onAction,
   required this.index});
 
 
   final ChannelModelCred channelModelCred;
   final Function onDelete;
+  final Function onAction;
   final int index;
 
 
@@ -23,9 +25,7 @@ class ItemChannelCred extends StatelessWidget{
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: (){
-        Navigator.push(context, MaterialPageRoute(builder: (_)=> VideoListPage(channelModelCred: channelModelCred)));
-        //onDelete.call(index);
-
+        onAction.call(channelModelCred);
       },
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 10),

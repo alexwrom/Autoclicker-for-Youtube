@@ -28,18 +28,18 @@ apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
     signingConfigs {
-        debug {
-            storeFile file('/Users/aliaksandrsamasiuk/Documents/Flutter docs/keystore.jks')
-            storePassword 'Aa12091988'
-            keyAlias 'alexwrom'
-            keyPassword 'Aa12091988'
-        }
-        release {
-            storeFile file('/Users/aliaksandrsamasiuk/Documents/Flutter docs/keystore.jks')
-            storePassword 'Aa12091988'
-            keyAlias 'alexwrom'
-            keyPassword 'Aa12091988'
-        }
+//        debug {
+//            storeFile file('/Users/aliaksandrsamasiuk/Documents/Flutter docs/keystore.jks')
+//            storePassword 'Aa12091988'
+//            keyAlias 'alexwrom'
+//            keyPassword 'Aa12091988'
+//        }
+//        release {
+//            storeFile file('/Users/aliaksandrsamasiuk/Documents/Flutter docs/keystore.jks')
+//            storePassword 'Aa12091988'
+//            keyAlias 'alexwrom'
+//            keyPassword 'Aa12091988'
+//        }
     }
     compileSdkVersion 33
     ndkVersion flutter.ndkVersion
@@ -64,10 +64,10 @@ android {
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-build-configuration.
         minSdkVersion 19
         targetSdkVersion 33
-        versionCode 8
-        versionName ="1.0.5"
+        versionCode 11
+        versionName ="1.0.7"
         multiDexEnabled = true
-        signingConfig signingConfigs.release
+        //signingConfig signingConfigs.release
     }
 
     buildTypes {

@@ -7,6 +7,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:youtube_clicker/utils/preferences_util.dart';
 
 import '../../utils/failure.dart';
 import '../models/user_data_from_api.dart';
@@ -18,6 +19,28 @@ class UserApiService{
 
    UserApiService(){
      _firebaseFirestore=FirebaseFirestore.instance;
+   }
+
+
+
+
+   Future<void> blockAccountUser({required bool unlock}) async {
+     try{
+       final email = PreferencesUtil.getEmail;
+       int lockIndicator = 1;
+       if(unlock){
+         lockIndicator = 0;
+       }
+     await _firebaseFirestore!.collection('userpc').doc(email).update({
+       'isBlock': lockIndicator
+     });
+     }on FirebaseException catch(error,stackTrace){
+       Error.throwWithStackTrace(Failure(error.message!), stackTrace);
+     } on Failure catch(error,stackTrace){
+       Error.throwWithStackTrace(Failure(error.message), stackTrace);
+     }on PlatformException catch(error,stackTrace){
+       Error.throwWithStackTrace(Failure(error.message!), stackTrace);
+     }
    }
 
 
