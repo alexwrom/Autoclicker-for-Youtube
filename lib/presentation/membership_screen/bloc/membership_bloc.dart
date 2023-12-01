@@ -12,6 +12,7 @@ import 'package:youtube_clicker/domain/repository/in_app_purchase_repository.dar
 import 'package:youtube_clicker/utils/failure.dart';
 import 'package:youtube_clicker/utils/preferences_util.dart';
 import '../../../data/utils/handle_subscription_util.dart';
+import '../../../domain/models/user_data.dart';
 import '../../main_screen/cubit/user_data_cubit.dart';
 import 'membership_event.dart';
 import 'membership_state.dart';
@@ -20,7 +21,7 @@ class MemberShipBloc extends Bloc<MemberShipEvent,MemberShipState>{
 
 
   late final HandleSubscriptionUtil _purchasesSubscription;
-  final cubitUserData;
+  final UserDataCubit cubitUserData;
   late final inAppPurchaseService=locator.get<InAppPurchaseService>();
 
 
@@ -39,10 +40,12 @@ class MemberShipBloc extends Bloc<MemberShipEvent,MemberShipState>{
           try {
             if (purchaseDetails.status==PurchaseStatus.purchased) {
               final oldBalance=cubitUserData.state.userData.numberOfTrans;
+              final isTakeBonus = cubitUserData.state.userData.isTakeBonus;
               final limitTranslate=state.listDetails.firstWhere((element) => purchaseDetails.productID==element.id).limitTranslation;
               final resultBalance=oldBalance+limitTranslate;
-              await inAppPurchaseService.updateBalance(resultBalance: resultBalance);
+              await inAppPurchaseService.updateBalance(resultBalance: resultBalance,isTakeBonus:isTakeBonus);
               await cubitUserData.addBalance(resultBalance);
+              _updateUser();
               add(OnPurchasedEvent());
             }
           } catch (_, __) {
@@ -57,6 +60,12 @@ class MemberShipBloc extends Bloc<MemberShipEvent,MemberShipState>{
      on<OnErrorEvent>(_onPurchaseError);
      on<OnCanceledEvent>(_onCanceled);
      on<OnPurchasedEvent>(_onPurchased);
+  }
+
+  void _updateUser() {
+     UserData userData = cubitUserData.state.userData;
+    userData = userData.copyWith(isTakeBonus:1);
+    cubitUserData.updateUser(userData:userData);
   }
 
 

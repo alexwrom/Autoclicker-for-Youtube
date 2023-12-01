@@ -11,7 +11,8 @@ class UserDataMapper{
     static UserData fromApi({required UserDataFromApi userDataFromApi}){
       return UserData(
         userDataFromApi.numberOfTrans,
-        userDataFromApi.isBlock);
+        userDataFromApi.isBlock,
+      userDataFromApi.isTakeBonus);
 
   }
 

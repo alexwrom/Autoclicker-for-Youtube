@@ -52,14 +52,18 @@ class MainBloc extends Bloc<MainEvent,MainState>{
     try{
       emit(state.copyWith(statusBlockAccount: StatusBlockAccount.loading));
       await userRepository.blockAccountUser(unlock: event.unlock);
-      UserData userData = _cubitUser.state.userData;
-      userData = userData.copyWith(isBlock:event.unlock?0:1);
-      _cubitUser.state.copyWith(userData: userData);
+      _updateUser(event);
       emit(state.copyWith(statusBlockAccount: StatusBlockAccount.success,blockedAccount: !event.unlock));
 
     }on Failure catch(e){
       emit(state.copyWith(statusBlockAccount: StatusBlockAccount.error,error: e.message));
     }
+  }
+
+  void _updateUser(BlockAccountEvent event) {
+     UserData userData = _cubitUser.state.userData;
+    userData = userData.copyWith(isBlock:event.unlock?0:1);
+    _cubitUser.updateUser(userData: userData);
   }
 
 

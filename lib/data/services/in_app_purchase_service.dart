@@ -41,17 +41,14 @@ class InAppPurchaseService{
         CollectionReference collectionRef= _firebaseFirestore!.collection('products_ios');
         QuerySnapshot querySnapshot = await collectionRef.get();
         final listProdFromFirebase = querySnapshot.docs.map((doc) => doc).toList();
-         print('List ptod IDS ${listProdFromFirebase.length} ID ${listProdFromFirebase[0].id}');
         for(int i=0;i<listProdFromFirebase.length;i++){
           idsProd.add(listProdFromFirebase[i].id.trim());
         }
         final ProductDetailsResponse productDetailResponse =
               await _inAppPurchase.queryProductDetails(idsProd);
         if(productDetailResponse.error != null){
-          print('Get store Error product ${productDetailResponse.error!.message}');
            throw Failure(productDetailResponse.error!.message);
         }
-        print('List ptod Det ${productDetailResponse.productDetails}');
         if (productDetailResponse.productDetails.isEmpty) {
                 return [];
         }
@@ -107,7 +104,6 @@ class InAppPurchaseService{
             await SKPaymentQueueWrapper().finishTransaction(transaction);
           } catch (e) {
             print(e);
-            print('clearTransactionsIos failed');
             // throw const Failure('Transactions clear failed');
           }
         }
@@ -117,14 +113,24 @@ class InAppPurchaseService{
 
 
 
-    Future<void> updateBalance({required int resultBalance})async{
+    Future<void> updateBalance({required int resultBalance,required int isTakeBonus})async{
 
       try {
+        Map<String,dynamic> data = {};
+        if(isTakeBonus == 0){
+          resultBalance+=800;
+          data = {
+            'balance':resultBalance,
+            'isTakeBonus': 1
+          };
+        }else{
+          data = {
+            'balance':resultBalance,
+          };
+        }
         final uid=PreferencesUtil.getEmail;
         _firebaseFirestore=FirebaseFirestore.instance;
-        await _firebaseFirestore!.collection('userpc').doc(uid.toLowerCase()).update({
-          'balance':resultBalance
-       });
+        await _firebaseFirestore!.collection('userpc').doc(uid.toLowerCase()).update(data);
       } on FirebaseException catch(error,stackTrace){
         Error.throwWithStackTrace(Failure(error.message!), stackTrace);
       } on Failure catch(error,stackTrace){

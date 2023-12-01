@@ -345,7 +345,11 @@ class Dialoger {
     );
   }
 
-  static void showBuyDialog(BuildContext context,String title,String count,bool isError,VoidCallback voidCallback) {
+  static void showBuyDialog(BuildContext context,String title,String count,bool isError,VoidCallback voidCallback,{required int isTakeBonus}) {
+    String quantityBonus = count;
+    if(isTakeBonus == 0){
+      quantityBonus = '${int.parse(count) + 800}';
+    }
     showCustomDialog(
         textButtonCancel: 'Ok',
         textButtonAccept: '',
@@ -360,7 +364,7 @@ class Dialoger {
                 fontSize: 16,
                 fontWeight: FontWeight.normal
             ),),
-            Text(' $count',style: TextStyle(
+            Text(' $quantityBonus',style: TextStyle(
                 color: Platform.isIOS?colorPrimary:Colors.white,
                 fontSize: 16,
                 fontWeight: FontWeight.normal

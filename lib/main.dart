@@ -7,6 +7,7 @@ import 'package:youtube_clicker/presentation/auth_screen/enter_code_verification
 import 'package:youtube_clicker/presentation/main_screen/bloc/main_bloc.dart';
 import 'package:youtube_clicker/presentation/main_screen/cubit/user_data_cubit.dart';
 import 'package:youtube_clicker/presentation/main_screen/list_channel_add_page.dart';
+import 'package:youtube_clicker/presentation/membership_screen/membership_page.dart';
 import 'package:youtube_clicker/utils/preferences_util.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -123,6 +124,8 @@ class _AppState extends State<App> {
         if (state.error != '') Dialoger.showError(state.error,context);
       },
       builder: (_, state) {
+
+        //return MembershipPage();
         if (state.authStatusCheck == AuthStatusCheck.unknown) {
           return const SplashPage();
         } else if (state.authStatusCheck == AuthStatusCheck.unauthenticated) {

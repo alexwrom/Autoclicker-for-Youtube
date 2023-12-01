@@ -9,6 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:super_banners/super_banners.dart';
+import 'package:youtube_clicker/app_bloc/app_bloc.dart';
 import 'package:youtube_clicker/presentation/main_screen/cubit/user_data_cubit.dart';
 import 'package:youtube_clicker/presentation/membership_screen/bloc/membership_bloc.dart';
 import 'package:youtube_clicker/presentation/membership_screen/bloc/membership_event.dart';
@@ -17,6 +18,7 @@ import 'package:youtube_clicker/resourses/colors_app.dart';
 import 'package:youtube_clicker/resourses/images.dart';
 
 import '../../components/dialoger.dart';
+import '../../domain/models/user_data.dart';
 
 class MembershipPage extends StatefulWidget{
    MembershipPage({super.key});
@@ -26,11 +28,11 @@ class MembershipPage extends StatefulWidget{
 }
 
 class _MembershipPageState extends State<MembershipPage> {
+
   int _currentLimit=0;
-
-
- late MemberShipBloc _memberShipBloc;
+  late MemberShipBloc _memberShipBloc;
  double? sizeText;
+ late UserData userData;
 
 
  @override
@@ -40,6 +42,14 @@ class _MembershipPageState extends State<MembershipPage> {
     _memberShipBloc.add(GetProductEvent());
 
 
+  }
+
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    userData = context.watch<UserDataCubit>().state.userData;
+    print('USER dA ${userData.isTakeBonus}');
   }
 
   @override
@@ -57,6 +67,7 @@ class _MembershipPageState extends State<MembershipPage> {
 
             if(stateLis.memebStatus.isPurchased){
               Dialoger.showBuyDialog(context, 'Subscribed successfully!'.tr(),
+                 isTakeBonus:userData.isTakeBonus,
                 '$_currentLimit', false, () {
                       Navigator.pop(context);
                   });
@@ -136,6 +147,9 @@ class _MembershipPageState extends State<MembershipPage> {
                       ],
                     ),
                   ),
+                    Visibility(
+                      visible: userData.isTakeBonus == 0&&!state.memebStatus.isPurchased,
+                        child: const TakeBonusBanner()),
                     ...List.generate(state.listDetails.length, (index) {
                       return Stack(
                         children: [
@@ -269,3 +283,56 @@ class _MembershipPageState extends State<MembershipPage> {
     return price;
    }
 }
+
+ class TakeBonusBanner extends StatelessWidget{
+  const TakeBonusBanner({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return                     Stack(
+      children: [
+        Container(
+          padding: const EdgeInsets.only(left: 50,right: 20,top:30,bottom: 30),
+          margin:const EdgeInsets.symmetric(horizontal: 10,vertical: 10),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15),
+            color: colorPrimary,
+            image: DecorationImage(image: AssetImage(bgCart),fit: BoxFit.fill),
+          ),
+          child:  Row(
+            children: [
+              const Icon(Icons.electric_bolt,color: Colors.amber,size: 40.0),
+              const SizedBox(width: 10.0),
+              Expanded(
+                child: Text('When you purchase any package for the first time, you receive 800 points as a bonus.'.tr(),
+                  style: const TextStyle(
+                      color: Colors.amber,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 20.0
+                  ),),
+              ),
+            ],
+          ),
+        ),
+        Positioned(
+          top: 10.0,
+          left: 10.0,
+          child: CornerBanner(
+              elevation: 0,
+              bannerPosition: CornerBannerPosition.topLeft,
+              bannerColor: colorRed,
+              child: const SizedBox(
+                width:70.0,
+                child: Text('+ 800',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 20),
+                    textAlign: TextAlign.center),
+              )),
+        ),
+      ],
+    );
+  }
+
+ }

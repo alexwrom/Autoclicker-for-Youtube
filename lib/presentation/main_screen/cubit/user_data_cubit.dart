@@ -37,6 +37,11 @@ class UserDataCubit extends Cubit<UserdataState>{
     }
   }
 
+  void updateUser({required UserData userData}){
+    _userData = userData;
+    emit(state.copyWith(userData: _userData));
+  }
+
 
   setListCodeLanguage(List<String> list)async{
     emit(state.copyWith(choiceCodeLanguageList: list));
