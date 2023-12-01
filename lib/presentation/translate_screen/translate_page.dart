@@ -57,6 +57,9 @@ class _TranslatePageState extends State<TranslatePage> {
     return Scaffold(
       backgroundColor: colorBackground,
       appBar: AppBar(
+        iconTheme: const IconThemeData(
+          color: Colors.white, //change your color here
+        ),
         elevation: 0,
         title:  Text(widget.videoModel.title,style:const TextStyle(
             color: Colors.white,

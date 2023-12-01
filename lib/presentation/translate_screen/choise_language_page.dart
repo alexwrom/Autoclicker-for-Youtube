@@ -220,7 +220,7 @@ class _ItemLanguageState extends State<_ItemLanguage> {
   Widget build(BuildContext context) {
     return ListTile(
       leading: Checkbox(
-        fillColor: MaterialStatePropertyAll(colorRed),
+        activeColor: colorRed,
         value: _value,
         onChanged: (bool? value) {
           print('Code ${widget.codeLanguage}');
