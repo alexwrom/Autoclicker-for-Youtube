@@ -190,7 +190,7 @@ class AuthService{
        }else{
          await PreferencesUtil.setUserName(email);
          await _firebaseFirestore!.collection('userpc').doc(email.toLowerCase()).set({
-           'balance':800,
+           'balance':0,
            'password':pass,
            'isBlock' : 0,
            'isTakeBonus' : 0,
