@@ -74,8 +74,12 @@ class UserDataCubit extends Cubit<UserdataState>{
 
    }
 
-  addBalance(int limitTranslate)async{
-    _userData=_userData!.copyWith(numberOfTrans: limitTranslate);
+  addBalance(int limitTranslate,int isTakeBonus)async{
+    int resultBalance = limitTranslate;
+    if(isTakeBonus == 0){
+      resultBalance+=800;
+    }
+    _userData=_userData!.copyWith(numberOfTrans: resultBalance);
     emit(state.copyWith(userDataStatus: UserDataStatus.success,userData: _userData,isSubscribe: true));
   }
 

@@ -10,15 +10,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:youtube_clicker/components/text_fields.dart';
+import 'package:youtube_clicker/domain/models/config_app_entity.dart';
 import 'package:youtube_clicker/presentation/membership_screen/membership_page.dart';
 import 'package:youtube_clicker/presentation/translate_screen/bloc/translate_bloc.dart';
 
+import '../app_bloc/app_bloc.dart';
 import '../data/models/list_translate_api.dart';
 import '../presentation/auth_screen/auth_page.dart';
 import '../presentation/auth_screen/bloc/auth_bloc.dart';
 import '../presentation/main_screen/bloc/main_bloc.dart';
 import '../presentation/main_screen/bloc/main_event.dart';
+import '../presentation/main_screen/list_channel_add_page.dart';
 import '../presentation/translate_screen/bloc/translate_event.dart';
 import '../resourses/colors_app.dart';
 import 'buttons.dart';
@@ -27,6 +31,96 @@ import 'buttons.dart';
 
 
 class Dialoger {
+
+
+  static void showBottomMenuAppUpdate({required BuildContext context, required ConfigAppEntity configAppEntity,required bool isAuth}){
+    const String urlGooglePlay = 'https://play.google.com/store/apps/details?id=com.alex.youtube_clicker';
+    const String urlAppStore = 'https://apps.apple.com/by/app/youclicker/id6448732961';
+
+    showModalBottomSheet(
+        isDismissible:false,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        context: context, builder: (contextMenu){
+      return BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 5),
+        child: Container(
+          padding:  const EdgeInsets.only(top: 20,right: 20,left: 20),
+          decoration:  BoxDecoration(
+              color: colorBackground,
+              borderRadius: const BorderRadius.only(topRight: Radius.circular(20),topLeft: Radius.circular(20))
+          ),
+          height:  320.0,
+          width: double.infinity,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(height: 20.0),
+              const Icon(Icons.system_security_update_good,color: Colors.white54,size: 80.0),
+              const SizedBox(height: 20.0),
+              Text('A new update is available for you'.tr(),
+                style:const TextStyle(
+                    color: Colors.white,
+                    fontSize: 22.0,
+                    fontWeight: FontWeight.w700
+                ),
+              ),
+              const SizedBox(height: 40.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  SizedBox(
+                    height: 40.0,
+                    width: MediaQuery.of(context).size.width/2.7,
+                    child: SubmitButton(
+                      colorsFill: colorPrimary,
+                        onTap: (){
+                       if(configAppEntity.requiredUpdate==0){
+                         if(isAuth){
+                           context.read<AppBloc>().add(CloseSplashEvent());
+                         }
+                          Navigator.pop(context);
+                       }else{
+                         exit(0);
+                       }
+                      },
+                      textButton: configAppEntity.requiredUpdate == 0?'Later'.tr():'Close'.tr()),
+                  ),
+                  const SizedBox(width: 10.0),
+                  SizedBox(
+                    height: 40.0,
+                    width: MediaQuery.of(context).size.width/2.7,
+                    child: SubmitButton(
+                        colorsFill: colorRed,
+                        onTap: () async {
+                       if(Platform.isAndroid)  {
+                         await _launchUrl(urlGooglePlay);
+                       }else{
+                         await _launchUrl(urlAppStore);
+                       }
+                    },
+                        textButton: 'Update'.tr()),
+                  ),
+                ],
+              ),
+
+
+            ],
+          ),
+        ),
+      );
+    });
+
+  }
+
+  static Future<void> _launchUrl(String url) async {
+    final Uri uri = Uri.parse(url);
+    if (!await launchUrl(uri)) {
+      throw Exception('Could not launch $uri');
+    }
+  }
+
 
 
   static void showBlockAccountDialog({required BuildContext context, required bool isBlockedAccount}){
@@ -173,14 +267,15 @@ class Dialoger {
       contextUp: context,
       title: 'Translate?'.tr(),
       titleColor: Platform.isIOS?colorPrimary:Colors.white,
-      content:  Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+      content:  Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text('Your transfer balance will be debited'.tr(),
             style:  TextStyle(
                 color: Platform.isIOS?colorPrimary:Colors.grey
             ),),
-          Text(' - $numberTranslate',
+          const SizedBox(height: 8.0),
+          Text('- $numberTranslate',
             style:  TextStyle(
                 color: Platform.isIOS?colorPrimary:Colors.grey
             ),),
@@ -227,6 +322,7 @@ class Dialoger {
     required String textButtonAccept,
     required VoidCallback voidCallbackAccept,
     required VoidCallback voidCallbackCancel,
+    double sizeTextAccept = 15.0,
     Color? textButtonColor=const Color.fromRGBO(212,32,60, 1),
     Color? titleColor,
     Widget? content,
@@ -270,6 +366,7 @@ class Dialoger {
                   children: [
                     TextButton(
                       child:  Text(textButtonAccept,style: TextStyle(
+                        fontSize: sizeTextAccept,
                         color: textButtonColor,
 
                       ),),
@@ -528,7 +625,6 @@ class _ActionDialogLogOutState extends State<ActionDialogLogOut> {
               children: [
                 if(Platform.isAndroid)...{
                   Checkbox(
-                      fillColor: MaterialStatePropertyAll(colorRed),
                       activeColor: colorRed,
                       value: _isRemoveAccount,
                       onChanged: (v){
@@ -634,4 +730,8 @@ class _ActionDialogErrorTranslateState extends State<ActionDialogErrorTranslate>
     return lisToString;
   }
 
+
+
 }
+
+

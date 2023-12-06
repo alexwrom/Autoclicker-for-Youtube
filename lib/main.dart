@@ -112,15 +112,22 @@ class App extends StatefulWidget {
   State<App> createState() => _AppState();
 }
 
-class _AppState extends State<App> {
+class _AppState extends State<App> with WidgetsBindingObserver{
 
-
+   bool _isShow = false;
 
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AppBloc, AppState>(
       listener: (context, state) {
+        if(state.checkUpdateStatus == CheckUpdateStatus.showMenuUpdate){
+          print('Show Dialof');
+         Dialoger.showBottomMenuAppUpdate(context:context,configAppEntity: state.configAppEntity,
+             isAuth:state.authStatusCheck == AuthStatusCheck.unknown
+         );
+        }
+
         if (state.error != '') Dialoger.showError(state.error,context);
       },
       builder: (_, state) {
@@ -131,7 +138,9 @@ class _AppState extends State<App> {
         }else if(state.authStatusCheck==AuthStatusCheck.verificationCodeExist){
           return const EnterCodeVerificationEmail();
         }
+
         return const ListChannelAdd();
+
 
       },
     );
@@ -141,6 +150,7 @@ class _AppState extends State<App> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     context.read<AppBloc>().add(AuthInitCheck());
 
   }
@@ -148,6 +158,7 @@ class _AppState extends State<App> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
 
   }
@@ -160,8 +171,16 @@ class _AppState extends State<App> {
 
   }
 
-
-
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if(state == AppLifecycleState.resumed&&_isShow){
+      context.read<AppBloc>().add(CheckAppUpdateEvent());
+    }
+    if(state == AppLifecycleState.paused){
+      _isShow = true;
+    }
+  }
 }
 
 

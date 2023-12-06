@@ -26,7 +26,7 @@ import '../http_client/dio_auth_client.dart';
 import '../http_client/dio_client_insert_caption.dart';
 import '../http_client/http_client.dart';
 import '../models/channel_cred_from_api.dart';
-import '../models/cred_token_model.dart';
+import '../models/config_app_model.dart';
 import '../models/video_model_from_api.dart';
 import 'package:google_sign_in_platform_interface/google_sign_in_platform_interface.dart';
 
@@ -134,7 +134,7 @@ class YouTubeApiService {
 
   Future<ChannelModelCredFromApi> getModelChannelIOS() async {
     try {
-      final cred = await getCredsForGetToken();
+      final cred = await getConfigApp();
       final oauth2Helper = getOauth2Helper(cred: cred);
       var response = await oauth2Helper.fetchToken();
       final refreshToken = response.refreshToken!;
@@ -387,7 +387,7 @@ class YouTubeApiService {
   Future<String> getAccessTokenByRefreshToken(
       {required String refreshToken,
       required TypePlatformRefreshToken typePlatformRefreshToken}) async {
-    final cred = await getCredsForGetToken();
+    final cred = await getConfigApp();
     print(
         'Platform $typePlatformRefreshToken Refresh $refreshToken Client ID ${cred.credAuthIOS[1]}');
     try {
@@ -412,12 +412,12 @@ class YouTubeApiService {
     }
   }
 
-  Future<CredTokenModel> getCredsForGetToken() async {
+  Future<ConfigAppModel> getConfigApp() async {
     final document = await FirebaseFirestore.instance
         .collection('settings')
         .doc('setting')
         .get();
-    return CredTokenModel.fromApi(document);
+    return ConfigAppModel.fromApi(document);
   }
 
   Future<CredByCodeInvitationModel> getCredByCodeInvitation(
@@ -444,7 +444,7 @@ class YouTubeApiService {
     return doc.exists;
   }
 
-  OAuth2Helper getOauth2Helper({required CredTokenModel cred}) {
+  OAuth2Helper getOauth2Helper({required ConfigAppModel cred}) {
     GoogleOAuth2Client client = GoogleOAuth2Client(
         customUriScheme: cred.credAuthIOS[0],
         redirectUri: '${cred.credAuthIOS[0]}:/oauthredirect');

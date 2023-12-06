@@ -223,7 +223,6 @@ class _ItemLanguageState extends State<_ItemLanguage> {
         activeColor: colorRed,
         value: _value,
         onChanged: (bool? value) {
-          print('Code ${widget.codeLanguage}');
               setState(() {
                 _value=value!;
                 widget.callback({

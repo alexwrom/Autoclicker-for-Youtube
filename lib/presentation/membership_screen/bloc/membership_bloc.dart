@@ -44,7 +44,7 @@ class MemberShipBloc extends Bloc<MemberShipEvent,MemberShipState>{
               final limitTranslate=state.listDetails.firstWhere((element) => purchaseDetails.productID==element.id).limitTranslation;
               final resultBalance=oldBalance+limitTranslate;
               await inAppPurchaseService.updateBalance(resultBalance: resultBalance,isTakeBonus:isTakeBonus);
-              await cubitUserData.addBalance(resultBalance);
+              await cubitUserData.addBalance(resultBalance,isTakeBonus);
               _updateUser();
               add(OnPurchasedEvent());
             }

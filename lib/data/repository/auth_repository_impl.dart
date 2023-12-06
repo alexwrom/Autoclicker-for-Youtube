@@ -2,6 +2,8 @@
 
 
 import 'package:flutter/widgets.dart';
+import 'package:youtube_clicker/data/models/config_app_model.dart';
+import 'package:youtube_clicker/domain/models/config_app_entity.dart';
 
 import '../../di/locator.dart';
 import '../../domain/repository/auth_repository.dart';
@@ -36,6 +38,11 @@ class AuthRepositoryImpl extends AuthRepository{
   @override
   Future<bool> forgotPass({required String email,required String newPass}) async{
     return await _apiUtil.forgotPass(email: email,newPass: newPass);
+  }
+
+  @override
+  Future<ConfigAppEntity> getConfigApp() {
+   return _apiUtil.getConfigApp();
   }
 
 

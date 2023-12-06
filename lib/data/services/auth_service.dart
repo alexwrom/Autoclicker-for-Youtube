@@ -11,6 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import '../../di/locator.dart';
 import '../../utils/failure.dart';
+import '../models/config_app_model.dart';
 
 
 
@@ -26,6 +27,14 @@ class AuthService{
       _auth=FirebaseAuth.instance;
       _firebaseFirestore=FirebaseFirestore.instance;
     }
+
+   Future<ConfigAppModel> getConfigApp() async {
+     final document = await FirebaseFirestore.instance
+         .collection('settings')
+         .doc('setting')
+         .get();
+     return ConfigAppModel.fromApi(document);
+   }
 
 
 
@@ -74,7 +83,7 @@ class AuthService{
         imei =data.identifierForVendor!;
       }else if(Platform.isAndroid){
         final data=await _deviceInfoPlugin.androidInfo;
-        imei=data.id!;
+        imei=data.id;
       }
       await PreferencesUtil.setUrlAvatar(userCredential.user!.photoURL!);
       await PreferencesUtil.setUserName(userCredential.user!.displayName!);
@@ -190,7 +199,7 @@ class AuthService{
        }else{
          await PreferencesUtil.setUserName(email);
          await _firebaseFirestore!.collection('userpc').doc(email.toLowerCase()).set({
-           'balance':800,
+           'balance':0,
            'password':pass,
            'isBlock' : 0,
            'isTakeBonus' : 0,

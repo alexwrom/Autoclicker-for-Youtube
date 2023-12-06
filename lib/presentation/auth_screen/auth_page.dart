@@ -8,6 +8,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:youtube_clicker/presentation/auth_screen/singin_page.dart';
 
 import '../../components/dialoger.dart';
@@ -49,6 +50,13 @@ class _AuthPageState extends State  with TickerProviderStateMixin{
       FocusScope.of(context).unfocus();
     });
     super.didChangeDependencies();
+  }
+
+  static Future<void> _launchUrl(String url) async {
+    final Uri uri = Uri.parse(url);
+    if (!await launchUrl(uri)) {
+      throw Exception('Could not launch $uri');
+    }
   }
 
   @override
@@ -172,7 +180,7 @@ class _AuthPageState extends State  with TickerProviderStateMixin{
                             ),
                             const SizedBox(height: 40),
                             SizedBox(
-                              height: 350,
+                              height: 310,
                               child: TabBarView(
                                   controller: _tabControllerMain,
                                   children: const[
@@ -182,6 +190,28 @@ class _AuthPageState extends State  with TickerProviderStateMixin{
                             )
                           ],
                         ),
+
+                        IconButton(onPressed: (){
+                          Dialoger.showCustomDialog(
+                              contextUp: context,
+                              title: '',
+                              sizeTextAccept: 17.0,
+                              textButtonCancel: 'Close'.tr(),
+                              textButtonAccept: 'Open chat'.tr(),
+                              content: Text('Want to ask a question in the support group?'.tr(),
+                               style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w500
+                              ),),
+                              voidCallbackAccept: (){
+                               _launchUrl('https://t.me/youclicker_support');
+                              },
+                              voidCallbackCancel: (){
+
+                              });
+                        },
+                            icon: const Icon(Icons.question_answer_outlined,color: Colors.white))
 
 
                       ],
