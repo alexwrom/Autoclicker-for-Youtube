@@ -43,6 +43,7 @@ dependencies:
   googleapis_auth: ^1.4.1
   firebase_auth: ^4.7.2
   firebase_core: ^2.15.0
+  firebase_crashlytics: ^3.4.8
   googleapis: ^9.2.0
   cloud_firestore: ^4.8.4
   flutter_bloc: ^8.1.1

@@ -1,4 +1,7 @@
 
+import 'dart:async';
+
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:youtube_clicker/presentation/auth_screen/auth_page.dart';
@@ -37,24 +40,32 @@ Future<void> initHive()async{
 
 
 void main()async  {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  await PreferencesUtil.init();
-  await initHive();
-  await EasyLocalization.ensureInitialized();
-  di.setup();
-  runApp(EasyLocalization(
-      supportedLocales: const [
-        Locale('ru'),
-        Locale('en'),
-        Locale('de'),
-        Locale('uk'),
-        Locale('fr')
-      ],
-      path: 'lib/assets/translations', // <-- change the path of the translation files
-      fallbackLocale: const Locale('en'),
-      child: const MyApp()
-  ),);
+  runZonedGuarded(() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    await Firebase.initializeApp();
+    await PreferencesUtil.init();
+    await initHive();
+    await EasyLocalization.ensureInitialized();
+    FlutterError.onError = (errorDetails) {
+      FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+    };
+    di.setup();
+    runApp(EasyLocalization(
+        supportedLocales: const [
+          Locale('ru'),
+          Locale('en'),
+          Locale('de'),
+          Locale('uk'),
+          Locale('fr')
+        ],
+        path: 'lib/assets/translations', // <-- change the path of the translation files
+        fallbackLocale: const Locale('en'),
+        child: const MyApp()
+    ),);
+  }, (error, stack) {
+    FirebaseCrashlytics.instance.recordError(error, stack);
+  });
+
 }
 
 
