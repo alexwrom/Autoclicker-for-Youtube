@@ -78,9 +78,13 @@ class MainBloc extends Bloc<MainEvent,MainState>{
             CredChannel value = boxCredChannel.get(key);
             listCredChannels.add(ChannelModelCred.fromBoxHive(channel: value));
           }).toList();
+
       if (listCredChannels.isEmpty) {
         emit(state.copyWith(
-            mainStatus: MainStatus.empty, userName: name, urlAvatar: '',blockedAccount: blockedAccount));
+            mainStatus: MainStatus.empty,
+            userName: name,
+            urlAvatar: '',
+            blockedAccount: blockedAccount));
       } else {
         final listFiltered=await _checkListChanelByInvitation(listCredChannels);
        final isActivatedChannel=await _checkActivatedChanelByInvitation(listCredFiltered: listFiltered,
@@ -88,6 +92,7 @@ class MainBloc extends Bloc<MainEvent,MainState>{
        if(!isActivatedChannel){
          listCredChannels=listFiltered;
        }
+
        emit(state.copyWith(
             mainStatus: MainStatus.success,
             listCredChannels: listCredChannels,
@@ -102,6 +107,11 @@ class MainBloc extends Bloc<MainEvent,MainState>{
 
 
   }
+
+
+
+
+
 
   Future<void> _addChannelByCodeInvitation(AddChannelByInvitationEvent event,emit)async{
     emit(state.copyWith(addCredStatus: AddCredStatus.loading));

@@ -14,7 +14,8 @@
    <application
         android:label="YouClicker"
         android:name="${applicationName}"
-       android:icon="@mipmap/ic_launcher">
+       android:roundIcon="@mipmap/ic_launch_happy_new_year_round"
+       android:icon="@mipmap/ic_launch_happy_new_year">
 
 
         <activity

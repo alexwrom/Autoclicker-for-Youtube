@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:youtube_clicker/utils/preferences_util.dart';
 
+import '../../domain/models/channel_model_cred.dart';
 import '../../utils/failure.dart';
 import '../models/user_data_from_api.dart';
 
@@ -20,6 +21,9 @@ class UserApiService{
    UserApiService(){
      _firebaseFirestore=FirebaseFirestore.instance;
    }
+
+
+
 
 
 
