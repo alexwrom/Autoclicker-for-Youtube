@@ -78,6 +78,11 @@ class YouTubeApiUtil{
       return await _youTubeApi.isActivatedChanelByInvitation(code);
     }
 
+    Future<ChannelModelCred> addRemoteChannelByRefreshToken({required String idChannel}) async {
+      final channelFromApi =  await  _youTubeApi.addRemoteChannelByRefreshToken(idChannel: idChannel);
+      return ChannelCredMapper.fromApi(channelModelCredFromApi: channelFromApi);
+    }
+
 
 
 

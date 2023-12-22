@@ -20,6 +20,7 @@ class ItemNotPubVideo extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
+
     return GestureDetector(
       onTap: (){
         //start play

@@ -30,7 +30,10 @@ class CredChannel{
   final String idInvitation;
   @HiveField(11)
   final String typePlatformRefreshToken;
-
+  @HiveField(12)
+  final bool remoteChannel;
+  @HiveField(13)
+  final int isTakeBonus;
 
 
   CredChannel({
@@ -45,7 +48,9 @@ class CredChannel{
     required this.defaultLanguage,
     required this.refreshToken,
     required this.idInvitation,
-    required this.typePlatformRefreshToken
+    required this.typePlatformRefreshToken,
+    required this.remoteChannel,
+    required this.isTakeBonus
 
   });
 }

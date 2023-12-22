@@ -12,7 +12,8 @@ class UserDataMapper{
       return UserData(
         userDataFromApi.numberOfTrans,
         userDataFromApi.isBlock,
-      userDataFromApi.isTakeBonus);
+      userDataFromApi.isTakeBonus,
+        userDataFromApi.channels);
 
   }
 

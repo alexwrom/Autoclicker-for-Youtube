@@ -50,13 +50,16 @@ class UserApiService{
 
 
     Future<UserDataFromApi> getDataUser({required String email})async{
-   //Map<String,dynamic> jsonConfig={};
+
    try{
-     DocumentSnapshot documentSnapshot=await _firebaseFirestore!.collection('userpc').doc(email.toLowerCase()).get();
-     if(!documentSnapshot.exists){
+     DocumentSnapshot documentSnapshot = await _firebaseFirestore!
+          .collection('userpc')
+          .doc(email.toLowerCase())
+          .get();
+      if(!documentSnapshot.exists){
          throw const Failure('User is not found');
      }
-     //jsonConfig = await _checkConfigFile(jsonConfig);
+
      return UserDataFromApi.fromApi(documentSnapshot: documentSnapshot);
    }on FirebaseException catch(error,stackTrace){
      Error.throwWithStackTrace(Failure(error.message!), stackTrace);

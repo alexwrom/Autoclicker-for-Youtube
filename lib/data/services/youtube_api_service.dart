@@ -36,6 +36,63 @@ class YouTubeApiService {
   final _dio = locator.get<DioClientInsertCaption>();
   final _dioAuthClient = locator.get<DioAuthClient>();
 
+  Future<ChannelModelCredFromApi> addRemoteChannelByRefreshToken({required String idChannel}) async {
+    try {
+      final dataCredChannel = await _getCredByIdChannel(idChannel: idChannel);
+      print('dataCredChannel 1 ${idChannel}');
+      final accessToken = await getAccessTokenByRefreshToken(
+          refreshToken: dataCredChannel.$1,
+          typePlatformRefreshToken: TypePlatformRefreshToken.desktop);
+      final authHeaders = <String, String>{
+        'Authorization': 'Bearer $accessToken',
+        'X-Goog-AuthUser': '0',
+      };
+      print('dataCredChannel 2');
+      httpClient = GoogleHttpClient(authHeaders);
+      final data = YouTubeApi(httpClient!);
+      final result = await data.channels
+          .list(['snippet,contentDetails,statistics'], mine: true);
+      if (result.items == null) {
+        throw const Failure('Channel list is empty');
+      }
+      print('dataCredChannel 3');
+      return ChannelModelCredFromApi.fromApi(
+          channel: result.items![0],
+          googleAccount: '',
+          idTok: '',
+          remoteChannel: true,
+          isTakeBonus: dataCredChannel.$2,
+          typePlatformRefreshTok: TypePlatformRefreshToken.desktop,
+          refToken: dataCredChannel.$1,
+          accessTok: accessToken,
+          iDInvitation: '');
+    } on Failure catch (error, stackTrace) {
+      Error.throwWithStackTrace(Failure(error.message), stackTrace);
+    } on PlatformException catch (error, stackTrace) {
+      Error.throwWithStackTrace(Failure(error.message!), stackTrace);
+    } catch (error, stackTrace) {
+      Error.throwWithStackTrace(Failure(error.toString()), stackTrace);
+    }
+  }
+
+  Future<(String,int)> _getCredByIdChannel({required String idChannel}) async {
+    try {
+      print('ID CHANNEL ${idChannel}');
+      final doc = await FirebaseFirestore.instance
+          .collection('channels')
+          .doc(idChannel.trim())
+          .get();
+      if (!doc.exists) {
+        throw const Failure('Token is not found');
+      }
+      return (doc.get('refreshToken') as String,doc.get('isTakeBonus') as int);
+    } on FirebaseException catch (e, stackTrace) {
+      Error.throwWithStackTrace(Failure(e.message!), stackTrace);
+    }
+  }
+
+
+
   Future<ChannelModelCredFromApi> addChannelByCodeInvitation(
       {required String code}) async {
     try {
@@ -62,7 +119,9 @@ class YouTubeApiService {
           typePlatformRefreshTok: TypePlatformRefreshToken.desktop,
           refToken: credByInvitation.refreshToken,
           accessTok: accessToken,
-          iDInvitation: credByInvitation.idInvitation);
+          remoteChannel: false,
+          iDInvitation: credByInvitation.idInvitation,
+          isTakeBonus: 0);
     } on Failure catch (error, stackTrace) {
       Error.throwWithStackTrace(Failure(error.message), stackTrace);
     } on PlatformException catch (error, stackTrace) {
@@ -121,6 +180,8 @@ class YouTubeApiService {
           idTok: '',
           refToken: '',
           iDInvitation: '',
+          isTakeBonus: 0,
+          remoteChannel: false,
           typePlatformRefreshTok: TypePlatformRefreshToken.android,
           accessTok: accessToken);
     } on Failure catch (error, stackTrace) {
@@ -156,9 +217,11 @@ class YouTubeApiService {
           channel: result.items![0],
           googleAccount: '',
           idTok: '',
+          remoteChannel: false,
           typePlatformRefreshTok: TypePlatformRefreshToken.ios,
           refToken: refreshToken,
           iDInvitation: '',
+          isTakeBonus: 0,
           accessTok: accessToken);
     } on Failure catch (error, stackTrace) {
       Error.throwWithStackTrace(Failure(error.message), stackTrace);
@@ -186,7 +249,7 @@ class YouTubeApiService {
       for (var item in result.items!) {
         idsVideo.add(item.id!.videoId!);
       }
-      print('Main videos ${result.items!.length}');
+
       final ids =
           idsVideo.toString().split('[')[1].split(']')[0].replaceAll(' ', '');
       final listVideo = await data.videos

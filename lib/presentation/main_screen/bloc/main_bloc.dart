@@ -43,6 +43,7 @@ class MainBloc extends Bloc<MainEvent,MainState>{
      on<AddChannelByInvitationEvent>(_addChannelByCodeInvitation,transformer: droppable());
      on<RemoveChannelEvent>(_removeChannel,transformer: droppable());
      on<BlockAccountEvent>(_blockAccountUser);
+     on<TakeBonusEvent>(_takeBonus,transformer: droppable());
   }
 
 
@@ -66,9 +67,19 @@ class MainBloc extends Bloc<MainEvent,MainState>{
     _cubitUser.updateUser(userData: userData);
   }
 
-
+ void _takeBonus(TakeBonusEvent event, emit) async {
+   emit(state.copyWith(mainStatus: MainStatus.loading));
+   UserData userData = _cubitUser.state.userData;
+   int transQuantity = userData.numberOfTrans + 400;
+   userData = userData.copyWith(numberOfTrans: transQuantity);
+   _cubitUser.updateUser(userData: userData);
+   await Future.delayed(Duration(seconds: 2));
+   final listChannelsUpdated = await _updateLocalChannels(event.channelModelCred);
+   emit(state.copyWith(mainStatus: MainStatus.success,listCredChannels: listChannelsUpdated));
+}
 
   Future<void> _getListCredChannel(GetChannelEvent event,emit)async{
+
     emit(state.copyWith(mainStatus: MainStatus.loading));
     try {
       listCredChannels.clear();
@@ -79,33 +90,115 @@ class MainBloc extends Bloc<MainEvent,MainState>{
             listCredChannels.add(ChannelModelCred.fromBoxHive(channel: value));
           }).toList();
 
-      if (listCredChannels.isEmpty) {
-        emit(state.copyWith(
-            mainStatus: MainStatus.empty,
-            userName: name,
-            urlAvatar: '',
-            blockedAccount: blockedAccount));
-      } else {
-        final listFiltered=await _checkListChanelByInvitation(listCredChannels);
-       final isActivatedChannel=await _checkActivatedChanelByInvitation(listCredFiltered: listFiltered,
-       listCredOld: listCredChannels);
-       if(!isActivatedChannel){
-         listCredChannels=listFiltered;
-       }
-
-       emit(state.copyWith(
-            mainStatus: MainStatus.success,
-            listCredChannels: listCredChannels,
-            userName: name,
-            urlAvatar: '',
-           blockedAccount: blockedAccount,
-            isChannelDeactivation:isActivatedChannel));
+      if(event.user.channels.isEmpty){
+        if (listCredChannels.isEmpty) {
+          emit(state.copyWith(
+              mainStatus: MainStatus.empty,
+              userName: name,
+              urlAvatar: '',
+              blockedAccount: blockedAccount));
+        } else {
+          final listFiltered=await _checkListChanelByInvitation(listCredChannels);
+          final isActivatedChannel=await _checkActivatedChanelByInvitation(listCredFiltered: listFiltered,
+              listCredOld: listCredChannels);
+          if(!isActivatedChannel){
+            listCredChannels=listFiltered;
           }
+
+          emit(state.copyWith(
+              mainStatus: MainStatus.success,
+              listCredChannels: listCredChannels,
+              userName: name,
+              urlAvatar: '',
+              blockedAccount: blockedAccount,
+              isChannelDeactivation:isActivatedChannel));
+        }
+      }else{
+         List<String> idsChannels = [];
+         for(var channel in listCredChannels){
+            idsChannels.add(channel.idChannel);
+         }
+         for (var element in event.user.channels) {
+           ChannelModelCred channel = await _googleApiRepository.addRemoteChannelByRefreshToken(idChannel: element);
+           if(!idsChannels.contains(channel.idChannel)){
+             int key = await _saveLocalChannel(channel);
+             channel = channel.copyWith(keyLangCode: key,remoteChannel: true);
+             listCredChannels.add(channel);
+           }
+         }
+
+        final listFiltered=await _checkListChanelByInvitation(listCredChannels);
+        final isActivatedChannel=await _checkActivatedChanelByInvitation(listCredFiltered: listFiltered,
+            listCredOld: listCredChannels);
+        if(!isActivatedChannel){
+          listCredChannels=listFiltered;
+        }
+
+         emit(state.copyWith(
+             mainStatus: MainStatus.success,
+             listCredChannels: listCredChannels,
+             userName: name,
+             urlAvatar: '',
+             blockedAccount: blockedAccount,
+             isChannelDeactivation:false));
+      }
+
+
     }on Failure catch (e) {
       emit(state.copyWith(mainStatus: MainStatus.error,error: e.message));
     }
 
 
+  }
+
+  Future<List<ChannelModelCred>> _updateLocalChannels(ChannelModelCred channel ) async {
+    int index = listCredChannels.indexWhere((element) => element.idChannel==channel.idChannel);
+    await boxCredChannel.putAt(index, CredChannel(
+        isTakeBonus: 0,
+        typePlatformRefreshToken:  typeRefreshToken(typePlatformRefreshToken:
+        channel.typePlatformRefreshToken),
+        refreshToken: channel.refreshToken,
+        keyLangCode: channel.keyLangCode,
+        idChannel: channel.idChannel,
+        nameChannel: channel.nameChannel,
+        imgBanner: channel.imgBanner,
+        accountName: channel.accountName,
+        idUpload: channel.idUpload,
+        idToken: channel.idToken,
+        accessToken: channel.accessToken,
+        remoteChannel: channel.remoteChannel,
+        idInvitation: channel.idInvitation,
+        defaultLanguage: channel.defaultLanguage));
+   channel = channel.copyWith(isTakeBonus: 0);
+   listCredChannels[index] = channel;
+   return listCredChannels;
+  }
+
+  Future<int> _saveLocalChannel(ChannelModelCred channel) async {
+     final key= await boxVideo.add(ChannelLangCode(id: channel.idChannel, codeLanguage: [])).catchError((error) {
+      throw const Failure('Error while saving locally...');
+    });
+    await boxCredChannel
+        .add(CredChannel(
+        isTakeBonus: channel.isTakeBonus,
+        typePlatformRefreshToken:  typeRefreshToken(typePlatformRefreshToken:
+        channel.typePlatformRefreshToken),
+        refreshToken: channel.refreshToken,
+        keyLangCode: key,
+        idChannel: channel.idChannel,
+        nameChannel: channel.nameChannel,
+        imgBanner: channel.imgBanner,
+        accountName: channel.accountName,
+        idUpload: channel.idUpload,
+        idToken: channel.idToken,
+        accessToken: channel.accessToken,
+        remoteChannel: channel.remoteChannel,
+        idInvitation: channel.idInvitation,
+        defaultLanguage: channel.defaultLanguage))
+        .catchError((error) {
+      throw const Failure('Error while saving locally..');
+    });
+    return key;
   }
 
 
@@ -125,27 +218,7 @@ class MainBloc extends Bloc<MainEvent,MainState>{
       if(exists.isNotEmpty){
         throw const Failure('Сhannel already added');
       }
-      final key= await boxVideo.add(ChannelLangCode(id: result.idChannel, codeLanguage: [])).catchError((error) {
-        throw const Failure('Error while saving locally...');
-      });
-      await boxCredChannel
-          .add(CredChannel(
-          typePlatformRefreshToken: typeRefreshToken(
-                  typePlatformRefreshToken: result.typePlatformRefreshToken),
-              refreshToken: result.refreshToken,
-          keyLangCode: key,
-          idChannel: result.idChannel,
-          nameChannel: result.nameChannel,
-          imgBanner: result.imgBanner,
-          accountName: result.accountName,
-          idUpload: result.idUpload,
-          idToken: result.idToken,
-          accessToken: result.accessToken,
-          idInvitation: result.idInvitation,
-          defaultLanguage: result.defaultLanguage))
-          .catchError((error) {
-        throw const Failure('Error while saving locally..');
-      });
+      int key = await _saveLocalChannel(result);
 
       listCredChannels.add(result.copyWith(keyLangCode: key));
       emit(state.copyWith(
@@ -180,27 +253,7 @@ class MainBloc extends Bloc<MainEvent,MainState>{
       if(exists.isNotEmpty){
         throw const Failure('Сhannel already added');
       }
-      final key= await boxVideo.add(ChannelLangCode(id: result.idChannel, codeLanguage: [])).catchError((error) {
-        throw const Failure('Error while saving locally...');
-      });
-      await boxCredChannel
-          .add(CredChannel(
-        typePlatformRefreshToken:  typeRefreshToken(typePlatformRefreshToken:
-        result.typePlatformRefreshToken),
-               refreshToken: result.refreshToken,
-               keyLangCode: key,
-              idChannel: result.idChannel,
-              nameChannel: result.nameChannel,
-              imgBanner: result.imgBanner,
-              accountName: result.accountName,
-              idUpload: result.idUpload,
-              idToken: result.idToken,
-               accessToken: result.accessToken,
-              idInvitation: result.idInvitation,
-              defaultLanguage: result.defaultLanguage))
-          .catchError((error) {
-        throw const Failure('Error while saving locally..');
-      });
+      int key = await _saveLocalChannel(result);
 
       listCredChannels.add(result.copyWith(keyLangCode: key));
       emit(state.copyWith(mainStatus:MainStatus.success,addCredStatus: AddCredStatus.success,listCredChannels: listCredChannels));
@@ -210,13 +263,17 @@ class MainBloc extends Bloc<MainEvent,MainState>{
 
   }
 
+  //todo is not work
   Future<void> _removeChannel(RemoveChannelEvent event,emit)async{
    emit(state.copyWith(addCredStatus: AddCredStatus.removal));
    await Future.delayed(const Duration(seconds: 2));
+   print('Delete ${event.keyHive}');
    await boxCredChannel.delete(event.keyHive).catchError((e){
+     print('Error1 $e');
      emit(state.copyWith(addCredStatus: AddCredStatus.errorRemove,error: 'Сhannel delete error'));
    });
    await boxVideo.delete(event.keyHive).catchError((e){
+     print('Error2 $e');
      emit(state.copyWith(addCredStatus: AddCredStatus.errorRemove,error: 'Сhannel delete error'));
    });
    listCredChannels.removeAt(event.index);

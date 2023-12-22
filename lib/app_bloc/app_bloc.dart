@@ -76,10 +76,12 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   }
 
   void _authInitCheck(event, emit) async {
+    print('A 0');
     await Future.delayed(const Duration(milliseconds: 2500));
     emit(state.copyWith(authStatusCheck: AuthStatusCheck.unknown));
     final code=PreferencesUtil.getCOdeVerificationEmail[0];
     if(code.isNotEmpty){
+      print('A 3');
        final timeNow=  DateTime.now().millisecondsSinceEpoch;
        final tsString=PreferencesUtil.getCOdeVerificationEmail[1];
        final timeStamp= int.parse(tsString);
@@ -96,7 +98,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     final PackageInfo packageInfo = await PackageInfo.fromPlatform();
     final versionApp = packageInfo.version;
     final user = FirebaseAuth.instance.currentUser;
-    if (user == null || user!.email == null) {
+    if (user == null || user.email == null) {
       await FirebaseAuth.instance.signInAnonymously();
       final config = await _authRepository.getConfigApp();
       await FirebaseAuth.instance.signOut();

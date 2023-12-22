@@ -20,6 +20,10 @@ class MainEvent extends Equatable{
   const BlockAccountEvent({required this.unlock});
  }
  class AddChannelWithGoogleEvent extends MainEvent{}
+ class TakeBonusEvent extends MainEvent{
+  final ChannelModelCred channelModelCred;
+  const TakeBonusEvent({required this.channelModelCred});
+ }
 
  class AddChannelByInvitationEvent extends MainEvent{
    final String codeInvitation;

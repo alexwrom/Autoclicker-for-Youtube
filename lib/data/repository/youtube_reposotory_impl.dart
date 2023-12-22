@@ -63,6 +63,11 @@ class YouTubeRepositoryImpl extends YouTubeRepository{
     return await _youTubeApiUtil.isActivatedChanelByInvitation(code);
    }
 
+  @override
+  Future<ChannelModelCred> addRemoteChannelByRefreshToken({required String idChannel}) async {
+    return await _youTubeApiUtil.addRemoteChannelByRefreshToken(idChannel: idChannel);
+  }
+
 
 
 }

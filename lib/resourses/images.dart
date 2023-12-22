@@ -7,3 +7,4 @@ String get almas=>'lib/assets/images/almas.png';
 String get item=>'lib/assets/images/ic_accept_2.png';
 String get banner=>'lib/assets/images/banner.png';
 String get imgCode=>'lib/assets/images/referal3.png';
+String get imgPresentBonus =>'lib/assets/images/present_bonus.png';

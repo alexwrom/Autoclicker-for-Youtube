@@ -21,6 +21,8 @@ class ChannelCredMapper{
         defaultLanguage: channelModelCredFromApi.defaultLanguage,
         refreshToken: channelModelCredFromApi.refreshToken,
         keyLangCode: 0,
+        isTakeBonus: channelModelCredFromApi.isTakeBonus,
+        remoteChannel: channelModelCredFromApi.remoteChannel,
     typePlatformRefreshToken: channelModelCredFromApi.typePlatformRefreshToken,
     idInvitation: channelModelCredFromApi.idInvitation);
   }

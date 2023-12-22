@@ -262,7 +262,6 @@ class _ChannelsPageState extends State<ChannelsPage> {
   void initState() {
     super.initState();
 
-
   }
 
    @override
@@ -272,6 +271,7 @@ class _ChannelsPageState extends State<ChannelsPage> {
 
   @override
   void didChangeDependencies() {
+    super.didChangeDependencies();
     userData = context.watch<UserDataCubit>().state.userData;
     context.read<MainBloc>().add(GetChannelEvent(user: userData));
   }

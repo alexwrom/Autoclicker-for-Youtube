@@ -12,9 +12,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:youtube_clicker/components/text_fields.dart';
+import 'package:youtube_clicker/domain/models/channel_model_cred.dart';
 import 'package:youtube_clicker/domain/models/config_app_entity.dart';
 import 'package:youtube_clicker/presentation/membership_screen/membership_page.dart';
 import 'package:youtube_clicker/presentation/translate_screen/bloc/translate_bloc.dart';
+import 'package:youtube_clicker/utils/preferences_util.dart';
 
 import '../app_bloc/app_bloc.dart';
 import '../data/models/list_translate_api.dart';
@@ -31,6 +33,30 @@ import 'buttons.dart';
 
 
 class Dialoger {
+
+  static void showTakeBonus({required BuildContext context,required ChannelModelCred channelModelCred}) {
+    final email = PreferencesUtil.getEmail;
+    showCustomDialog(
+        textButtonCancel: 'Cancel'.tr(),
+        textButtonAccept: 'Yes'.tr(),
+        textButtonColor: Colors.white,
+        contextUp: context,
+        title: 'You want to credit bonus points to your account balance'.tr(),
+        titleColor: Platform.isIOS?colorPrimary:Colors.white,
+        content:  Text(email,
+          style:  TextStyle(
+              color: Platform.isIOS?colorPrimary:Colors.grey
+          ),),
+        voidCallbackAccept: (){
+           context.read<MainBloc>().add(TakeBonusEvent(channelModelCred:channelModelCred));
+        },
+        voidCallbackCancel: (){
+
+        }
+
+    );
+  }
+
 
 
   static void showBottomMenuAppUpdate({required BuildContext context, required ConfigAppEntity configAppEntity,required bool isAuth}){
@@ -219,7 +245,6 @@ class Dialoger {
 
         },
         voidCallbackCancel: (){
-          print('isDeleteAcc: false');
           //context.read<AuthBloc>().add(const LogOutEvent(isDeleteAcc: false));
           Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=>const AuthPage()));
         }

@@ -30,6 +30,7 @@ class _ListChannelAddState extends State<ListChannelAdd> {
 
 
   late UserData userData;
+  bool _isGetListChannel = false;
 
 
 
@@ -44,8 +45,12 @@ class _ListChannelAddState extends State<ListChannelAdd> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    userData = context.watch<UserDataCubit>().state.userData;
-    context.read<MainBloc>().add(GetChannelEvent(user:userData));
+    if(!_isGetListChannel){
+      userData = context.watch<UserDataCubit>().state.userData;
+     context.read<MainBloc>().add(GetChannelEvent(user:userData));
+      _isGetListChannel = true;
+    }
+
 
   }
 
