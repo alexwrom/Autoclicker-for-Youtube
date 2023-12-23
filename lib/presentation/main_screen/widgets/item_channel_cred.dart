@@ -38,7 +38,7 @@ class ItemChannelCred extends StatelessWidget{
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             ClipRRect(
               borderRadius:const BorderRadius.only(topLeft: Radius.circular(20),
@@ -47,86 +47,96 @@ class ItemChannelCred extends StatelessWidget{
                   placeholder: (context, url) => const Icon(Icons.image_outlined,color: Colors.grey,size: 100),
                   errorWidget: (context, url, error) =>const Icon(Icons.error,color: Colors.grey,size: 60),
                   imageUrl: channelModelCred.imgBanner, fit: BoxFit.cover,
-                  width: 115,
-                  height: 115),
+                  width: 90.0,
+                  height: 90.0),
             ),
              const SizedBox(width: 10.0),
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: SizedBox(
-                width: channelModelCred.isTakeBonus == 0?225:
-                165.0,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(channelModelCred.nameChannel,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
-                      style:const TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700
-                      ),),
-                    Text(channelModelCred.accountName,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
-                      style:const TextStyle(
-                          color: Colors.grey,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w400
-                      ),),
-                  ],
-                ),
-              ),
-            ),
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 30.0),
-                  child: Visibility(
+
+            SizedBox(
+              width: 230.0,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(channelModelCred.nameChannel,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
+                    style:const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700
+                    ),),
+                  Visibility(
                     visible: channelModelCred.isTakeBonus == 1,
-                    child: GestureDetector(
-                      onTap: (){
-                        Dialoger.showTakeBonus(context:context,
-                        channelModelCred: channelModelCred);
-                      },
-                      child: Container(
-                          width: 60.0,
-                          height: 60.0,
-                          padding: const EdgeInsets.all(5.0),
-                          decoration:  const BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 10.0),
+                      child: GestureDetector(
+                        onTap: (){
+                          Dialoger.showTakeBonus(context:context,
+                              channelModelCred: channelModelCred);
+                        },
+                        child: SizedBox(
+                          height: 30.0,
+                          width: 80.0,
+                          child: Stack(
+                            alignment: Alignment.centerLeft,
+                            children: [
+                              Container(
+                                alignment: Alignment.center,
+                                padding: const EdgeInsets.only(left: 30.0),
+                                height: 30.0,
+                                width: 100.0,
+                                decoration: BoxDecoration(
+                                    color: colorRed,
+                                    borderRadius:
+                                        BorderRadius.circular(20.0)),
+                                child: const Text('+400',
+                                  style:TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w700
+                                  ),),
+                              ),
+                              Container(
+                                  width: 30.0,
+                                  height: 30.0,
+                                  padding: const EdgeInsets.all(5.0),
+                                  decoration:  const BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.white,
+                                  ),
+                                  child: Image.asset(imgPresentBonus)),
+
+                            ],
                           ),
-                          child: Image.asset(imgPresentBonus)),
+                        ),
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 15.0),
-                Padding(
-                  padding: const EdgeInsets.only(top: 20.0,right: 10.0),
-                  child: Column(
-                    children: [
-                      Container(
-                        width: 40.0,
-                        height: 40.0,
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: colorBackground
-                        ),
-                        child: Icon(!channelModelCred.remoteChannel?Icons.smartphone:
-                        Icons.public,color: Colors.white),
-                      ),
-                      const SizedBox(height: 10.0),
-                      GestureDetector(
-                          onTap: (){
-                            onDelete.call(index);
-                          },
-                          child: const Icon(Icons.delete_outline,color: Colors.grey))
-                    ],
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 15.0),
+              child: Row(
+                children: [
+                  Container(
+                    width: 40.0,
+                    height: 40.0,
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: colorBackground
+                    ),
+                    child: Icon(!channelModelCred.remoteChannel?Icons.smartphone:
+                    Icons.public,color: Colors.white),
                   ),
-                ),
-              ],
+                  const SizedBox(width: 10.0),
+                  GestureDetector(
+                      onTap: (){
+                        onDelete.call(index);
+                      },
+                      child: const Icon(Icons.delete_outline,color: Colors.grey))
+                ],
+              ),
             )
           ],
         ),

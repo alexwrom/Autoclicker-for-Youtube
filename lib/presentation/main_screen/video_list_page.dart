@@ -54,39 +54,57 @@ class _VideoListPageState extends State<VideoListPage> with WidgetsBindingObserv
                     bottomLeft: Radius.circular(40))
             ),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                IconButton(onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: const Icon(Icons.arrow_back,color: Colors.white)),
-                const SizedBox(width: 10),
                 Row(
                   children: [
-                    Container(
-                      width: 40,
-                      height: 40,
-                      padding: const EdgeInsets.all(2),
-                      decoration:const BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(25.0),
-                        child: CachedNetworkImage(
-                            fit: BoxFit.cover,
-                            placeholder: (context, url) => CircularProgressIndicator(color: colorBackground),
-                            errorWidget: (context, url, error) =>const Icon(Icons.error),
-                            imageUrl: widget.channelModelCred.imgBanner),
-                      ),
+                    IconButton(onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: const Icon(Icons.arrow_back,color: Colors.white)),
+                    const SizedBox(width: 10),
+                    Row(
+                      children: [
+                        Container(
+                          width: 40,
+                          height: 40,
+                          padding: const EdgeInsets.all(2),
+                          decoration:const BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.white
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(25.0),
+                            child: CachedNetworkImage(
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) => CircularProgressIndicator(color: colorBackground),
+                                errorWidget: (context, url, error) =>const Icon(Icons.error),
+                                imageUrl: widget.channelModelCred.imgBanner),
+                          ),
+                        ),
+                        const SizedBox(width: 20),
+                        Text(widget.channelModelCred.nameChannel,style:const TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700
+                        ),),
+                      ],
                     ),
-                    const SizedBox(width: 20),
-                    Text(widget.channelModelCred.nameChannel,style:const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700
-                    ),),
                   ],
                 ),
+
+                Row(
+                  children: [
+                     Icon(Icons.smartphone,color: colorGrey,size: 23.0),
+                   Switch(
+                     thumbColor: MaterialStatePropertyAll(colorGrey),
+                      trackColor: MaterialStatePropertyAll(colorBackground),
+                       value: true, onChanged: (v){
+
+                   }),
+                     Icon(Icons.public,color: colorGrey,size: 25.0)
+                  ],
+                )
 
               ],
             ),
