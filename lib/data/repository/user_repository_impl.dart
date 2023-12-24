@@ -24,5 +24,20 @@ class UserRepositoryImpl extends UserRepository{
    await _util.blockAccountUser(unlock: unlock);
   }
 
+  @override
+  Future<void> takeBonusChannel({required String idChannel,required int newBalance}) async {
+   await _util.takeBonusChannel(idChannel: idChannel,newBalance: newBalance);
+  }
+
+  @override
+  Future<void> removeChannelFromAccount({required String idChannel}) async {
+    await _util.removeChannelFromAccount(idChannel: idChannel);
+  }
+
+  @override
+  Future<bool> addRemoteChannel({required String idChannel}) async {
+    return await _util.addRemoteChannel(idChannel: idChannel);
+  }
+
 
   }

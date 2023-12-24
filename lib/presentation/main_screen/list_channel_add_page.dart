@@ -14,6 +14,7 @@ import 'package:youtube_clicker/resourses/images.dart';
 import '../../components/dialoger.dart';
 import '../../components/floating_buttom_animation.dart';
 import '../../resourses/colors_app.dart';
+import '../../utils/preferences_util.dart';
 import 'bloc/main_bloc.dart';
 import 'bloc/main_event.dart';
 import 'bloc/main_state.dart';
@@ -37,7 +38,6 @@ class _ListChannelAddState extends State<ListChannelAdd> {
   @override
   void initState() {
     super.initState();
-
 
   }
 
@@ -331,8 +331,7 @@ class _ListChannelAddState extends State<ListChannelAdd> {
                                            },
                                            onDelete: (i){
                                              Dialoger.showDeleteChannel(context: context,keyHive: state
-                                                .listCredChannels[index]
-                                                .keyLangCode,index:index);
+                                                .listCredChannels[index].keyLangCode,index:index);
                                           },);
                                          })
                                        ],)),

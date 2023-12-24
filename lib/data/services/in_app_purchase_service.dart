@@ -118,7 +118,7 @@ class InAppPurchaseService{
       try {
         Map<String,dynamic> data = {};
         if(isTakeBonus == 0){
-          resultBalance+=800;
+          resultBalance+=400;
           data = {
             'balance':resultBalance,
             'isTakeBonus': 1

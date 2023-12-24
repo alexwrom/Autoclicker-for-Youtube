@@ -164,7 +164,6 @@ class AuthService{
        if(!userDoc.exists){
          throw const Failure('User is not found');
        }else{
-
          if(userDoc.get('password')==pass){
            await PreferencesUtil.setUserName(email);
            await PreferencesUtil.setEmail(email);

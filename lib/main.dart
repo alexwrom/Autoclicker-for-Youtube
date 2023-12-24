@@ -132,6 +132,7 @@ class _AppState extends State<App> with WidgetsBindingObserver{
   Widget build(BuildContext context) {
     return BlocConsumer<AppBloc, AppState>(
       listener: (context, state) {
+
         if(state.checkUpdateStatus == CheckUpdateStatus.showMenuUpdate){
          Dialoger.showBottomMenuAppUpdate(context:context,configAppEntity: state.configAppEntity,
              isAuth:state.authStatusCheck == AuthStatusCheck.unknown
@@ -162,7 +163,10 @@ class _AppState extends State<App> with WidgetsBindingObserver{
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     context.read<AppBloc>().add(AuthInitCheck());
-    context.read<UserDataCubit>().getDataUser();
+    final uid=PreferencesUtil.getEmail;
+    if(uid.isNotEmpty){
+      context.read<UserDataCubit>().getDataUser();
+    }
 
   }
 

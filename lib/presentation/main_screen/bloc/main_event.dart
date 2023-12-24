@@ -25,6 +25,12 @@ class MainEvent extends Equatable{
   const TakeBonusEvent({required this.channelModelCred});
  }
 
+ class AddOrRemoveRemoteChannelEvent extends MainEvent{
+  final ChannelModelCred channelModelCred;
+  final bool remove;
+  const AddOrRemoveRemoteChannelEvent({required this.channelModelCred,required this.remove});
+ }
+
  class AddChannelByInvitationEvent extends MainEvent{
    final String codeInvitation;
    const AddChannelByInvitationEvent({

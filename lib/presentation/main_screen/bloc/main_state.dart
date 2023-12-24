@@ -31,6 +31,14 @@ enum StatusBlockAccount{
 
 }
 
+enum StatusAddRemoteChannel{
+  unknown,
+  error,
+  loading,
+  success,
+
+}
+
 
 
 enum AddCredStatus{
@@ -81,11 +89,18 @@ extension VideoListStatusExt on VideoListStatus{
   bool get isError => this ==  StatusBlockAccount.error;
   }
 
+extension StatusAddRemoteChannelExt on StatusAddRemoteChannel{
+  bool get isLoading => this == StatusAddRemoteChannel.loading;
+  bool get isSuccess => this == StatusAddRemoteChannel.success;
+  bool get isError => this ==  StatusAddRemoteChannel.error;
+}
+
  class MainState extends Equatable{
 
    final MainStatus mainStatus;
    final AddCredStatus addCredStatus;
    final StatusBlockAccount statusBlockAccount;
+   final StatusAddRemoteChannel statusAddRemoteChannel;
    final VideoListStatus videoListStatus;
    final List<ChannelModel> channelList;
    final List<VideoModel> videoNotPubList;
@@ -104,6 +119,7 @@ extension VideoListStatusExt on VideoListStatus{
       this.mainStatus,
       this.addCredStatus,
       this.statusBlockAccount,
+      this.statusAddRemoteChannel,
       this.channelList,
       this.error,
       this.userName,
@@ -114,7 +130,8 @@ extension VideoListStatusExt on VideoListStatus{
        this.blockedAccount);
 
    factory MainState.unknown(){
-     return const MainState(VideoListStatus.unknown,[],MainStatus.unknown,AddCredStatus.unknown,StatusBlockAccount.unknown, [],'','','',[],[],true,false);
+     return const MainState(VideoListStatus.unknown,[],MainStatus.unknown,AddCredStatus.unknown,StatusBlockAccount.unknown,StatusAddRemoteChannel.unknown,
+         [],'','','',[],[],true,false);
    }
 
 
@@ -128,6 +145,7 @@ extension VideoListStatusExt on VideoListStatus{
         mainStatus,
         addCredStatus,
         statusBlockAccount,
+        statusAddRemoteChannel,
         channelList,
         error,
         userName,
@@ -151,6 +169,7 @@ extension VideoListStatusExt on VideoListStatus{
      List<VideoModel>? videoFromChannel,
     bool? isChannelDeactivation,
     StatusBlockAccount? statusBlockAccount,
+    StatusAddRemoteChannel? statusAddRemoteChannel,
     bool? blockedAccount,
   }) {
     return MainState(
@@ -159,6 +178,7 @@ extension VideoListStatusExt on VideoListStatus{
       mainStatus?? this.mainStatus,
       addCredStatus??this.addCredStatus,
       statusBlockAccount??this.statusBlockAccount,
+      statusAddRemoteChannel??this.statusAddRemoteChannel,
       channelList ?? this.channelList,
       error?? this.error,
       userName??this.userName,

@@ -36,6 +36,36 @@ class _VideoListPageState extends State<VideoListPage> with WidgetsBindingObserv
 
 
   IOClient? httpClient;
+  bool _remoteChannel = false;
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    super.initState();
+    context.read<MainBloc>().add(GetListVideoFromChannelEvent(cred: widget.channelModelCred));
+    _remoteChannel  = widget.channelModelCred.remoteChannel;
+  }
+
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+
+
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    //  if (state == AppLifecycleState.resumed) {
+    //     await _googleSingIn.currentUser!.clearAuthCache();
+    //     final  authHeaders = await _googleSingIn.currentUser!.authHeaders;
+    //     await PreferencesUtil.setHeadersGoogleApi(authHeaders);
+    //   }
+  }
+
+
+
 
 
   @override
@@ -93,17 +123,35 @@ class _VideoListPageState extends State<VideoListPage> with WidgetsBindingObserv
                   ],
                 ),
 
-                Row(
-                  children: [
-                     Icon(Icons.smartphone,color: colorGrey,size: 23.0),
-                   Switch(
-                     thumbColor: MaterialStatePropertyAll(colorGrey),
-                      trackColor: MaterialStatePropertyAll(colorBackground),
-                       value: true, onChanged: (v){
-
-                   }),
-                     Icon(Icons.public,color: colorGrey,size: 25.0)
-                  ],
+                BlocConsumer<MainBloc,MainState>(
+                  listener: (c,s){
+                    if(s.statusAddRemoteChannel.isError){
+                      _remoteChannel =!_remoteChannel;
+                      Dialoger.showError(s.error, context);
+                    }
+                  },
+                  builder: (context,state) {
+                    return Row(
+                      children: [
+                         Icon(Icons.smartphone,color: colorGrey,size: 23.0),
+                       Switch(
+                         thumbColor: MaterialStatePropertyAll(colorGrey),
+                          trackColor: MaterialStatePropertyAll(colorBackground),
+                           value: _remoteChannel,
+                           onChanged: (v){
+                            setState(() {
+                              _remoteChannel = v;
+                              context.read<MainBloc>().add(
+                                      AddOrRemoveRemoteChannelEvent(
+                                          channelModelCred:
+                                              widget.channelModelCred,
+                                          remove: !_remoteChannel));
+                                });
+                       }),
+                         Icon(Icons.public,color: colorGrey,size: 25.0)
+                      ],
+                    );
+                  }
                 )
 
               ],
@@ -115,6 +163,8 @@ class _VideoListPageState extends State<VideoListPage> with WidgetsBindingObserv
                   margin:const EdgeInsets.symmetric(horizontal: 20),
                   child: BlocConsumer<MainBloc,MainState>(
                       listener: (context,stateListener){
+
+
                         if(stateListener.videoListStatus.isError){
                           Dialoger.showError(stateListener.error, context);
                         }
@@ -203,29 +253,5 @@ class _VideoListPageState extends State<VideoListPage> with WidgetsBindingObserv
     );
   }
 
-  @override
-  void initState() {
-    WidgetsBinding.instance.addObserver(this);
-    super.initState();
-    context.read<MainBloc>().add(GetListVideoFromChannelEvent(cred: widget.channelModelCred));
-  }
-
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-
-
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) async {
-  //  if (state == AppLifecycleState.resumed) {
-  //     await _googleSingIn.currentUser!.clearAuthCache();
-  //     final  authHeaders = await _googleSingIn.currentUser!.authHeaders;
-  //     await PreferencesUtil.setHeadersGoogleApi(authHeaders);
-  //   }
-   }
 
 }

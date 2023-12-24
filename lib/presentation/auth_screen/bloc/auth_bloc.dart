@@ -212,6 +212,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
      try{
        final result= await _authRepository.logIn(pass: event.password,email: event.email);
        if(result){
+         await PreferencesUtil.setEmail(event.email); ///for signInWithEmailAndPassword method firebase auth
+         await PreferencesUtil.setPassword(event.password); ///for signInWithEmailAndPassword method firebase auth
          emit(state.copyWith(authStatus: AuthStatus.authenticated));
        }
      }on Failure catch(error){

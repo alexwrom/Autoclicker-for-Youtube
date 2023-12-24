@@ -44,6 +44,31 @@ class MainBloc extends Bloc<MainEvent,MainState>{
      on<RemoveChannelEvent>(_removeChannel,transformer: droppable());
      on<BlockAccountEvent>(_blockAccountUser);
      on<TakeBonusEvent>(_takeBonus,transformer: droppable());
+     on<AddOrRemoveRemoteChannelEvent>(_addOrRemoveRemoteChannel,transformer: droppable());
+  }
+
+
+
+  Future<void> _addOrRemoveRemoteChannel(AddOrRemoveRemoteChannelEvent event, emit) async {
+    try{
+      emit(state.copyWith(statusAddRemoteChannel: StatusAddRemoteChannel.loading));
+      if(event.remove){
+        await userRepository.removeChannelFromAccount(idChannel: event.channelModelCred.idChannel);
+        ChannelModelCred channel = event.channelModelCred;
+        channel = channel.copyWith(remoteChannel: false,isTakeBonus:0);
+        _updateLocalChannels(channel);
+      }else{
+       final isTakeBonus =  await userRepository.addRemoteChannel(idChannel: event.channelModelCred.idChannel);
+       ChannelModelCred channel = event.channelModelCred;
+       channel = channel.copyWith(remoteChannel: true,
+           isTakeBonus: isTakeBonus?1:0);
+       _updateLocalChannels(channel);
+      }
+      emit(state.copyWith(statusAddRemoteChannel: StatusAddRemoteChannel.success));
+
+    }on Failure catch(e){
+      emit(state.copyWith(statusAddRemoteChannel: StatusAddRemoteChannel.error,error: e.message));
+    }
   }
 
 
@@ -73,14 +98,18 @@ class MainBloc extends Bloc<MainEvent,MainState>{
    int transQuantity = userData.numberOfTrans + 400;
    userData = userData.copyWith(numberOfTrans: transQuantity);
    _cubitUser.updateUser(userData: userData);
-   await Future.delayed(Duration(seconds: 2));
-   final listChannelsUpdated = await _updateLocalChannels(event.channelModelCred);
+   await Future.delayed(const Duration(seconds: 1));
+   await userRepository.takeBonusChannel(idChannel: event.channelModelCred.idChannel,
+       newBalance:transQuantity);
+   ChannelModelCred channelModelCred = event.channelModelCred;
+   channelModelCred = channelModelCred.copyWith(isTakeBonus: 0);
+   final listChannelsUpdated = await _updateLocalChannels(channelModelCred);
    emit(state.copyWith(mainStatus: MainStatus.success,listCredChannels: listChannelsUpdated));
 }
 
   Future<void> _getListCredChannel(GetChannelEvent event,emit)async{
 
-    emit(state.copyWith(mainStatus: MainStatus.loading));
+    emit(state.copyWith(mainStatus: MainStatus.loading,isChannelDeactivation:true));
     try {
       listCredChannels.clear();
       final blockedAccount = event.user.isBlock==1;
@@ -111,7 +140,7 @@ class MainBloc extends Bloc<MainEvent,MainState>{
               userName: name,
               urlAvatar: '',
               blockedAccount: blockedAccount,
-              isChannelDeactivation:isActivatedChannel));
+              isChannelDeactivation: isActivatedChannel));
         }
       }else{
          List<String> idsChannels = [];
@@ -119,8 +148,8 @@ class MainBloc extends Bloc<MainEvent,MainState>{
             idsChannels.add(channel.idChannel);
          }
          for (var element in event.user.channels) {
-           ChannelModelCred channel = await _googleApiRepository.addRemoteChannelByRefreshToken(idChannel: element);
-           if(!idsChannels.contains(channel.idChannel)){
+           if(!idsChannels.contains(element)){
+             ChannelModelCred channel = await _googleApiRepository.addRemoteChannelByRefreshToken(idChannel: element);
              int key = await _saveLocalChannel(channel);
              channel = channel.copyWith(keyLangCode: key,remoteChannel: true);
              listCredChannels.add(channel);
@@ -140,7 +169,7 @@ class MainBloc extends Bloc<MainEvent,MainState>{
              userName: name,
              urlAvatar: '',
              blockedAccount: blockedAccount,
-             isChannelDeactivation:false));
+             isChannelDeactivation: isActivatedChannel));
       }
 
 
@@ -151,10 +180,10 @@ class MainBloc extends Bloc<MainEvent,MainState>{
 
   }
 
-  Future<List<ChannelModelCred>> _updateLocalChannels(ChannelModelCred channel ) async {
+  Future<List<ChannelModelCred>> _updateLocalChannels(ChannelModelCred channel) async {
     int index = listCredChannels.indexWhere((element) => element.idChannel==channel.idChannel);
-    await boxCredChannel.putAt(index, CredChannel(
-        isTakeBonus: 0,
+    await boxCredChannel.put(channel.keyLangCode, CredChannel(
+        isTakeBonus: channel.isTakeBonus,
         typePlatformRefreshToken:  typeRefreshToken(typePlatformRefreshToken:
         channel.typePlatformRefreshToken),
         refreshToken: channel.refreshToken,
@@ -169,7 +198,6 @@ class MainBloc extends Bloc<MainEvent,MainState>{
         remoteChannel: channel.remoteChannel,
         idInvitation: channel.idInvitation,
         defaultLanguage: channel.defaultLanguage));
-   channel = channel.copyWith(isTakeBonus: 0);
    listCredChannels[index] = channel;
    return listCredChannels;
   }
@@ -263,19 +291,17 @@ class MainBloc extends Bloc<MainEvent,MainState>{
 
   }
 
-  //todo is not work
+
   Future<void> _removeChannel(RemoveChannelEvent event,emit)async{
    emit(state.copyWith(addCredStatus: AddCredStatus.removal));
    await Future.delayed(const Duration(seconds: 2));
-   print('Delete ${event.keyHive}');
    await boxCredChannel.delete(event.keyHive).catchError((e){
-     print('Error1 $e');
      emit(state.copyWith(addCredStatus: AddCredStatus.errorRemove,error: 'Сhannel delete error'));
    });
    await boxVideo.delete(event.keyHive).catchError((e){
-     print('Error2 $e');
      emit(state.copyWith(addCredStatus: AddCredStatus.errorRemove,error: 'Сhannel delete error'));
    });
+   await userRepository.removeChannelFromAccount(idChannel: listCredChannels[event.index].idChannel);
    listCredChannels.removeAt(event.index);
    if(listCredChannels.isEmpty){
      emit(state.copyWith(addCredStatus: AddCredStatus.removed,mainStatus:MainStatus.empty,listCredChannels: listCredChannels));

@@ -36,10 +36,34 @@ class YouTubeApiService {
   final _dio = locator.get<DioClientInsertCaption>();
   final _dioAuthClient = locator.get<DioAuthClient>();
 
+
+  Future<void> _checkRemoteChannelsList({required String idChannel,required String refreshToken}) async {
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection('channels')
+          .doc(idChannel.trim())
+          .get();
+      if (!doc.exists) {
+        await FirebaseFirestore.instance
+            .collection('channels')
+            .doc(idChannel.trim()).set({
+          'isTakeBonus':1,
+          'refreshToken':refreshToken
+        });
+      }else{
+        await FirebaseFirestore.instance
+            .collection('channels')
+            .doc(idChannel.trim()).update({'refreshToken':refreshToken});
+      }
+
+    } on FirebaseException catch (e, stackTrace) {
+      Error.throwWithStackTrace(Failure(e.message!), stackTrace);
+    }
+  }
+
   Future<ChannelModelCredFromApi> addRemoteChannelByRefreshToken({required String idChannel}) async {
     try {
       final dataCredChannel = await _getCredByIdChannel(idChannel: idChannel);
-      print('dataCredChannel 1 ${idChannel}');
       final accessToken = await getAccessTokenByRefreshToken(
           refreshToken: dataCredChannel.$1,
           typePlatformRefreshToken: TypePlatformRefreshToken.desktop);
@@ -47,7 +71,7 @@ class YouTubeApiService {
         'Authorization': 'Bearer $accessToken',
         'X-Goog-AuthUser': '0',
       };
-      print('dataCredChannel 2');
+
       httpClient = GoogleHttpClient(authHeaders);
       final data = YouTubeApi(httpClient!);
       final result = await data.channels
@@ -55,7 +79,6 @@ class YouTubeApiService {
       if (result.items == null) {
         throw const Failure('Channel list is empty');
       }
-      print('dataCredChannel 3');
       return ChannelModelCredFromApi.fromApi(
           channel: result.items![0],
           googleAccount: '',
@@ -77,7 +100,6 @@ class YouTubeApiService {
 
   Future<(String,int)> _getCredByIdChannel({required String idChannel}) async {
     try {
-      print('ID CHANNEL ${idChannel}');
       final doc = await FirebaseFirestore.instance
           .collection('channels')
           .doc(idChannel.trim())
@@ -112,6 +134,10 @@ class YouTubeApiService {
         throw const Failure('Channel list is empty');
       }
 
+      await _checkRemoteChannelsList(
+          idChannel: result.items![0].id!,
+          refreshToken: credByInvitation.refreshToken);
+
       return ChannelModelCredFromApi.fromApi(
           channel: result.items![0],
           googleAccount: credByInvitation.emailUser,
@@ -135,10 +161,13 @@ class YouTubeApiService {
     try {
       final ChannelModelCredFromApi channelModelCredFromApi;
       if (Platform.isIOS) {
-        channelModelCredFromApi = await getModelChannelIOS();
+        channelModelCredFromApi = await _getModelChannelIOS();
       } else {
-        channelModelCredFromApi = await getModelChannelAndroid();
+        channelModelCredFromApi = await _getModelChannelAndroid();
       }
+      await _checkRemoteChannelsList(
+          idChannel: channelModelCredFromApi.idChannel,
+          refreshToken: channelModelCredFromApi.refreshToken);
 
       return channelModelCredFromApi;
     } on Failure catch (error, stackTrace) {
@@ -150,7 +179,7 @@ class YouTubeApiService {
     }
   }
 
-  Future<ChannelModelCredFromApi> getModelChannelAndroid() async {
+  Future<ChannelModelCredFromApi> _getModelChannelAndroid() async {
     try {
       await _googleSingIn.signOut();
       final googleSignInAccount = await _googleSingIn.signIn();
@@ -193,7 +222,7 @@ class YouTubeApiService {
     }
   }
 
-  Future<ChannelModelCredFromApi> getModelChannelIOS() async {
+  Future<ChannelModelCredFromApi> _getModelChannelIOS() async {
     try {
       final cred = await getConfigApp();
       final oauth2Helper = getOauth2Helper(cred: cred);
@@ -451,8 +480,6 @@ class YouTubeApiService {
       {required String refreshToken,
       required TypePlatformRefreshToken typePlatformRefreshToken}) async {
     final cred = await getConfigApp();
-    print(
-        'Platform $typePlatformRefreshToken Refresh $refreshToken Client ID ${cred.credAuthIOS[1]}');
     try {
       final token =
           await _dioAuthClient.init().post('/token', queryParameters: {
@@ -467,7 +494,6 @@ class YouTubeApiService {
       });
       return token.data['access_token'];
     } on DioError catch (e, stackTrace) {
-      print('ERROR REFRESH TOKEN ${e}');
       Error.throwWithStackTrace(
           const Failure('Error refresh token'), stackTrace);
     } on FirebaseException catch (e, stackTrace) {

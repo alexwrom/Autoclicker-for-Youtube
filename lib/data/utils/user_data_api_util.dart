@@ -29,5 +29,17 @@ class UserDataApiUtil{
       await _api.blockAccountUser(unlock: unlock);
     }
 
+    Future<void> takeBonusChannel({required String idChannel,required int newBalance}) async {
+      await _api.takeBonusChannel(idChannel: idChannel,newBalance: newBalance);
+    }
 
-  }
+    Future<void> removeChannelFromAccount({required String idChannel}) async {
+      await _api.removeChannelFromAccount(idChannel: idChannel);
+    }
+
+    Future<bool> addRemoteChannel({required String idChannel}) async {
+     return await _api.addRemoteChannel(idChannel: idChannel);
+    }
+
+
+}

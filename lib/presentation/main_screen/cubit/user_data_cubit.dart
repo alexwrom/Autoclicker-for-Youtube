@@ -21,6 +21,7 @@ class UserDataCubit extends Cubit<UserdataState>{
 
 
   getDataUser()async{
+    print('getDataUser');
     bool isSubscribe=false;
     bool isFreeTrial=false;
     String uid='';
@@ -28,6 +29,7 @@ class UserDataCubit extends Cubit<UserdataState>{
     try {
        uid=PreferencesUtil.getEmail;
        _userData=await _repositoryUser.getDataUser(email: uid);
+
        // if(_userData!.timeStampPurchase>0){
        //   isFreeTrial=false;
        // }

@@ -9,6 +9,7 @@ import 'package:youtube_clicker/resourses/colors_app.dart';
 
 import '../../../components/dialoger.dart';
 import '../../../domain/models/user_data.dart';
+import '../../../utils/preferences_util.dart';
 import '../../auth_screen/auth_page.dart';
 
 import '../bloc/main_bloc.dart';
@@ -30,13 +31,14 @@ class _UserDataCardState extends State<UserDataCard> {
   @override
   void initState() {
     super.initState();
-    //context.read<UserDataCubit>().getDataUser();
+
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-
+    final user = context.watch<UserDataCubit>().state.userData;
+    if(!user.init)context.read<UserDataCubit>().getDataUser();
   }
 
   double _getWight(int count) {

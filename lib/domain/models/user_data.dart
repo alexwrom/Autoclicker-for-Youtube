@@ -5,10 +5,12 @@
     final int numberOfTrans;
     final int isBlock;
     final int isTakeBonus;
+    final bool init;
     final List<dynamic> channels;
 
 
     const UserData(
+        this.init,
         this.numberOfTrans,
       this.isBlock,
         this.isTakeBonus,
@@ -17,6 +19,7 @@
   );
 
      UserData.unknown():
+         init = false,
            numberOfTrans=0,
      isTakeBonus=0,
     isBlock=0,
@@ -24,6 +27,7 @@
 
 
     UserData copyWith({
+      bool? init,
     bool? isActive,
     int? numberOfTrans,
       int? numberOfTransActive,
@@ -34,6 +38,7 @@
       List<dynamic>? channels
   }) {
     return UserData(
+      init??this.init,
         numberOfTrans ?? this.numberOfTrans,
         isBlock??this.isBlock,
         isTakeBonus??this.isTakeBonus,

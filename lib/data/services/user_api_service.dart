@@ -23,6 +23,29 @@ class UserApiService{
    }
 
 
+   Future<bool> addRemoteChannel({required String idChannel}) async {
+     try{
+
+       final email = PreferencesUtil.getEmail;
+       final user = _firebaseFirestore!.collection('userpc').doc(email);
+       final channel = _firebaseFirestore!.collection('channels').doc(idChannel);
+       final update = <String,dynamic>{
+         'channels': FieldValue.arrayUnion([idChannel])
+       };
+       await user.update(update);
+       final data = await channel.get();
+       final result = data.get('isTakeBonus') as int;
+       return result == 1;
+     }on FirebaseException catch(error,stackTrace){
+       Error.throwWithStackTrace(Failure(error.message!), stackTrace);
+     } on Failure catch(error,stackTrace){
+       Error.throwWithStackTrace(Failure(error.message), stackTrace);
+     }on PlatformException catch(error,stackTrace){
+       Error.throwWithStackTrace(Failure(error.message!), stackTrace);
+     }
+   }
+
+
 
 
 
@@ -50,8 +73,8 @@ class UserApiService{
 
 
     Future<UserDataFromApi> getDataUser({required String email})async{
-
-   try{
+     try{
+       print('UID ${email}');
      DocumentSnapshot documentSnapshot = await _firebaseFirestore!
           .collection('userpc')
           .doc(email.toLowerCase())
@@ -96,6 +119,41 @@ class UserApiService{
       try{
         await _firebaseFirestore!.collection('userpc').doc(uid.toLowerCase()).update(map);
 
+      }on FirebaseException catch(error,stackTrace){
+        Error.throwWithStackTrace(Failure(error.message!), stackTrace);
+      } on Failure catch(error,stackTrace){
+        Error.throwWithStackTrace(Failure(error.message), stackTrace);
+      }on PlatformException catch(error,stackTrace){
+        Error.throwWithStackTrace(Failure(error.message!), stackTrace);
+      }
+    }
+
+    Future<void> takeBonusChannel({required String idChannel,required int newBalance}) async {
+      try{
+        final uid = PreferencesUtil.getEmail;
+        await _firebaseFirestore!.collection('channels').doc(idChannel).update({
+          'isTakeBonus':0
+        });
+        await _firebaseFirestore!.collection('userpc').doc(uid.toLowerCase()).update({
+          'balance':newBalance
+        });
+
+      }on FirebaseException catch(error,stackTrace){
+        Error.throwWithStackTrace(Failure(error.message!), stackTrace);
+      } on Failure catch(error,stackTrace){
+        Error.throwWithStackTrace(Failure(error.message), stackTrace);
+      }on PlatformException catch(error,stackTrace){
+        Error.throwWithStackTrace(Failure(error.message!), stackTrace);
+      }
+    }
+
+
+    Future<void> removeChannelFromAccount({required String idChannel}) async {
+      try{
+        final uid = PreferencesUtil.getEmail;
+      final doc =  _firebaseFirestore!.collection('userpc').doc(uid.toLowerCase());
+      final update = <String, dynamic>{'channels':FieldValue.arrayRemove([idChannel.trim()])};
+      await doc.update(update);
       }on FirebaseException catch(error,stackTrace){
         Error.throwWithStackTrace(Failure(error.message!), stackTrace);
       } on Failure catch(error,stackTrace){
