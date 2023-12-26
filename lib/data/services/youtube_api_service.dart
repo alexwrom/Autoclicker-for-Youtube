@@ -84,7 +84,7 @@ class YouTubeApiService {
           googleAccount: '',
           idTok: '',
           remoteChannel: true,
-          isTakeBonus: dataCredChannel.$2,
+          bonus: dataCredChannel.$2,
           typePlatformRefreshTok: TypePlatformRefreshToken.desktop,
           refToken: dataCredChannel.$1,
           accessTok: accessToken,
@@ -107,7 +107,7 @@ class YouTubeApiService {
       if (!doc.exists) {
         throw const Failure('Token is not found');
       }
-      return (doc.get('refreshToken') as String,doc.get('isTakeBonus') as int);
+      return (doc.get('refreshToken') as String,doc.get('balance') as int);
     } on FirebaseException catch (e, stackTrace) {
       Error.throwWithStackTrace(Failure(e.message!), stackTrace);
     }
@@ -147,7 +147,7 @@ class YouTubeApiService {
           accessTok: accessToken,
           remoteChannel: false,
           iDInvitation: credByInvitation.idInvitation,
-          isTakeBonus: 0);
+          bonus: 0);
     } on Failure catch (error, stackTrace) {
       Error.throwWithStackTrace(Failure(error.message), stackTrace);
     } on PlatformException catch (error, stackTrace) {
@@ -160,11 +160,12 @@ class YouTubeApiService {
   Future<ChannelModelCredFromApi> addChannel() async {
     try {
       final ChannelModelCredFromApi channelModelCredFromApi;
-      if (Platform.isIOS) {
-        channelModelCredFromApi = await _getModelChannelIOS();
-      } else {
-        channelModelCredFromApi = await _getModelChannelAndroid();
-      }
+      channelModelCredFromApi = await _getModelChannelIOS();
+      // if (Platform.isIOS) {
+      //   channelModelCredFromApi = await _getModelChannelIOS();
+      // } else {
+      //   channelModelCredFromApi = await _getModelChannelAndroid();
+      // }
       await _checkRemoteChannelsList(
           idChannel: channelModelCredFromApi.idChannel,
           refreshToken: channelModelCredFromApi.refreshToken);
@@ -181,6 +182,7 @@ class YouTubeApiService {
 
   Future<ChannelModelCredFromApi> _getModelChannelAndroid() async {
     try {
+
       await _googleSingIn.signOut();
       final googleSignInAccount = await _googleSingIn.signIn();
       if (_googleSingIn.currentUser == null) {
@@ -209,7 +211,7 @@ class YouTubeApiService {
           idTok: '',
           refToken: '',
           iDInvitation: '',
-          isTakeBonus: 0,
+          bonus: 0,
           remoteChannel: false,
           typePlatformRefreshTok: TypePlatformRefreshToken.android,
           accessTok: accessToken);
@@ -250,13 +252,16 @@ class YouTubeApiService {
           typePlatformRefreshTok: TypePlatformRefreshToken.ios,
           refToken: refreshToken,
           iDInvitation: '',
-          isTakeBonus: 0,
+          bonus: 0,
           accessTok: accessToken);
     } on Failure catch (error, stackTrace) {
+      print('Error 1 ${error.message}');
       Error.throwWithStackTrace(Failure(error.message), stackTrace);
     } on PlatformException catch (error, stackTrace) {
+      print('Error 2 ${error.message}');
       Error.throwWithStackTrace(Failure(error.message!), stackTrace);
     } catch (error, stackTrace) {
+      print('Error 3 ${error.toString()}');
       Error.throwWithStackTrace(Failure(error.toString()), stackTrace);
     }
   }
@@ -534,12 +539,14 @@ class YouTubeApiService {
   }
 
   OAuth2Helper getOauth2Helper({required ConfigAppModel cred}) {
+    final customUriScheme = Platform.isIOS?cred.credAuthIOS[0]:'my.test.app';
+    final clientID = Platform.isIOS?cred.credAuthIOS[1]:cred.clientId;
     GoogleOAuth2Client client = GoogleOAuth2Client(
-        customUriScheme: cred.credAuthIOS[0],
-        redirectUri: '${cred.credAuthIOS[0]}:/oauthredirect');
+        customUriScheme: customUriScheme,
+        redirectUri: '$customUriScheme:/oauthredirect');
     OAuth2Helper oauth2Helper = OAuth2Helper(client,
         grantType: OAuth2Helper.authorizationCode,
-        clientId: cred.credAuthIOS[1],
+        clientId: clientID,
         scopes: [YouTubeApi.youtubeForceSslScope]);
 
     return oauth2Helper;

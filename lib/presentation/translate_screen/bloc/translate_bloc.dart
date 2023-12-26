@@ -160,6 +160,7 @@ class TranslateBloc extends Bloc<TranslateEvent, TranslateState> {
 
   Future<void> _initTranslate(StartTranslateEvent event, emit) async {
     _clearVar();
+    //todo check balance in remote channel
     if (cubitUserData.state.userData.numberOfTrans == 0) {
       emit(state.copyWith(translateStatus: TranslateStatus.forbidden));
     } else {
@@ -293,6 +294,7 @@ class TranslateBloc extends Bloc<TranslateEvent, TranslateState> {
 
       if (_operationQueueAll == 0) {
         _clearVar();
+        //todo check balance in remote channel
         await cubitUserData.updateBalance(codeLanguage.length);
         emit(state.copyWith(
             translateStatus: TranslateStatus.success,

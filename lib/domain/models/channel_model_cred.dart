@@ -19,7 +19,7 @@ class ChannelModelCred{
   final String refreshToken;
   final String defaultLanguage;
   final String idInvitation;
-  final int isTakeBonus;
+  final int bonus;
   final bool remoteChannel;
   final TypePlatformRefreshToken typePlatformRefreshToken;
 
@@ -37,7 +37,7 @@ class ChannelModelCred{
     required this.refreshToken,
     required this.defaultLanguage,
     required this.idInvitation,
-    required this.isTakeBonus,
+    required this.bonus,
     required this.remoteChannel,
     required this.typePlatformRefreshToken
   });
@@ -55,7 +55,7 @@ class ChannelModelCred{
         keyLangCode:channel.keyLangCode,
         refreshToken:  channel.refreshToken,
         idInvitation: channel.idInvitation,
-        isTakeBonus: channel.isTakeBonus,
+        bonus: channel.bonus,
         remoteChannel: channel.remoteChannel,
         defaultLanguage:  channel.defaultLanguage,
     typePlatformRefreshToken: channel.typePlatformRefreshToken==androidPlatform?
@@ -77,7 +77,7 @@ class ChannelModelCred{
     String? refreshToken,
     String? idInvitation,
     String? defaultLanguage,
-    int? isTakeBonus,
+    int? bonus,
     bool? remoteChannel,
     TypePlatformRefreshToken? typePlatformRefreshToken
   }) {
@@ -92,7 +92,7 @@ class ChannelModelCred{
       keyLangCode: keyLangCode ?? this.keyLangCode,
       refreshToken: refreshToken??this.refreshToken,
       idInvitation: idInvitation??this.idInvitation,
-        isTakeBonus: isTakeBonus??this.isTakeBonus,
+        bonus: bonus??this.bonus,
       remoteChannel: remoteChannel??this.remoteChannel,
       defaultLanguage: defaultLanguage??this.defaultLanguage,
       typePlatformRefreshToken: typePlatformRefreshToken??this.typePlatformRefreshToken

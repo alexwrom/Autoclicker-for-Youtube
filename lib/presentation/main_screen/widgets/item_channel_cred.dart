@@ -66,7 +66,7 @@ class ItemChannelCred extends StatelessWidget{
                         fontWeight: FontWeight.w700
                     ),),
                   Visibility(
-                    visible: channelModelCred.isTakeBonus == 1,
+                    visible: channelModelCred.bonus > 0,
                     child: Padding(
                       padding: const EdgeInsets.only(top: 10.0),
                       child: GestureDetector(
@@ -89,8 +89,8 @@ class ItemChannelCred extends StatelessWidget{
                                     color: colorRed,
                                     borderRadius:
                                         BorderRadius.circular(20.0)),
-                                child: const Text('+400',
-                                  style:TextStyle(
+                                child:  Text('+${channelModelCred.bonus}',
+                                  style:const TextStyle(
                                       color: Colors.white,
                                       fontSize: 16,
                                       fontWeight: FontWeight.w700

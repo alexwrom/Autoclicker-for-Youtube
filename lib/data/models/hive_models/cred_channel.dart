@@ -33,7 +33,7 @@ class CredChannel{
   @HiveField(12)
   final bool remoteChannel;
   @HiveField(13)
-  final int isTakeBonus;
+  final int bonus;
 
 
   CredChannel({
@@ -50,7 +50,7 @@ class CredChannel{
     required this.idInvitation,
     required this.typePlatformRefreshToken,
     required this.remoteChannel,
-    required this.isTakeBonus
+    required this.bonus
 
   });
 }

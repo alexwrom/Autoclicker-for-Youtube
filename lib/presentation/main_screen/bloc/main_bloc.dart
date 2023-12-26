@@ -55,13 +55,12 @@ class MainBloc extends Bloc<MainEvent,MainState>{
       if(event.remove){
         await userRepository.removeChannelFromAccount(idChannel: event.channelModelCred.idChannel);
         ChannelModelCred channel = event.channelModelCred;
-        channel = channel.copyWith(remoteChannel: false,isTakeBonus:0);
+        channel = channel.copyWith(remoteChannel: false,bonus:0);
         _updateLocalChannels(channel);
       }else{
        final isTakeBonus =  await userRepository.addRemoteChannel(idChannel: event.channelModelCred.idChannel);
        ChannelModelCred channel = event.channelModelCred;
-       channel = channel.copyWith(remoteChannel: true,
-           isTakeBonus: isTakeBonus?1:0);
+       channel = channel.copyWith(remoteChannel: true, bonus: 0);
        _updateLocalChannels(channel);
       }
       emit(state.copyWith(statusAddRemoteChannel: StatusAddRemoteChannel.success));
@@ -102,7 +101,7 @@ class MainBloc extends Bloc<MainEvent,MainState>{
    await userRepository.takeBonusChannel(idChannel: event.channelModelCred.idChannel,
        newBalance:transQuantity);
    ChannelModelCred channelModelCred = event.channelModelCred;
-   channelModelCred = channelModelCred.copyWith(isTakeBonus: 0);
+   channelModelCred = channelModelCred.copyWith(bonus: 0);
    final listChannelsUpdated = await _updateLocalChannels(channelModelCred);
    emit(state.copyWith(mainStatus: MainStatus.success,listCredChannels: listChannelsUpdated));
 }
@@ -183,7 +182,7 @@ class MainBloc extends Bloc<MainEvent,MainState>{
   Future<List<ChannelModelCred>> _updateLocalChannels(ChannelModelCred channel) async {
     int index = listCredChannels.indexWhere((element) => element.idChannel==channel.idChannel);
     await boxCredChannel.put(channel.keyLangCode, CredChannel(
-        isTakeBonus: channel.isTakeBonus,
+        bonus: channel.bonus,
         typePlatformRefreshToken:  typeRefreshToken(typePlatformRefreshToken:
         channel.typePlatformRefreshToken),
         refreshToken: channel.refreshToken,
@@ -208,7 +207,7 @@ class MainBloc extends Bloc<MainEvent,MainState>{
     });
     await boxCredChannel
         .add(CredChannel(
-        isTakeBonus: channel.isTakeBonus,
+        bonus: channel.bonus,
         typePlatformRefreshToken:  typeRefreshToken(typePlatformRefreshToken:
         channel.typePlatformRefreshToken),
         refreshToken: channel.refreshToken,

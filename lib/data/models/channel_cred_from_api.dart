@@ -22,7 +22,7 @@ class ChannelModelCredFromApi{
    final String defaultLanguage;
    final String refreshToken;
    final String idInvitation;
-   final int isTakeBonus;
+   final int bonus;
    final bool remoteChannel;
    final TypePlatformRefreshToken typePlatformRefreshToken;
 
@@ -34,7 +34,7 @@ class ChannelModelCredFromApi{
       required String idTok,
       required String refToken,
       required String iDInvitation,
-         required this.isTakeBonus,
+         required this.bonus,
          required this.remoteChannel,
       required TypePlatformRefreshToken typePlatformRefreshTok})
       : nameChannel = channel.snippet!.title!,

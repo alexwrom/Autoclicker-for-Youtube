@@ -54,6 +54,7 @@ class _TranslatePageState extends State<TranslatePage> {
       _textButton='Translate title'.tr();
     }
     final balance=context.read<UserDataCubit>().state.userData.numberOfTrans;
+
     return Scaffold(
       backgroundColor: colorBackground,
       appBar: AppBar(
@@ -489,7 +490,6 @@ class _TranslatePageState extends State<TranslatePage> {
     _translateBloc.add(GetSubtitlesEvent(
       defaultAudioLanguage: widget.videoModel.defaultAudioLanguage,
         videoId: widget.videoModel.idVideo,cred: widget.credChannel));
-    print('Get Id key ${widget.credChannel.keyLangCode}');
     final ChannelLangCode value = boxVideo.get(widget.credChannel.keyLangCode);
     _listCodeLanguage=value.codeLanguage;
     // boxVideo.keys.map((key) {
