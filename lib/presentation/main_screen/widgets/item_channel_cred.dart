@@ -59,7 +59,7 @@ class ItemChannelCred extends StatelessWidget{
                 children: [
                   Text(channelModelCred.nameChannel,
                     overflow: TextOverflow.ellipsis,
-                    maxLines: 2,
+                    maxLines: 1,
                     style:const TextStyle(
                         color: Colors.white,
                         fontSize: 16,

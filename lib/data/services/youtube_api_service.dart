@@ -47,7 +47,7 @@ class YouTubeApiService {
         await FirebaseFirestore.instance
             .collection('channels')
             .doc(idChannel.trim()).set({
-          'isTakeBonus':1,
+          'balance':400,
           'refreshToken':refreshToken
         });
       }else{
@@ -95,6 +95,21 @@ class YouTubeApiService {
       Error.throwWithStackTrace(Failure(error.message!), stackTrace);
     } catch (error, stackTrace) {
       Error.throwWithStackTrace(Failure(error.toString()), stackTrace);
+    }
+  }
+
+  Future<int> getBonusOfRemoteChannel({required String idChannel}) async {
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection('channels')
+          .doc(idChannel.trim())
+          .get();
+      if (!doc.exists) {
+        throw const Failure('Token is not found');
+      }
+      return doc.get('balance') as int;
+    } on FirebaseException catch (e, stackTrace) {
+      Error.throwWithStackTrace(Failure(e.message!), stackTrace);
     }
   }
 
@@ -160,12 +175,11 @@ class YouTubeApiService {
   Future<ChannelModelCredFromApi> addChannel() async {
     try {
       final ChannelModelCredFromApi channelModelCredFromApi;
-      channelModelCredFromApi = await _getModelChannelIOS();
-      // if (Platform.isIOS) {
-      //   channelModelCredFromApi = await _getModelChannelIOS();
-      // } else {
-      //   channelModelCredFromApi = await _getModelChannelAndroid();
-      // }
+      if (Platform.isIOS) {
+        channelModelCredFromApi = await _getModelChannelIOS();
+      } else {
+        channelModelCredFromApi = await _getModelChannelAndroid();
+      }
       await _checkRemoteChannelsList(
           idChannel: channelModelCredFromApi.idChannel,
           refreshToken: channelModelCredFromApi.refreshToken);

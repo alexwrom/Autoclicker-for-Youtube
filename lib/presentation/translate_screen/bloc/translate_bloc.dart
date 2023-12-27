@@ -40,7 +40,8 @@ class TranslateBloc extends Bloc<TranslateEvent, TranslateState> {
 
   Future<void> _getCaption(GetSubtitlesEvent event, emit) async {
     idCap = '';
-    if (cubitUserData.state.userData.numberOfTrans == 0) {
+    if (_balanceEmpty(cubitUserData.state.userData.numberOfTrans,
+        event.cred.bonus,event.codesLang.length)) {
       emit(state.copyWith(translateStatus: TranslateStatus.forbidden));
     }
     emit(state.copyWith(captionStatus: CaptionStatus.loading));
@@ -67,7 +68,8 @@ class TranslateBloc extends Bloc<TranslateEvent, TranslateState> {
   }
 
   Future<void> _insertCaption(InsertSubtitlesEvent event, emit) async {
-    if (cubitUserData.state.userData.numberOfTrans == 0) {
+    if (_balanceEmpty(cubitUserData.state.userData.numberOfTrans,
+        event.cred.bonus,event.codesLang.length)) {
       emit(state.copyWith(translateStatus: TranslateStatus.forbidden));
     } else {
       emit(state.copyWith(
@@ -138,7 +140,11 @@ class TranslateBloc extends Bloc<TranslateEvent, TranslateState> {
             final l1 = listCodeLang.length;
             final l2 = listCodeLanguageNotSuccessful.length;
             final resultCountSuccessTranslate = l1 - l2;
-            await cubitUserData.updateBalance(resultCountSuccessTranslate);
+
+            await cubitUserData.updateBalance(
+              channel: event.cred,
+                numberTranslate: resultCountSuccessTranslate,
+                bonusOfRemoteChannel: event.cred.bonus);
             if (l2 > 0) {
               emit(state.copyWith(
                   listCodeLanguageNotSuccessful: listCodeLanguageNotSuccessful,
@@ -160,8 +166,8 @@ class TranslateBloc extends Bloc<TranslateEvent, TranslateState> {
 
   Future<void> _initTranslate(StartTranslateEvent event, emit) async {
     _clearVar();
-    //todo check balance in remote channel
-    if (cubitUserData.state.userData.numberOfTrans == 0) {
+    if (_balanceEmpty(cubitUserData.state.userData.numberOfTrans,
+        event.channelModelCred.bonus,event.codeLanguage.length)) {
       emit(state.copyWith(translateStatus: TranslateStatus.forbidden));
     } else {
       final num = event.videoModel.description.isEmpty ? 1 : 2;
@@ -185,6 +191,19 @@ class TranslateBloc extends Bloc<TranslateEvent, TranslateState> {
             translateStatus: TranslateStatus.error, error: error.message));
       }
     }
+  }
+
+  bool _balanceEmpty(int userBalance,int channelRemoteBonus,int quantityLanguage){
+    final total = userBalance+channelRemoteBonus;
+    if(total == 0){
+      return true;
+    }
+    if(total<quantityLanguage){
+      return true;
+    }
+
+
+    return false;
   }
 
   String _getProgress(int op, int allOp) {
@@ -294,8 +313,9 @@ class TranslateBloc extends Bloc<TranslateEvent, TranslateState> {
 
       if (_operationQueueAll == 0) {
         _clearVar();
-        //todo check balance in remote channel
-        await cubitUserData.updateBalance(codeLanguage.length);
+        await cubitUserData.updateBalance(numberTranslate: codeLanguage.length,
+            channel: channelModelCred,
+            bonusOfRemoteChannel: channelModelCred.bonus);
         emit(state.copyWith(
             translateStatus: TranslateStatus.success,
             messageStatus:

@@ -5,6 +5,7 @@
 import 'package:youtube_clicker/di/locator.dart';
 import 'package:youtube_clicker/utils/preferences_util.dart';
 
+import '../../domain/models/channel_model_cred.dart';
 import '../../domain/models/user_data.dart';
 import '../mappers/user_data_mapper.dart';
 import '../models/hive_models/channel_lang_code.dart';
@@ -21,8 +22,8 @@ class UserDataApiUtil{
       return UserDataMapper.fromApi(userDataFromApi: data);
     }
 
-    Future<void> updateBalance({required int balance,required String uid})async{
-      return await _api.updateBalance(balance: balance, uid: uid);
+    Future<void> updateBalance({required int balance,required String uid,required int bonusOfRemoteChannel,required ChannelModelCred channel})async{
+      return await _api.updateBalance(balance: balance, uid: uid,bonusOfRemoteChannel: bonusOfRemoteChannel,channel:channel);
     }
 
     Future<void> blockAccountUser({required bool unlock}) async {
@@ -37,7 +38,7 @@ class UserDataApiUtil{
       await _api.removeChannelFromAccount(idChannel: idChannel);
     }
 
-    Future<bool> addRemoteChannel({required String idChannel}) async {
+    Future<int> addRemoteChannel({required String idChannel}) async {
      return await _api.addRemoteChannel(idChannel: idChannel);
     }
 

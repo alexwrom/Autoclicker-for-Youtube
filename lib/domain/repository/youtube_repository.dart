@@ -22,5 +22,6 @@ abstract class YouTubeRepository{
     Future<bool> removeCaptions(String idCap);
     Future<bool> isActivatedChanelByInvitation(String code);
     Future<ChannelModelCred> addRemoteChannelByRefreshToken({required String idChannel});
+    Future<int> getBonusOfRemoteChannel({required String idChannel});
 
   }

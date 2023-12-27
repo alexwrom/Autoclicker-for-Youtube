@@ -23,7 +23,7 @@ class UserApiService{
    }
 
 
-   Future<bool> addRemoteChannel({required String idChannel}) async {
+   Future<int> addRemoteChannel({required String idChannel}) async {
      try{
 
        final email = PreferencesUtil.getEmail;
@@ -34,8 +34,8 @@ class UserApiService{
        };
        await user.update(update);
        final data = await channel.get();
-       final result = data.get('isTakeBonus') as int;
-       return result == 1;
+       final result = data.get('balance') as int;
+       return result;
      }on FirebaseException catch(error,stackTrace){
        Error.throwWithStackTrace(Failure(error.message!), stackTrace);
      } on Failure catch(error,stackTrace){
@@ -113,11 +113,15 @@ class UserApiService{
       return jsonConfig;
     }
 
-    Future<void> updateBalance({required int balance,required String uid})async{
+    Future<void> updateBalance({required int balance,required String uid,required int bonusOfRemoteChannel,
+      required ChannelModelCred channel})async{
       Map<String,dynamic> map={};
       map.addAll({'balance':balance});
       try{
         await _firebaseFirestore!.collection('userpc').doc(uid.toLowerCase()).update(map);
+        await _firebaseFirestore!.collection('channels').doc(channel.idChannel).update({
+          'balance':bonusOfRemoteChannel
+        });
 
       }on FirebaseException catch(error,stackTrace){
         Error.throwWithStackTrace(Failure(error.message!), stackTrace);
@@ -132,11 +136,11 @@ class UserApiService{
       try{
         final uid = PreferencesUtil.getEmail;
         await _firebaseFirestore!.collection('channels').doc(idChannel).update({
-          'isTakeBonus':0
-        });
-        await _firebaseFirestore!.collection('userpc').doc(uid.toLowerCase()).update({
           'balance':newBalance
         });
+        // await _firebaseFirestore!.collection('userpc').doc(uid.toLowerCase()).update({
+        //   'balance':newBalance
+        // });
 
       }on FirebaseException catch(error,stackTrace){
         Error.throwWithStackTrace(Failure(error.message!), stackTrace);
@@ -152,7 +156,7 @@ class UserApiService{
       try{
         final uid = PreferencesUtil.getEmail;
       final doc =  _firebaseFirestore!.collection('userpc').doc(uid.toLowerCase());
-      final update = <String, dynamic>{'channels':FieldValue.arrayRemove([idChannel.trim()])};
+      final update = <String, dynamic>{'channels':FieldValue.arrayRemove([idChannel])};
       await doc.update(update);
       }on FirebaseException catch(error,stackTrace){
         Error.throwWithStackTrace(Failure(error.message!), stackTrace);

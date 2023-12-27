@@ -3,6 +3,7 @@
   import 'package:youtube_clicker/di/locator.dart';
 import 'package:youtube_clicker/domain/models/user_data.dart';
 
+import '../../domain/models/channel_model_cred.dart';
 import '../../domain/repository/user_repository.dart';
 import '../utils/user_data_api_util.dart';
 
@@ -15,8 +16,8 @@ class UserRepositoryImpl extends UserRepository{
   }
 
   @override
-  Future<void> updateBalance({required int balance, required String uid}) async {
-    return await _util.updateBalance(balance: balance, uid: uid);
+  Future<void> updateBalance({required int balance, required String uid,required int bonusOfRemoteChannel,required ChannelModelCred channel}) async {
+    return await _util.updateBalance(balance: balance, uid: uid,bonusOfRemoteChannel:bonusOfRemoteChannel,channel:channel);
   }
 
   @override
@@ -35,7 +36,7 @@ class UserRepositoryImpl extends UserRepository{
   }
 
   @override
-  Future<bool> addRemoteChannel({required String idChannel}) async {
+  Future<int> addRemoteChannel({required String idChannel}) async {
     return await _util.addRemoteChannel(idChannel: idChannel);
   }
 

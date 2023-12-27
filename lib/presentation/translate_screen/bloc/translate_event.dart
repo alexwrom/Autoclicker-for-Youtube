@@ -41,12 +41,14 @@ class TranslateEvent extends Equatable{
 
        final ChannelModelCred cred;
        final String defaultAudioLanguage;
+       final List<String> codesLang;
      final String videoId;
 
      GetSubtitlesEvent({
        required this.defaultAudioLanguage,
        required this.cred,
      required this.videoId,
+       required this.codesLang
      });
     }
 

@@ -58,9 +58,9 @@ class MainBloc extends Bloc<MainEvent,MainState>{
         channel = channel.copyWith(remoteChannel: false,bonus:0);
         _updateLocalChannels(channel);
       }else{
-       final isTakeBonus =  await userRepository.addRemoteChannel(idChannel: event.channelModelCred.idChannel);
+       final bonus =  await userRepository.addRemoteChannel(idChannel: event.channelModelCred.idChannel);
        ChannelModelCred channel = event.channelModelCred;
-       channel = channel.copyWith(remoteChannel: true, bonus: 0);
+       channel = channel.copyWith(remoteChannel: true, bonus: bonus);
        _updateLocalChannels(channel);
       }
       emit(state.copyWith(statusAddRemoteChannel: StatusAddRemoteChannel.success));
@@ -146,7 +146,7 @@ class MainBloc extends Bloc<MainEvent,MainState>{
          for(var channel in listCredChannels){
             idsChannels.add(channel.idChannel);
          }
-         for (var element in event.user.channels) {
+         for (String element in event.user.channels) {
            if(!idsChannels.contains(element)){
              ChannelModelCred channel = await _googleApiRepository.addRemoteChannelByRefreshToken(idChannel: element);
              int key = await _saveLocalChannel(channel);
@@ -162,9 +162,12 @@ class MainBloc extends Bloc<MainEvent,MainState>{
           listCredChannels=listFiltered;
         }
 
+        final listChannelsResult = await _checkBonusInRemoteChannel(channels: listCredChannels,
+            idsRemoteChannel: event.user.channels);
+
          emit(state.copyWith(
              mainStatus: MainStatus.success,
-             listCredChannels: listCredChannels,
+             listCredChannels: listChannelsResult,
              userName: name,
              urlAvatar: '',
              blockedAccount: blockedAccount,
@@ -177,6 +180,19 @@ class MainBloc extends Bloc<MainEvent,MainState>{
     }
 
 
+  }
+
+  Future<List<ChannelModelCred>> _checkBonusInRemoteChannel(
+      {required List<ChannelModelCred> channels, required List<dynamic> idsRemoteChannel}) async {
+    List<ChannelModelCred> listResult = [];
+    for(var idChannel in idsRemoteChannel){
+      final bonus = await _googleApiRepository.getBonusOfRemoteChannel(idChannel: idChannel as String);
+      ChannelModelCred channelUpdated = listCredChannels.firstWhere((element) => element.idChannel == idChannel);
+      channelUpdated = channelUpdated.copyWith(bonus: bonus);
+      listResult = await _updateLocalChannels(channelUpdated);
+
+    }
+    return listResult;
   }
 
   Future<List<ChannelModelCred>> _updateLocalChannels(ChannelModelCred channel) async {

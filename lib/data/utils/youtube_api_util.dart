@@ -83,6 +83,10 @@ class YouTubeApiUtil{
       return ChannelCredMapper.fromApi(channelModelCredFromApi: channelFromApi);
     }
 
+    Future<int> getBonusOfRemoteChannel({required String idChannel}) async {
+      return await _youTubeApi.getBonusOfRemoteChannel(idChannel: idChannel);
+    }
+
 
 
 

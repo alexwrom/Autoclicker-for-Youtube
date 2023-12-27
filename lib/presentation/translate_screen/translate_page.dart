@@ -53,7 +53,7 @@ class _TranslatePageState extends State<TranslatePage> {
     if(widget.videoModel.description.isEmpty){
       _textButton='Translate title'.tr();
     }
-    final balance=context.read<UserDataCubit>().state.userData.numberOfTrans;
+    //final balance=context.read<UserDataCubit>().state.userData.numberOfTrans;
 
     return Scaffold(
       backgroundColor: colorBackground,
@@ -301,7 +301,7 @@ class _TranslatePageState extends State<TranslatePage> {
                               ),
 
                                 onPressed:()async{
-                                 _initTranslate(context, state, balance);
+                                 _initTranslate(context, state);
 
 
                                  },
@@ -326,44 +326,8 @@ class _TranslatePageState extends State<TranslatePage> {
                                 ),
 
                                 onPressed:()async{
-                                  if(!state.captionStatus.isTranslating&&!state.translateStatus.isTranslating){
-                                    if(state.captionStatus.isSuccess){
-                                      if(_listCodeLanguage.isNotEmpty){
-                                        if(state.translateStatus.isForbidden){
-                                          Dialoger.showNotTranslate(context,'The balance of active transfers is over'.tr());
-                                        }else{
-                                          if(balance<_listCodeLanguage.length){
-                                            Dialoger.showNotTranslate(context,'You don\'t have enough translations'.tr());
-                                          }else{
-                                            Dialoger.showGetStartedTranslate(context,_listCodeLanguage.length, () {
-                                              _translateBloc.add(InsertSubtitlesEvent(
-                                                  cred: widget.credChannel,
-                                                  defaultAudioLanguage: widget.videoModel.defaultAudioLanguage,
-                                                  codesLang: _listCodeLanguage,
-                                                  repeatTranslate: false,
-                                                  idVideo: widget.videoModel.idVideo));
-                                            });
-                                          }
-
-                                        }
-
-                                      }else{
-                                        Dialoger.showMessageSnackBar('No languages selected for translation'.tr(), context);
-                                      }
-                                    }else if(state.captionStatus.isLoading){
-                                      Dialoger.showMessageSnackBar('The titles haven\'t loaded yet'.tr(), context);
-                                    }else if(state.captionStatus.isError){
-                                      Dialoger.showInfoDialog(context, 'Error!'.tr(),
-                                          'There were errors loading subtitles. Subtitle translation is not available. Try again later'.tr(),true,(){});
-                                    }else if(state.captionStatus.isEmpty){
-                                      Dialoger.showInfoDialog(context, 'Titles missing!'.tr(),
-                                          'There are no subtitles. Download basic subtitles in Youtube Studio if you need them'.tr(),false,(){});
-                                    }
-                                  }
-
-
-
-                                },
+                                  _initTranslateSubtitle(state, context);
+                                  },
                                 child: Text('Translate subtitle'.tr(),
                                   style: const TextStyle(
                                       color: Colors.white,
@@ -386,7 +350,44 @@ class _TranslatePageState extends State<TranslatePage> {
     );
   }
 
-  void _initTranslate(BuildContext context, TranslateState state, int balance) {
+  void _initTranslateSubtitle(TranslateState state, BuildContext context) {
+    if(!state.captionStatus.isTranslating&&!state.translateStatus.isTranslating){
+      if(state.captionStatus.isSuccess){
+        if(_listCodeLanguage.isNotEmpty){
+          if(state.translateStatus.isForbidden){
+            //Dialoger.showNotTranslate(context,'The balance of active transfers is over'.tr());
+            Dialoger.showNotTranslate(context,'You don\'t have enough translations'.tr());
+          }else{
+            Dialoger.showGetStartedTranslate(context,_listCodeLanguage.length, () {
+                _translateBloc.add(InsertSubtitlesEvent(
+                    cred: widget.credChannel,
+                    defaultAudioLanguage: widget.videoModel.defaultAudioLanguage,
+                    codesLang: _listCodeLanguage,
+                    repeatTranslate: false,
+                    idVideo: widget.videoModel.idVideo));
+              });
+
+
+          }
+
+        }else{
+         Dialoger.showMessageSnackBar('No languages selected for translation'.tr(), context);
+        }
+      }else if(state.captionStatus.isLoading){
+        Dialoger.showMessageSnackBar('The titles haven\'t loaded yet'.tr(), context);
+      }else if(state.captionStatus.isError){
+        Dialoger.showInfoDialog(context, 'Error!'.tr(),
+            'There were errors loading subtitles. Subtitle translation is not available. Try again later'.tr(),true,(){});
+      }else if(state.captionStatus.isEmpty){
+        Dialoger.showInfoDialog(context, 'Titles missing!'.tr(),
+           'There are no subtitles. Download basic subtitles in Youtube Studio if you need them'.tr(),false,(){});
+      }
+    }
+
+
+  }
+
+  void _initTranslate(BuildContext context, TranslateState state) {
     if (widget.videoModel.defaultLanguage.isEmpty&&widget.credChannel.defaultLanguage.isEmpty) {
       Dialoger.showInfoDialog(
           context,
@@ -398,18 +399,16 @@ class _TranslatePageState extends State<TranslatePage> {
       if(!state.captionStatus.isTranslating&&!state.translateStatus.isTranslating){
         if(_listCodeLanguage.isNotEmpty){
           if(state.translateStatus.isForbidden){
-            Dialoger.showNotTranslate(context,'The balance of active transfers is over'.tr());
+            //Dialoger.showNotTranslate(context,'The balance of active transfers is over'.tr());
+            Dialoger.showNotTranslate(context,'You don\'t have enough translations'.tr());
           }else{
-            if(balance<_listCodeLanguage.length){
-              Dialoger.showNotTranslate(context,'You don\'t have enough translations'.tr());
-            }else{
-              Dialoger.showGetStartedTranslate(context,_listCodeLanguage.length, () {
+            Dialoger.showGetStartedTranslate(context,_listCodeLanguage.length, () {
                 _translateBloc.add(StartTranslateEvent(
                     channelModelCred: widget.credChannel,
                     codeLanguage: _listCodeLanguage,
                     videoModel: widget.videoModel));
               });
-            }
+
 
           }
         }else{
@@ -486,12 +485,13 @@ class _TranslatePageState extends State<TranslatePage> {
   @override
   void initState() {
     super.initState();
-    _translateBloc=TranslateBloc(cubitUserData: context.read<UserDataCubit>());
-    _translateBloc.add(GetSubtitlesEvent(
-      defaultAudioLanguage: widget.videoModel.defaultAudioLanguage,
-        videoId: widget.videoModel.idVideo,cred: widget.credChannel));
     final ChannelLangCode value = boxVideo.get(widget.credChannel.keyLangCode);
     _listCodeLanguage=value.codeLanguage;
+    _translateBloc=TranslateBloc(cubitUserData: context.read<UserDataCubit>());
+    _translateBloc.add(GetSubtitlesEvent(
+      codesLang: _listCodeLanguage,
+      defaultAudioLanguage: widget.videoModel.defaultAudioLanguage,
+        videoId: widget.videoModel.idVideo,cred: widget.credChannel));
     // boxVideo.keys.map((key) {
     //   final ChannelLangCode value = boxVideo.get(widget.credChannel.keyLangCode);
     //   _listCodeLanguage=value.codeLanguage;

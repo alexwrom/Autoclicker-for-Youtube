@@ -113,11 +113,16 @@ class _VideoListPageState extends State<VideoListPage> with WidgetsBindingObserv
                           ),
                         ),
                         const SizedBox(width: 20),
-                        Text(widget.channelModelCred.nameChannel,style:const TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700
-                        ),),
+                        Container(
+                          constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width/2.3),
+                          child: Text(widget.channelModelCred.nameChannel,
+                            maxLines: 2,
+                            style:const TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700
+                          ),),
+                        ),
                       ],
                     ),
                   ],
