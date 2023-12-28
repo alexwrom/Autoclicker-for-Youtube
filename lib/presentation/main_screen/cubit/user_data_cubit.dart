@@ -8,6 +8,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:youtube_clicker/domain/models/channel_model_cred.dart';
 import 'package:youtube_clicker/domain/models/user_data.dart';
+import 'package:youtube_clicker/presentation/main_screen/bloc/main_bloc.dart';
 import 'package:youtube_clicker/presentation/main_screen/cubit/user_data_state.dart';
   import 'package:youtube_clicker/utils/preferences_util.dart';
 import '../../../di/locator.dart';
@@ -21,8 +22,8 @@ class UserDataCubit extends Cubit<UserdataState>{
    UserData? _userData;
 
 
+
   getDataUser()async{
-    print('getDataUser');
     bool isSubscribe=false;
     bool isFreeTrial=false;
     String uid='';

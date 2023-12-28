@@ -158,8 +158,8 @@ class AuthService{
          throw const Failure('Enter password');
        }
 
-       //await _auth!.signInAnonymously();
-       await _auth!.signInWithEmailAndPassword(email: email, password: pass);
+       await _auth!.signInAnonymously();
+       //await _auth!.signInWithEmailAndPassword(email: email, password: pass);
        DocumentSnapshot userDoc=await _firebaseFirestore!.collection('userpc').doc(email.toLowerCase()).get();
        if(!userDoc.exists){
          throw const Failure('User is not found');

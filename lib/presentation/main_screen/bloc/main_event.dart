@@ -55,4 +55,11 @@ class MainEvent extends Equatable{
     required this.cred,
 
   });
+
 }
+
+ class UpdateChannelListEvent extends MainEvent{
+   final ChannelModelCred channelModelCred;
+   final int translateQuantity;
+   const UpdateChannelListEvent({required this.channelModelCred,required this.translateQuantity});
+ }

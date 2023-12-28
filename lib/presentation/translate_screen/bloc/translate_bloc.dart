@@ -1,3 +1,5 @@
+
+
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,6 +13,7 @@ import '../../../di/locator.dart';
 import '../../../domain/models/channel_model_cred.dart';
 import '../../../domain/repository/translate_repository.dart';
 import '../../../domain/repository/youtube_repository.dart';
+import '../../main_screen/bloc/main_bloc.dart';
 import '../../main_screen/cubit/user_data_cubit.dart';
 
 class TranslateBloc extends Bloc<TranslateEvent, TranslateState> {
@@ -30,6 +33,7 @@ class TranslateBloc extends Bloc<TranslateEvent, TranslateState> {
   String? idCap;
   List<Caption> _listCap = [];
   final List<String> _oldCodeList = [];
+
 
   TranslateBloc({required this.cubitUserData})
       : super(TranslateState.unknown()) {
@@ -141,10 +145,8 @@ class TranslateBloc extends Bloc<TranslateEvent, TranslateState> {
             final l2 = listCodeLanguageNotSuccessful.length;
             final resultCountSuccessTranslate = l1 - l2;
 
-            await cubitUserData.updateBalance(
-              channel: event.cred,
-                numberTranslate: resultCountSuccessTranslate,
-                bonusOfRemoteChannel: event.cred.bonus);
+            await _updateBalance(resultCountSuccessTranslate, event.cred);
+
             if (l2 > 0) {
               emit(state.copyWith(
                   listCodeLanguageNotSuccessful: listCodeLanguageNotSuccessful,
@@ -313,14 +315,19 @@ class TranslateBloc extends Bloc<TranslateEvent, TranslateState> {
 
       if (_operationQueueAll == 0) {
         _clearVar();
-        await cubitUserData.updateBalance(numberTranslate: codeLanguage.length,
-            channel: channelModelCred,
-            bonusOfRemoteChannel: channelModelCred.bonus);
+        await _updateBalance(codeLanguage.length, channelModelCred);
         emit(state.copyWith(
             translateStatus: TranslateStatus.success,
             messageStatus:
                 'Status TD $_operationQueueAll Code $codeState CL = ${videoModel.defaultLanguage}'));
       }
     }
+  }
+
+  Future<void> _updateBalance(int translateQuantity, ChannelModelCred channelModelCred) async {
+    await cubitUserData.updateBalance(
+         numberTranslate: translateQuantity,
+        channel: channelModelCred,
+        bonusOfRemoteChannel: channelModelCred.bonus);
   }
 }

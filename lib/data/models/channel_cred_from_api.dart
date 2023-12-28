@@ -27,6 +27,41 @@ class ChannelModelCredFromApi{
    final TypePlatformRefreshToken typePlatformRefreshToken;
 
 
+   ChannelModelCredFromApi(
+      this.nameChannel,
+      this.imgBanner,
+      this.accountName,
+      this.idUpload,
+      this.idChannel,
+      this.accessToken,
+      this.idToken,
+      this.defaultLanguage,
+      this.refreshToken,
+      this.idInvitation,
+      this.bonus,
+       this.remoteChannel,
+      this.typePlatformRefreshToken);
+
+  ChannelModelCredFromApi copyWith({int? bonus}){
+      return ChannelModelCredFromApi(
+          nameChannel,
+          imgBanner,
+          accountName,
+          idUpload,
+          idChannel,
+          accessToken,
+          idToken,
+          defaultLanguage,
+          refreshToken,
+          idInvitation,
+          bonus??this.bonus,
+          remoteChannel,
+          typePlatformRefreshToken
+
+      );
+   }
+
+
    ChannelModelCredFromApi.fromApi(
       {required Channel channel,
       required String googleAccount,

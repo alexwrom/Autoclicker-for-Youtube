@@ -37,8 +37,9 @@ class YouTubeApiService {
   final _dioAuthClient = locator.get<DioAuthClient>();
 
 
-  Future<void> _checkRemoteChannelsList({required String idChannel,required String refreshToken}) async {
+  Future<int> _checkRemoteChannelsList({required String idChannel,required String refreshToken}) async {
     try {
+      int bonus = 0;
       final doc = await FirebaseFirestore.instance
           .collection('channels')
           .doc(idChannel.trim())
@@ -50,11 +51,15 @@ class YouTubeApiService {
           'balance':400,
           'refreshToken':refreshToken
         });
+        bonus = 400;
       }else{
         await FirebaseFirestore.instance
             .collection('channels')
             .doc(idChannel.trim()).update({'refreshToken':refreshToken});
+        bonus = doc.get('balance');
       }
+
+      return bonus;
 
     } on FirebaseException catch (e, stackTrace) {
       Error.throwWithStackTrace(Failure(e.message!), stackTrace);
@@ -149,10 +154,6 @@ class YouTubeApiService {
         throw const Failure('Channel list is empty');
       }
 
-      await _checkRemoteChannelsList(
-          idChannel: result.items![0].id!,
-          refreshToken: credByInvitation.refreshToken);
-
       return ChannelModelCredFromApi.fromApi(
           channel: result.items![0],
           googleAccount: credByInvitation.emailUser,
@@ -174,15 +175,20 @@ class YouTubeApiService {
 
   Future<ChannelModelCredFromApi> addChannel() async {
     try {
-      final ChannelModelCredFromApi channelModelCredFromApi;
+       ChannelModelCredFromApi channelModelCredFromApi;
       if (Platform.isIOS) {
         channelModelCredFromApi = await _getModelChannelIOS();
       } else {
         channelModelCredFromApi = await _getModelChannelAndroid();
       }
-      await _checkRemoteChannelsList(
-          idChannel: channelModelCredFromApi.idChannel,
-          refreshToken: channelModelCredFromApi.refreshToken);
+
+      if(channelModelCredFromApi.refreshToken.isNotEmpty){
+       final bonus = await _checkRemoteChannelsList(
+            idChannel: channelModelCredFromApi.idChannel,
+            refreshToken: channelModelCredFromApi.refreshToken);
+       channelModelCredFromApi = channelModelCredFromApi.copyWith(bonus: bonus);
+      }
+
 
       return channelModelCredFromApi;
     } on Failure catch (error, stackTrace) {
@@ -225,7 +231,7 @@ class YouTubeApiService {
           idTok: '',
           refToken: '',
           iDInvitation: '',
-          bonus: 0,
+          bonus: 400,
           remoteChannel: false,
           typePlatformRefreshTok: TypePlatformRefreshToken.android,
           accessTok: accessToken);
@@ -266,7 +272,7 @@ class YouTubeApiService {
           typePlatformRefreshTok: TypePlatformRefreshToken.ios,
           refToken: refreshToken,
           iDInvitation: '',
-          bonus: 0,
+          bonus: 400,
           accessTok: accessToken);
     } on Failure catch (error, stackTrace) {
       print('Error 1 ${error.message}');

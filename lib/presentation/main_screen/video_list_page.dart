@@ -128,35 +128,39 @@ class _VideoListPageState extends State<VideoListPage> with WidgetsBindingObserv
                   ],
                 ),
 
-                BlocConsumer<MainBloc,MainState>(
-                  listener: (c,s){
-                    if(s.statusAddRemoteChannel.isError){
-                      _remoteChannel =!_remoteChannel;
-                      Dialoger.showError(s.error, context);
+                Visibility(
+                  visible: widget.channelModelCred.refreshToken.isNotEmpty&&
+                      widget.channelModelCred.idInvitation.isEmpty,
+                  child: BlocConsumer<MainBloc,MainState>(
+                    listener: (c,s){
+                      if(s.statusAddRemoteChannel.isError){
+                        _remoteChannel =!_remoteChannel;
+                        Dialoger.showError(s.error, context);
+                      }
+                    },
+                    builder: (context,state) {
+                      return Row(
+                        children: [
+                           Icon(Icons.smartphone,color: colorGrey,size: 23.0),
+                         Switch(
+                           thumbColor: MaterialStatePropertyAll(colorGrey),
+                            trackColor: MaterialStatePropertyAll(colorBackground),
+                             value: _remoteChannel,
+                             onChanged: (v){
+                              setState(() {
+                                _remoteChannel = v;
+                                context.read<MainBloc>().add(
+                                        AddOrRemoveRemoteChannelEvent(
+                                            channelModelCred:
+                                                widget.channelModelCred,
+                                            remove: !_remoteChannel));
+                                  });
+                         }),
+                           Icon(Icons.public,color: colorGrey,size: 25.0)
+                        ],
+                      );
                     }
-                  },
-                  builder: (context,state) {
-                    return Row(
-                      children: [
-                         Icon(Icons.smartphone,color: colorGrey,size: 23.0),
-                       Switch(
-                         thumbColor: MaterialStatePropertyAll(colorGrey),
-                          trackColor: MaterialStatePropertyAll(colorBackground),
-                           value: _remoteChannel,
-                           onChanged: (v){
-                            setState(() {
-                              _remoteChannel = v;
-                              context.read<MainBloc>().add(
-                                      AddOrRemoveRemoteChannelEvent(
-                                          channelModelCred:
-                                              widget.channelModelCred,
-                                          remove: !_remoteChannel));
-                                });
-                       }),
-                         Icon(Icons.public,color: colorGrey,size: 25.0)
-                      ],
-                    );
-                  }
+                  ),
                 )
 
               ],

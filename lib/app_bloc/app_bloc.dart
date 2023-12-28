@@ -98,7 +98,8 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     final PackageInfo packageInfo = await PackageInfo.fromPlatform();
     final versionApp = packageInfo.version;
     final user = FirebaseAuth.instance.currentUser;
-    if (user == null || user.email == null) {
+    final uid = PreferencesUtil.getEmail;
+    if (user == null || uid.isEmpty) {
       await FirebaseAuth.instance.signInAnonymously();
       final config = await _authRepository.getConfigApp();
       await FirebaseAuth.instance.signOut();

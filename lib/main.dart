@@ -11,6 +11,7 @@ import 'package:youtube_clicker/presentation/main_screen/bloc/main_bloc.dart';
 import 'package:youtube_clicker/presentation/main_screen/cubit/user_data_cubit.dart';
 import 'package:youtube_clicker/presentation/main_screen/list_channel_add_page.dart';
 import 'package:youtube_clicker/presentation/membership_screen/membership_page.dart';
+import 'package:youtube_clicker/presentation/translate_screen/bloc/translate_bloc.dart';
 import 'package:youtube_clicker/utils/preferences_util.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -89,6 +90,7 @@ class _MyAppState extends State<MyApp> {
         BlocProvider<AuthBloc>(create: (_)=>AuthBloc()),
         BlocProvider<AppBloc>(create: (_) => AppBloc()),
         BlocProvider<MainBloc>(create: (_)=>MainBloc(userDataCubit)),
+
       ],
       child: MaterialApp(
         theme: AppTheme.light,

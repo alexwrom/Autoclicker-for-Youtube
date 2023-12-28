@@ -20,6 +20,8 @@ import '../../data/models/hive_models/channel_lang_code.dart';
 import '../../data/services/youtube_api_service.dart';
 import '../../domain/models/channel_model_cred.dart';
 import '../../utils/parse_time_duration.dart';
+import '../main_screen/bloc/main_bloc.dart';
+import '../main_screen/bloc/main_event.dart';
 import 'bloc/translate_bloc.dart';
 import 'bloc/translate_event.dart';
 import 'bloc/translate_state.dart';
@@ -90,6 +92,11 @@ class _TranslatePageState extends State<TranslatePage> {
                   Dialoger.showError(stateLis.error, context);
                 }
 
+              }
+
+              if(stateLis.translateStatus.isSuccess){
+                context.read<MainBloc>().add(UpdateChannelListEvent(channelModelCred: widget.credChannel,
+                    translateQuantity: _listCodeLanguage.length));
               }
 
 

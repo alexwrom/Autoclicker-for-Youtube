@@ -119,9 +119,13 @@ class UserApiService{
       map.addAll({'balance':balance});
       try{
         await _firebaseFirestore!.collection('userpc').doc(uid.toLowerCase()).update(map);
-        await _firebaseFirestore!.collection('channels').doc(channel.idChannel).update({
-          'balance':bonusOfRemoteChannel
-        });
+        final docBonus = await _firebaseFirestore!.collection('channels').doc(channel.idChannel).get();
+        if(docBonus.exists&&channel.idInvitation.isEmpty){
+          await _firebaseFirestore!.collection('channels').doc(channel.idChannel).update({
+            'balance':bonusOfRemoteChannel
+          });
+        }
+
 
       }on FirebaseException catch(error,stackTrace){
         Error.throwWithStackTrace(Failure(error.message!), stackTrace);
