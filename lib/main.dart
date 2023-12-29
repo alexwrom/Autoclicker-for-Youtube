@@ -87,7 +87,7 @@ class _MyAppState extends State<MyApp> {
     return MultiBlocProvider(
       providers: [
         BlocProvider<UserDataCubit>(create: (_)=>userDataCubit),
-        BlocProvider<AuthBloc>(create: (_)=>AuthBloc()),
+        BlocProvider<AuthBloc>(create: (_)=>AuthBloc(userDataCubit)),
         BlocProvider<AppBloc>(create: (_) => AppBloc()),
         BlocProvider<MainBloc>(create: (_)=>MainBloc(userDataCubit)),
 

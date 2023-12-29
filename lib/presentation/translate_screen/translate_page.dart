@@ -44,9 +44,25 @@ class _TranslatePageState extends State<TranslatePage> {
    late TranslateBloc _translateBloc;
    List<String> _listCodeLanguage=[];
    final boxVideo=Hive.box('video_box');
+   late ChannelModelCred _channelModelCred;
 
 
-
+   void _updateChannel({required ChannelModelCred channelModelCred,required int translateQuantity}) async {
+     if(channelModelCred.bonus>0){
+       int totalBonus = 0;
+       int bonusOfRemoteChannel = channelModelCred.bonus;
+       int numberTranslate = translateQuantity;
+       final res = bonusOfRemoteChannel - numberTranslate;
+       if(res<0){
+         totalBonus = 0;
+       }else {
+         totalBonus = res;
+       }
+       ChannelModelCred channel = channelModelCred;
+       channel = channel.copyWith(bonus:totalBonus);
+       _channelModelCred = channel;
+     }
+   }
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +72,8 @@ class _TranslatePageState extends State<TranslatePage> {
       _textButton='Translate title'.tr();
     }
     //final balance=context.read<UserDataCubit>().state.userData.numberOfTrans;
+
+
 
     return Scaffold(
       backgroundColor: colorBackground,
@@ -82,7 +100,7 @@ class _TranslatePageState extends State<TranslatePage> {
                       context: context,
                        callRepeatTranslate: (){
                          _translateBloc.add(InsertSubtitlesEvent(
-                           cred: widget.credChannel,
+                           cred: _channelModelCred,
                            repeatTranslate: true,
                              defaultAudioLanguage: widget.videoModel.defaultAudioLanguage,
                              codesLang: stateLis.listCodeLanguageNotSuccessful,
@@ -95,8 +113,10 @@ class _TranslatePageState extends State<TranslatePage> {
               }
 
               if(stateLis.translateStatus.isSuccess){
-                context.read<MainBloc>().add(UpdateChannelListEvent(channelModelCred: widget.credChannel,
+                context.read<MainBloc>().add(UpdateChannelListEvent(channelModelCred: _channelModelCred,
                     translateQuantity: _listCodeLanguage.length));
+                _updateChannel(channelModelCred: _channelModelCred,
+                    translateQuantity: _listCodeLanguage.length);
               }
 
 
@@ -208,7 +228,7 @@ class _TranslatePageState extends State<TranslatePage> {
                                     Navigator.of(context).push(MaterialPageRoute(
                                       builder: (_) => ChoiceLanguagePage(
                                           idVideo: widget.videoModel.idVideo,
-                                          credChannel: widget.credChannel)));
+                                          credChannel: _channelModelCred)));
                                 },
                                   child:const Icon(Icons.translate,color: Colors.white,)),
                             ],
@@ -367,7 +387,7 @@ class _TranslatePageState extends State<TranslatePage> {
           }else{
             Dialoger.showGetStartedTranslate(context,_listCodeLanguage.length, () {
                 _translateBloc.add(InsertSubtitlesEvent(
-                    cred: widget.credChannel,
+                    cred: _channelModelCred,
                     defaultAudioLanguage: widget.videoModel.defaultAudioLanguage,
                     codesLang: _listCodeLanguage,
                     repeatTranslate: false,
@@ -395,7 +415,7 @@ class _TranslatePageState extends State<TranslatePage> {
   }
 
   void _initTranslate(BuildContext context, TranslateState state) {
-    if (widget.videoModel.defaultLanguage.isEmpty&&widget.credChannel.defaultLanguage.isEmpty) {
+    if (widget.videoModel.defaultLanguage.isEmpty&&_channelModelCred.defaultLanguage.isEmpty) {
       Dialoger.showInfoDialog(
           context,
           'There are no localization settings on the channel'.tr(),
@@ -411,7 +431,7 @@ class _TranslatePageState extends State<TranslatePage> {
           }else{
             Dialoger.showGetStartedTranslate(context,_listCodeLanguage.length, () {
                 _translateBloc.add(StartTranslateEvent(
-                    channelModelCred: widget.credChannel,
+                    channelModelCred: _channelModelCred,
                     codeLanguage: _listCodeLanguage,
                     videoModel: widget.videoModel));
               });
@@ -492,13 +512,14 @@ class _TranslatePageState extends State<TranslatePage> {
   @override
   void initState() {
     super.initState();
-    final ChannelLangCode value = boxVideo.get(widget.credChannel.keyLangCode);
+    _channelModelCred = widget.credChannel;
+    final ChannelLangCode value = boxVideo.get(_channelModelCred.keyLangCode);
     _listCodeLanguage=value.codeLanguage;
     _translateBloc=TranslateBloc(cubitUserData: context.read<UserDataCubit>());
     _translateBloc.add(GetSubtitlesEvent(
       codesLang: _listCodeLanguage,
       defaultAudioLanguage: widget.videoModel.defaultAudioLanguage,
-        videoId: widget.videoModel.idVideo,cred: widget.credChannel));
+        videoId: widget.videoModel.idVideo,cred: _channelModelCred));
     // boxVideo.keys.map((key) {
     //   final ChannelLangCode value = boxVideo.get(widget.credChannel.keyLangCode);
     //   _listCodeLanguage=value.codeLanguage;

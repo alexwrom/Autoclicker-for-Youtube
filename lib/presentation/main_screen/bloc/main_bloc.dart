@@ -126,7 +126,7 @@ class MainBloc extends Bloc<MainEvent,MainState>{
 }
 
   Future<void> _getListCredChannel(GetChannelEvent event,emit)async{
-
+    print('L 1');
     emit(state.copyWith(mainStatus: MainStatus.loading,isChannelDeactivation:true));
     try {
       listCredChannels.clear();
@@ -138,6 +138,7 @@ class MainBloc extends Bloc<MainEvent,MainState>{
           }).toList();
 
       if(event.user.channels.isEmpty){
+        print('L 2');
         if (listCredChannels.isEmpty) {
           emit(state.copyWith(
               mainStatus: MainStatus.empty,
@@ -145,21 +146,24 @@ class MainBloc extends Bloc<MainEvent,MainState>{
               urlAvatar: '',
               blockedAccount: blockedAccount));
         } else {
+
           final listFiltered=await _checkListChanelByInvitation(listCredChannels);
           final isActivatedChannel=await _checkActivatedChanelByInvitation(listCredFiltered: listFiltered,
               listCredOld: listCredChannels);
           if(!isActivatedChannel){
             listCredChannels=listFiltered;
           }
+          final listChannelsResult = await _checkBonusInRemoteChannel(channels: listCredChannels);
           emit(state.copyWith(
               mainStatus: MainStatus.success,
-              listCredChannels: listCredChannels,
+              listCredChannels: listChannelsResult,
               userName: name,
               urlAvatar: '',
               blockedAccount: blockedAccount,
               isChannelDeactivation: isActivatedChannel));
         }
       }else{
+        print('L 3');
          List<String> idsChannels = [];
          for(var channel in listCredChannels){
             idsChannels.add(channel.idChannel);

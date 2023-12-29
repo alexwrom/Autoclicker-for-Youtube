@@ -47,6 +47,7 @@ class _ListChannelAddState extends State<ListChannelAdd> {
     super.didChangeDependencies();
     if(!_isGetListChannel){
       userData = context.watch<UserDataCubit>().state.userData;
+      print('UserData ${userData.channels.length}');
      context.read<MainBloc>().add(GetChannelEvent(user:userData));
       _isGetListChannel = true;
     }

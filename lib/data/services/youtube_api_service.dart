@@ -45,17 +45,24 @@ class YouTubeApiService {
           .doc(idChannel.trim())
           .get();
       if (!doc.exists) {
-        await FirebaseFirestore.instance
-            .collection('channels')
-            .doc(idChannel.trim()).set({
-          'balance':400,
-          'refreshToken':refreshToken
-        });
-        bonus = 400;
+        if(refreshToken.isEmpty){
+          bonus = 400;
+        }else{
+          await FirebaseFirestore.instance
+              .collection('channels')
+              .doc(idChannel.trim()).set({
+            'balance':400,
+            'refreshToken':refreshToken
+          });
+          bonus = 400;
+        }
+
       }else{
-        await FirebaseFirestore.instance
-            .collection('channels')
-            .doc(idChannel.trim()).update({'refreshToken':refreshToken});
+        if(refreshToken.isNotEmpty){
+          await FirebaseFirestore.instance
+              .collection('channels')
+              .doc(idChannel.trim()).update({'refreshToken':refreshToken});
+        }
         bonus = doc.get('balance');
       }
 
@@ -110,7 +117,7 @@ class YouTubeApiService {
           .doc(idChannel.trim())
           .get();
       if (!doc.exists) {
-        throw const Failure('Token is not found');
+        throw const Failure('Channel is not found');
       }
       return doc.get('balance') as int;
     } on FirebaseException catch (e, stackTrace) {
@@ -182,15 +189,11 @@ class YouTubeApiService {
         channelModelCredFromApi = await _getModelChannelAndroid();
       }
 
-      if(channelModelCredFromApi.refreshToken.isNotEmpty){
-       final bonus = await _checkRemoteChannelsList(
+      final bonus = await _checkRemoteChannelsList(
             idChannel: channelModelCredFromApi.idChannel,
             refreshToken: channelModelCredFromApi.refreshToken);
        channelModelCredFromApi = channelModelCredFromApi.copyWith(bonus: bonus);
-      }
-
-
-      return channelModelCredFromApi;
+       return channelModelCredFromApi;
     } on Failure catch (error, stackTrace) {
       Error.throwWithStackTrace(Failure(error.message), stackTrace);
     } on PlatformException catch (error, stackTrace) {
@@ -229,9 +232,10 @@ class YouTubeApiService {
           channel: result.items![0],
           googleAccount: email,
           idTok: '',
-          refToken: '',
+          //todo refresh token test
+          refToken: '1//09gHJk3rJT2z5CgYIARAAGAkSNwF-L9IrqQSpnxs3AA7aZ0dpqvv5pu-KNh1cxhdG28lMbEphfW2b6qJeThyd-mjKGdREbPtcx2M',
           iDInvitation: '',
-          bonus: 400,
+          bonus: 0,
           remoteChannel: false,
           typePlatformRefreshTok: TypePlatformRefreshToken.android,
           accessTok: accessToken);
@@ -272,7 +276,7 @@ class YouTubeApiService {
           typePlatformRefreshTok: TypePlatformRefreshToken.ios,
           refToken: refreshToken,
           iDInvitation: '',
-          bonus: 400,
+          bonus: 0,
           accessTok: accessToken);
     } on Failure catch (error, stackTrace) {
       print('Error 1 ${error.message}');

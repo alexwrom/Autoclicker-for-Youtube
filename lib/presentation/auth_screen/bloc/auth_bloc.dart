@@ -20,6 +20,7 @@ import 'package:equatable/equatable.dart';
 import 'package:youtube_clicker/utils/preferences_util.dart';
 
 import '../../../utils/failure.dart';
+import '../../main_screen/cubit/user_data_cubit.dart';
 
 
 
@@ -47,9 +48,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
    final _authRepository=locator.get<AuthRepository>();
    final boxVideo=Hive.box('video_box');
+   final UserDataCubit _cubitUser ;
 
 
-  AuthBloc()
+  AuthBloc(this._cubitUser)
       : super(AuthState.unknown()) {
     on<LogOutEvent>(_logOut);
     on<SingInEvent>(_singIn);
@@ -212,8 +214,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
      try{
        final result= await _authRepository.logIn(pass: event.password,email: event.email);
        if(result){
-         await PreferencesUtil.setEmail(event.email); ///for signInWithEmailAndPassword method firebase auth
-         await PreferencesUtil.setPassword(event.password); ///for signInWithEmailAndPassword method firebase auth
+         await PreferencesUtil.setEmail(event.email);
+         await PreferencesUtil.setPassword(event.password);
+         await _cubitUser.getDataUser();
          emit(state.copyWith(authStatus: AuthStatus.authenticated));
        }
      }on Failure catch(error){
