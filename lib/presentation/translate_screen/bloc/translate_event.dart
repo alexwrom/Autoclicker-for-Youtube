@@ -27,6 +27,13 @@ class TranslateEvent extends Equatable{
 
 }
 
+class CheckBalanceEvent extends TranslateEvent{
+  final List<String> codeLanguage;
+  final VideoModel videoModel;
+  final ChannelModelCred channelModelCred;
+   CheckBalanceEvent({required this.channelModelCred,required this.codeLanguage,required this.videoModel});
+}
+
   class TranslateSubtitlesEvent extends TranslateEvent {
     final List<String> codeLanguage;
     final String captionId;

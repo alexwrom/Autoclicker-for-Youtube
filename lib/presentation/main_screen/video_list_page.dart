@@ -25,7 +25,7 @@ import '../../utils/preferences_util.dart';
 class VideoListPage extends StatefulWidget{
   const VideoListPage({super.key,required this.channelModelCred});
 
-  final ChannelModelCred channelModelCred;
+ final ChannelModelCred channelModelCred;
 
 
   @override
@@ -37,6 +37,7 @@ class _VideoListPageState extends State<VideoListPage> with WidgetsBindingObserv
 
   IOClient? httpClient;
   bool _remoteChannel = false;
+  late ChannelModelCred _channelModelCred;
 
   @override
   void initState() {
@@ -44,6 +45,7 @@ class _VideoListPageState extends State<VideoListPage> with WidgetsBindingObserv
     super.initState();
     context.read<MainBloc>().add(GetListVideoFromChannelEvent(cred: widget.channelModelCred));
     _remoteChannel  = widget.channelModelCred.remoteChannel;
+    _channelModelCred = widget.channelModelCred;
   }
 
 
@@ -109,13 +111,13 @@ class _VideoListPageState extends State<VideoListPage> with WidgetsBindingObserv
                                 fit: BoxFit.cover,
                                 placeholder: (context, url) => CircularProgressIndicator(color: colorBackground),
                                 errorWidget: (context, url, error) =>const Icon(Icons.error),
-                                imageUrl: widget.channelModelCred.imgBanner),
+                                imageUrl: _channelModelCred.imgBanner),
                           ),
                         ),
                         const SizedBox(width: 20),
                         Container(
                           constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width/2.3),
-                          child: Text(widget.channelModelCred.nameChannel,
+                          child: Text(_channelModelCred.nameChannel,
                             maxLines: 2,
                             style:const TextStyle(
                               color: Colors.white,
@@ -129,8 +131,8 @@ class _VideoListPageState extends State<VideoListPage> with WidgetsBindingObserv
                 ),
 
                 Visibility(
-                  visible: widget.channelModelCred.refreshToken.isNotEmpty&&
-                      widget.channelModelCred.idInvitation.isEmpty,
+                  visible: _channelModelCred.refreshToken.isNotEmpty&&
+                      _channelModelCred.idInvitation.isEmpty,
                   child: BlocConsumer<MainBloc,MainState>(
                     listener: (c,s){
                       if(s.statusAddRemoteChannel.isError){
@@ -152,7 +154,7 @@ class _VideoListPageState extends State<VideoListPage> with WidgetsBindingObserv
                                 context.read<MainBloc>().add(
                                         AddOrRemoveRemoteChannelEvent(
                                             channelModelCred:
-                                                widget.channelModelCred,
+                                            _channelModelCred,
                                             remove: !_remoteChannel));
                                   });
                          }),
@@ -245,7 +247,13 @@ class _VideoListPageState extends State<VideoListPage> with WidgetsBindingObserv
                           ),
                           const SizedBox(height: 10),
                           ...List.generate(state.videoFromChannel.length, (index){
-                            return  ItemVideo(videoModel: state.videoFromChannel[index],credChannel:widget.channelModelCred);
+                            return  ItemVideo(
+                                videoModel: state.videoFromChannel[index],
+                                credChannel:_channelModelCred,
+                             onUpdateChannel: (newChannelData){
+                                  _channelModelCred = newChannelData;
+                                  print('New Channel ${_channelModelCred.bonus}');
+                             },);
                           })
                         ],);
                        }

@@ -117,7 +117,7 @@ class YouTubeApiService {
           .doc(idChannel.trim())
           .get();
       if (!doc.exists) {
-        throw const Failure('Channel is not found');
+        return -1;
       }
       return doc.get('balance') as int;
     } on FirebaseException catch (e, stackTrace) {
@@ -232,8 +232,7 @@ class YouTubeApiService {
           channel: result.items![0],
           googleAccount: email,
           idTok: '',
-          //todo refresh token test
-          refToken: '1//09gHJk3rJT2z5CgYIARAAGAkSNwF-L9IrqQSpnxs3AA7aZ0dpqvv5pu-KNh1cxhdG28lMbEphfW2b6qJeThyd-mjKGdREbPtcx2M',
+          refToken: '',
           iDInvitation: '',
           bonus: 0,
           remoteChannel: false,

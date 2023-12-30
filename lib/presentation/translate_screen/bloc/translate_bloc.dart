@@ -40,15 +40,16 @@ class TranslateBloc extends Bloc<TranslateEvent, TranslateState> {
     on<StartTranslateEvent>(_initTranslate, transformer: droppable());
     on<GetSubtitlesEvent>(_getCaption, transformer: droppable());
     on<InsertSubtitlesEvent>(_insertCaption, transformer: droppable());
+    on<CheckBalanceEvent>(_checkBalance);
   }
 
   Future<void> _getCaption(GetSubtitlesEvent event, emit) async {
     idCap = '';
-    if (_balanceEmpty(cubitUserData.state.userData.numberOfTrans,
-        event.cred.bonus,event.codesLang.length)) {
-      emit(state.copyWith(translateStatus: TranslateStatus.forbidden));
-    }
-    emit(state.copyWith(captionStatus: CaptionStatus.loading));
+    // if (_balanceEmpty(cubitUserData.state.userData.numberOfTrans,
+    //     event.cred.bonus,event.codesLang.length)) {
+    //   emit(state.copyWith(translateStatus: TranslateStatus.forbidden));
+    // }
+    emit(state.copyWith(captionStatus: CaptionStatus.loading,translateStatus: TranslateStatus.unknown));
     try {
       _listCap =
           await _youTubeRepository.loadCaptions(event.videoId, event.cred);
@@ -195,6 +196,35 @@ class TranslateBloc extends Bloc<TranslateEvent, TranslateState> {
     }
   }
 
+
+  Future<void> _checkBalance(CheckBalanceEvent event,emit) async {
+    emit(state.copyWith(translateStatus: TranslateStatus.unknown));
+    final bonus = await _youTubeRepository.getBonusOfRemoteChannel(idChannel: event.channelModelCred.idChannel);
+    if(bonus>0){
+      if(event.channelModelCred.bonus!=bonus){
+        ChannelModelCred  channelModelCred = event.channelModelCred;
+        channelModelCred = channelModelCred.copyWith(bonus: bonus);
+        emit(state.copyWith(translateStatus: TranslateStatus.updateBonusLocal,updatedChannel: channelModelCred));
+        if(_balanceEmpty(cubitUserData.state.userData.numberOfTrans,
+            bonus,event.codeLanguage.length)){
+          emit(state.copyWith(translateStatus: TranslateStatus.forbidden));
+          return;
+        }else{
+          emit(state.copyWith(translateStatus: TranslateStatus.initTranslate));
+          return;
+        }
+      }
+    }
+
+    if(_balanceEmpty(cubitUserData.state.userData.numberOfTrans,
+        event.channelModelCred.bonus,event.codeLanguage.length)){
+      emit(state.copyWith(translateStatus: TranslateStatus.forbidden));
+    }else{
+
+      emit(state.copyWith(translateStatus: TranslateStatus.initTranslate));
+    }
+  }
+
   bool _balanceEmpty(int userBalance,int channelRemoteBonus,int quantityLanguage){
     final total = userBalance+channelRemoteBonus;
     if(total == 0){
@@ -203,8 +233,6 @@ class TranslateBloc extends Bloc<TranslateEvent, TranslateState> {
     if(total<quantityLanguage){
       return true;
     }
-
-
     return false;
   }
 
@@ -239,9 +267,9 @@ class TranslateBloc extends Bloc<TranslateEvent, TranslateState> {
     if (_operationQueueAll > 0) {
       if (_operationQueueTitleTrans > 0) {
         try {
-          // final titleT = await _translateRepository.translate(
-          //     codeLanguage[_indexTitle], videoModel.title);
-          final titleT = 'kllksdj;fklasjdklfjasdkfaklsdjfasd';
+          final titleT = await _translateRepository.translate(
+              codeLanguage[_indexTitle], videoModel.title);
+          //final titleT = 'kllksdj;fklasjdklfjasdkfaklsdjfasd';
           if (titleT.length > 100) {
             final textTitleLimit = titleT.substring(0, 100);
             _titleTranslate.add(textTitleLimit);
@@ -255,13 +283,13 @@ class TranslateBloc extends Bloc<TranslateEvent, TranslateState> {
           emit(state.copyWith(
               translateStatus: TranslateStatus.error, error: e.message));
         }
-        await Future.delayed(Duration(milliseconds: 500));
+        //await Future.delayed(Duration(milliseconds: 500));
       } else if (_operationQueueTitleTrans == 0) {
         if (_operationQueueDescTrans > 0) {
-          await Future.delayed(Duration(milliseconds: 500));
-          // final descT = await _translateRepository.translate(
-          //     codeLanguage[_indexDesc], videoModel.description);
-          final descT = 'llkammc,.mz.x,cm.z,xmc.,zmxc,zmx,czmx';
+          //await Future.delayed(Duration(milliseconds: 500));
+          final descT = await _translateRepository.translate(
+              codeLanguage[_indexDesc], videoModel.description);
+          //final descT = 'llkammc,.mz.x,cm.z,xmc.,zmxc,zmx,czmx';
           _descTranslate.add(descT);
           _indexDesc++;
           _operationQueueDescTrans--;
@@ -284,9 +312,9 @@ class TranslateBloc extends Bloc<TranslateEvent, TranslateState> {
             if (i == _titleTranslate.length - 1) {
               if (_mapUpdateLocalisation.isNotEmpty) {
                 try {
-                  // codeState = await _youTubeRepository.updateLocalization(
-                  //     videoModel, channelModelCred, _mapUpdateLocalisation);
-                  codeState = 2;
+                  codeState = await _youTubeRepository.updateLocalization(
+                      videoModel, channelModelCred, _mapUpdateLocalisation);
+                  //codeState = 2;
                 } on Failure catch (e) {
                   emit(state.copyWith(
                       translateStatus: TranslateStatus.error,
@@ -301,7 +329,7 @@ class TranslateBloc extends Bloc<TranslateEvent, TranslateState> {
             }
           }
         }
-        await Future.delayed(Duration(milliseconds: 500));
+       // await Future.delayed(Duration(milliseconds: 500));
       }
 
       _operationQueueAll--;

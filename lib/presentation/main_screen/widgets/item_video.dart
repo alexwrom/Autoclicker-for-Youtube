@@ -12,19 +12,42 @@ import 'package:youtube_clicker/utils/parse_time_duration.dart';
 import '../../../resourses/colors_app.dart';
 import '../../translate_screen/translate_page.dart';
 
-class ItemVideo extends StatelessWidget{
-  const ItemVideo({super.key,required this.videoModel,required this.credChannel});
+class ItemVideo extends StatefulWidget{
+  const ItemVideo({super.key,required this.videoModel,required this.credChannel,
+  required this.onUpdateChannel});
 
   final VideoModel videoModel;
-  final ChannelModelCred credChannel;
+   final ChannelModelCred credChannel;
+   final Function onUpdateChannel;
+
+  @override
+  State<ItemVideo> createState() => _ItemVideoState();
+}
+
+class _ItemVideoState extends State<ItemVideo> {
+
+  late ChannelModelCred credChannel;
+
+  @override
+  void initState() {
+   super.initState();
+   credChannel = widget.credChannel;
+  }
 
   @override
   Widget build(BuildContext context) {
+
+
     final _width=MediaQuery.of(context).size.width;
+
     return GestureDetector(
-      onTap: (){
-        //start play
-       Navigator.push(context, MaterialPageRoute(builder: (_)=>TranslatePage(videoModel: videoModel,credChannel:credChannel)));
+      onTap: () async{
+       final channel = await Navigator.push(context, MaterialPageRoute(builder: (_)=>
+           TranslatePage(videoModel: widget.videoModel,credChannel:credChannel)));
+       if(channel!=null){
+         credChannel = channel;
+         widget.onUpdateChannel.call(credChannel);
+       }
       },
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 10),
@@ -43,7 +66,7 @@ class ItemVideo extends StatelessWidget{
                   child: CachedNetworkImage(
                       placeholder: (context, url) => const Icon(Icons.image_outlined,color: Colors.grey,size: 100),
                       errorWidget: (context, url, error) =>const Icon(Icons.error,color: Colors.grey,size: 60),
-                      imageUrl: videoModel.urlBanner, fit: BoxFit.cover,
+                      imageUrl: widget.videoModel.urlBanner, fit: BoxFit.cover,
                       width: 120,
                       height: 130),
                 ),
@@ -57,7 +80,7 @@ class ItemVideo extends StatelessWidget{
                       color: Colors.black54,
                       borderRadius: BorderRadius.circular(5.0),
                     ),
-                    child: Text(ParseTimeDuration.toStringTimeVideo(videoModel.duration),
+                    child: Text(ParseTimeDuration.toStringTimeVideo(widget.videoModel.duration),
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
                       style:const TextStyle(
@@ -77,7 +100,7 @@ class ItemVideo extends StatelessWidget{
                 children: [
                   SizedBox(
                     width: _width/1.8,
-                    child: Text(videoModel.title,
+                    child: Text(widget.videoModel.title,
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
                       style:const TextStyle(
@@ -90,7 +113,7 @@ class ItemVideo extends StatelessWidget{
                   SizedBox(
                     width: _width/1.8,
                     height: 35,
-                    child: Text(videoModel.description.isEmpty?'Video description missing....'.tr():videoModel.description,
+                    child: Text(widget.videoModel.description.isEmpty?'Video description missing....'.tr():widget.videoModel.description,
                       overflow: TextOverflow.ellipsis,
                       maxLines: 2,
                       style:const TextStyle(
@@ -107,7 +130,7 @@ class ItemVideo extends StatelessWidget{
                         children: [
                           Icon(Icons.recommend_outlined,color: colorRed.withOpacity(0.7),size: 15),
                           const SizedBox(width: 5),
-                          Text(videoModel.likeCount,
+                          Text(widget.videoModel.likeCount,
                             overflow: TextOverflow.ellipsis,
                             maxLines: 2,
                             style:const TextStyle(
@@ -122,7 +145,7 @@ class ItemVideo extends StatelessWidget{
                         children: [
                           Icon(Icons.remove_red_eye_outlined,color: colorRed.withOpacity(0.7),size: 15),
                           const SizedBox(width: 5),
-                          Text(videoModel.viewCount,
+                          Text(widget.videoModel.viewCount,
                             overflow: TextOverflow.ellipsis,
                             maxLines: 2,
                             style:const TextStyle(
@@ -139,7 +162,7 @@ class ItemVideo extends StatelessWidget{
                         children: [
                           Icon(Icons.mode_comment_outlined,color: colorRed.withOpacity(0.7),size: 15),
                           const SizedBox(width: 5),
-                          Text(videoModel.commentCount,
+                          Text(widget.videoModel.commentCount,
                             overflow: TextOverflow.ellipsis,
                             maxLines: 2,
                             style: const TextStyle(
@@ -164,4 +187,4 @@ class ItemVideo extends StatelessWidget{
   }
 
 
-  }
+}

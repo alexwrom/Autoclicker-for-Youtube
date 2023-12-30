@@ -43,6 +43,11 @@ class MainEvent extends Equatable{
    const GetChannelEvent({required this.user});
  }
 
+ class UpdateBonusEvent extends MainEvent{
+   final ChannelModelCred channelModelCred;
+   const UpdateBonusEvent({required this.channelModelCred});
+ }
+
  class RemoveChannelEvent extends MainEvent{
    final int keyHive;
    final int index;

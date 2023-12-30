@@ -1,13 +1,16 @@
 
 
   import 'package:equatable/equatable.dart';
+import 'package:youtube_clicker/domain/models/channel_model_cred.dart';
 
   enum TranslateStatus{
     error,
     success,
     translating,
     unknown,
-    forbidden
+    forbidden,
+    updateBonusLocal,
+    initTranslate
   }
 
   enum CaptionStatus{
@@ -46,6 +49,7 @@ class TranslateState extends Equatable{
     final double progressTranslateDouble;
     final String error;
     final String messageStatus;
+    final ChannelModelCred updatedChannel;
     final List<String> listCodeLanguageNotSuccessful;
 
 
@@ -56,16 +60,17 @@ class TranslateState extends Equatable{
       this.error,
       this.progressTranslateDouble,
       this.messageStatus,
-       this.listCodeLanguageNotSuccessful);
+       this.listCodeLanguageNotSuccessful,
+       this.updatedChannel);
 
     factory TranslateState.unknown(){
-        return const TranslateState(TranslateStatus.unknown,CaptionStatus.unknown,'0%','',0.0,'---',[]);
+        return  TranslateState(TranslateStatus.unknown,CaptionStatus.unknown,'0%','',0.0,'---',const [],ChannelModelCred.unknown());
     }
 
 
 
   @override
-  List<Object?> get props => [translateStatus,captionStatus,progressTranslate,error,progressTranslateDouble,messageStatus,listCodeLanguageNotSuccessful];
+  List<Object?> get props => [translateStatus,captionStatus,progressTranslate,error,progressTranslateDouble,messageStatus,listCodeLanguageNotSuccessful,updatedChannel];
 
     TranslateState copyWith({
     TranslateStatus? translateStatus,
@@ -74,7 +79,8 @@ class TranslateState extends Equatable{
     String? error,
       double? progressTranslateDouble,
       String? messageStatus,
-      List<String>? listCodeLanguageNotSuccessful
+      List<String>? listCodeLanguageNotSuccessful,
+      ChannelModelCred? updatedChannel
   }) {
     return TranslateState(
     translateStatus ?? this.translateStatus,
@@ -83,7 +89,8 @@ class TranslateState extends Equatable{
        error ?? this.error,
         progressTranslateDouble ?? this.progressTranslateDouble,
       messageStatus??this.messageStatus,
-      listCodeLanguageNotSuccessful?? this.listCodeLanguageNotSuccessful
+      listCodeLanguageNotSuccessful?? this.listCodeLanguageNotSuccessful,
+      updatedChannel??this.updatedChannel
     );
   }
 }

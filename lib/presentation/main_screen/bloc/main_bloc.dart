@@ -46,6 +46,7 @@ class MainBloc extends Bloc<MainEvent,MainState>{
      on<TakeBonusEvent>(_takeBonus,transformer: droppable());
      on<AddOrRemoveRemoteChannelEvent>(_addOrRemoveRemoteChannel,transformer: droppable());
      on<UpdateChannelListEvent>(_updateChannelList);
+     on<UpdateBonusEvent>(_updateBonus);
   }
 
 
@@ -64,6 +65,14 @@ class MainBloc extends Bloc<MainEvent,MainState>{
       channel = channel.copyWith(bonus:totalBonus);
       _updateLocalChannels(channel);
     }
+  }
+
+  void _updateBonus(UpdateBonusEvent event,emit) async {
+    print('_updateBonus ${event.channelModelCred.bonus}');
+    emit(state.copyWith(mainStatus: MainStatus.loading,isChannelDeactivation:true));
+    final listNew = await _updateLocalChannels(event.channelModelCred);
+    emit(state.copyWith(listCredChannels: listNew,mainStatus: MainStatus.success));
+
   }
 
 
@@ -126,7 +135,6 @@ class MainBloc extends Bloc<MainEvent,MainState>{
 }
 
   Future<void> _getListCredChannel(GetChannelEvent event,emit)async{
-    print('L 1');
     emit(state.copyWith(mainStatus: MainStatus.loading,isChannelDeactivation:true));
     try {
       listCredChannels.clear();
@@ -138,7 +146,6 @@ class MainBloc extends Bloc<MainEvent,MainState>{
           }).toList();
 
       if(event.user.channels.isEmpty){
-        print('L 2');
         if (listCredChannels.isEmpty) {
           emit(state.copyWith(
               mainStatus: MainStatus.empty,

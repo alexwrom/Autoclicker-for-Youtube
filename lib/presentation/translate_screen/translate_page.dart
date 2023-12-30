@@ -45,6 +45,7 @@ class _TranslatePageState extends State<TranslatePage> {
    List<String> _listCodeLanguage=[];
    final boxVideo=Hive.box('video_box');
    late ChannelModelCred _channelModelCred;
+   bool _tranlatingSubtitle = false;
 
 
    void _updateChannel({required ChannelModelCred channelModelCred,required int translateQuantity}) async {
@@ -61,6 +62,7 @@ class _TranslatePageState extends State<TranslatePage> {
        ChannelModelCred channel = channelModelCred;
        channel = channel.copyWith(bonus:totalBonus);
        _channelModelCred = channel;
+       print('Update bonus ${_channelModelCred.bonus}');
      }
    }
 
@@ -71,22 +73,38 @@ class _TranslatePageState extends State<TranslatePage> {
     if(widget.videoModel.description.isEmpty){
       _textButton='Translate title'.tr();
     }
-    //final balance=context.read<UserDataCubit>().state.userData.numberOfTrans;
+
 
 
 
     return Scaffold(
       backgroundColor: colorBackground,
       appBar: AppBar(
-        iconTheme: const IconThemeData(
-          color: Colors.white, //change your color here
-        ),
+        actions: [
+          Expanded(
+            child: Row(
+              children: [
+                IconButton(onPressed: (){
+                  Navigator.pop(context,_channelModelCred);
+                }, icon: const Icon(Icons.arrow_back),color: Colors.white),
+                Text(widget.videoModel.title,style:const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700
+                ),),
+              ],
+            ),
+          ),
+        ],
+        // iconTheme: const IconThemeData(
+        //   color: Colors.white, //change your color here
+        // ),
         elevation: 0,
-        title:  Text(widget.videoModel.title,style:const TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.w700
-        ),),
+        // title:  Text(widget.videoModel.title,style:const TextStyle(
+        //     color: Colors.white,
+        //     fontSize: 18,
+        //     fontWeight: FontWeight.w700
+        // ),),
       ),
       body: SafeArea(
         child: BlocProvider(
@@ -112,11 +130,30 @@ class _TranslatePageState extends State<TranslatePage> {
 
               }
 
+              if(stateLis.translateStatus == TranslateStatus.initTranslate){
+                if(_tranlatingSubtitle){
+                  _initTranslateSubtitle(stateLis, context);
+                }else{
+                  _initTranslate(context, stateLis);
+                }
+
+              }
+              if(stateLis.translateStatus.isForbidden){
+                //Dialoger.showNotTranslate(context,'The balance of active transfers is over'.tr());
+                Dialoger.showNotTranslate(context,'You don\'t have enough translations'.tr());
+              }
+
               if(stateLis.translateStatus.isSuccess){
                 context.read<MainBloc>().add(UpdateChannelListEvent(channelModelCred: _channelModelCred,
                     translateQuantity: _listCodeLanguage.length));
                 _updateChannel(channelModelCred: _channelModelCred,
                     translateQuantity: _listCodeLanguage.length);
+              }
+
+              if(stateLis.translateStatus == TranslateStatus.updateBonusLocal){
+                print('Update Channel ${stateLis.updatedChannel.bonus}');
+                context.read<MainBloc>().add(UpdateBonusEvent(
+                channelModelCred: stateLis.updatedChannel));
               }
 
 
@@ -328,7 +365,12 @@ class _TranslatePageState extends State<TranslatePage> {
                               ),
 
                                 onPressed:()async{
-                                 _initTranslate(context, state);
+                                  _tranlatingSubtitle = false;
+                                context.read<TranslateBloc>().add(CheckBalanceEvent(
+                                    channelModelCred: _channelModelCred,
+                                    codeLanguage: _listCodeLanguage,
+                                    videoModel: widget.videoModel));
+
 
 
                                  },
@@ -353,7 +395,13 @@ class _TranslatePageState extends State<TranslatePage> {
                                 ),
 
                                 onPressed:()async{
-                                  _initTranslateSubtitle(state, context);
+                                  _tranlatingSubtitle = true;
+                                  context.read<TranslateBloc>().add(CheckBalanceEvent(
+                                      channelModelCred: _channelModelCred,
+                                      codeLanguage: _listCodeLanguage,
+                                      videoModel: widget.videoModel));
+
+
                                   },
                                 child: Text('Translate subtitle'.tr(),
                                   style: const TextStyle(

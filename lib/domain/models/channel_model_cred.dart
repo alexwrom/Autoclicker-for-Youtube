@@ -23,7 +23,23 @@ class ChannelModelCred{
   final bool remoteChannel;
   final TypePlatformRefreshToken typePlatformRefreshToken;
 
-
+ factory ChannelModelCred.unknown(){
+   return const ChannelModelCred(
+        nameChannel: '',
+        imgBanner: '',
+        accountName: '',
+        idUpload: '',
+        idChannel: '',
+        accessToken: '',
+        idToken: '',
+        keyLangCode: 0,
+        refreshToken: '',
+        defaultLanguage: '',
+        idInvitation: '',
+        bonus: 0,
+        remoteChannel: false,
+        typePlatformRefreshToken: TypePlatformRefreshToken.android);
+  }
 
   const ChannelModelCred({
     required this.nameChannel,
@@ -41,6 +57,8 @@ class ChannelModelCred{
     required this.remoteChannel,
     required this.typePlatformRefreshToken
   });
+
+
 
 
   static ChannelModelCred fromBoxHive({required CredChannel channel}){
