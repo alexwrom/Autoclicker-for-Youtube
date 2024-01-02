@@ -10,6 +10,7 @@ import 'package:youtube_clicker/domain/models/channel_model_cred.dart';
     unknown,
     forbidden,
     updateBonusLocal,
+    updateBalanceLocal,
     initTranslate
   }
 
@@ -51,6 +52,7 @@ class TranslateState extends Equatable{
     final String messageStatus;
     final ChannelModelCred updatedChannel;
     final List<String> listCodeLanguageNotSuccessful;
+    final int updatedBalance;
 
 
    const TranslateState(
@@ -61,16 +63,18 @@ class TranslateState extends Equatable{
       this.progressTranslateDouble,
       this.messageStatus,
        this.listCodeLanguageNotSuccessful,
-       this.updatedChannel);
+       this.updatedChannel,
+       this.updatedBalance);
 
     factory TranslateState.unknown(){
-        return  TranslateState(TranslateStatus.unknown,CaptionStatus.unknown,'0%','',0.0,'---',const [],ChannelModelCred.unknown());
+        return  TranslateState(TranslateStatus.unknown,CaptionStatus.unknown,'0%','',0.0,'---',const [],ChannelModelCred.unknown(),0);
     }
 
 
 
   @override
-  List<Object?> get props => [translateStatus,captionStatus,progressTranslate,error,progressTranslateDouble,messageStatus,listCodeLanguageNotSuccessful,updatedChannel];
+  List<Object?> get props => [translateStatus,captionStatus,progressTranslate,error,progressTranslateDouble,messageStatus,
+    listCodeLanguageNotSuccessful,updatedChannel,updatedBalance];
 
     TranslateState copyWith({
     TranslateStatus? translateStatus,
@@ -80,7 +84,8 @@ class TranslateState extends Equatable{
       double? progressTranslateDouble,
       String? messageStatus,
       List<String>? listCodeLanguageNotSuccessful,
-      ChannelModelCred? updatedChannel
+      ChannelModelCred? updatedChannel,
+      int? updatedBalance
   }) {
     return TranslateState(
     translateStatus ?? this.translateStatus,
@@ -90,7 +95,8 @@ class TranslateState extends Equatable{
         progressTranslateDouble ?? this.progressTranslateDouble,
       messageStatus??this.messageStatus,
       listCodeLanguageNotSuccessful?? this.listCodeLanguageNotSuccessful,
-      updatedChannel??this.updatedChannel
+      updatedChannel??this.updatedChannel,
+      updatedBalance??this.updatedBalance
     );
   }
 }

@@ -74,7 +74,7 @@ class UserApiService{
 
     Future<UserDataFromApi> getDataUser({required String email})async{
      try{
-       print('UID ${email}');
+
      DocumentSnapshot documentSnapshot = await _firebaseFirestore!
           .collection('userpc')
           .doc(email.toLowerCase())
@@ -136,15 +136,11 @@ class UserApiService{
       }
     }
 
-    Future<void> takeBonusChannel({required String idChannel,required int newBalance}) async {
+    Future<int> getBalance() async {
       try{
         final uid = PreferencesUtil.getEmail;
-        await _firebaseFirestore!.collection('channels').doc(idChannel).update({
-          'balance':newBalance
-        });
-        // await _firebaseFirestore!.collection('userpc').doc(uid.toLowerCase()).update({
-        //   'balance':newBalance
-        // });
+        final doc = await _firebaseFirestore!.collection('userpc').doc(uid.toLowerCase()).get();
+        return doc.get('balance');
 
       }on FirebaseException catch(error,stackTrace){
         Error.throwWithStackTrace(Failure(error.message!), stackTrace);

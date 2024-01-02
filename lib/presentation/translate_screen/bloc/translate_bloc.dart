@@ -12,12 +12,14 @@ import 'package:youtube_clicker/utils/failure.dart';
 import '../../../di/locator.dart';
 import '../../../domain/models/channel_model_cred.dart';
 import '../../../domain/repository/translate_repository.dart';
+import '../../../domain/repository/user_repository.dart';
 import '../../../domain/repository/youtube_repository.dart';
 import '../../main_screen/bloc/main_bloc.dart';
 import '../../main_screen/cubit/user_data_cubit.dart';
 
 class TranslateBloc extends Bloc<TranslateEvent, TranslateState> {
   final _translateRepository = locator.get<TranslateRepository>();
+  final _userRepository = locator.get<UserRepository>();
   final _youTubeRepository = locator.get<YouTubeRepository>();
   late UserDataCubit cubitUserData;
   final Map<String, VideoLocalization> _mapUpdateLocalisation = {};
@@ -199,25 +201,21 @@ class TranslateBloc extends Bloc<TranslateEvent, TranslateState> {
 
   Future<void> _checkBalance(CheckBalanceEvent event,emit) async {
     emit(state.copyWith(translateStatus: TranslateStatus.unknown));
-    final bonus = await _youTubeRepository.getBonusOfRemoteChannel(idChannel: event.channelModelCred.idChannel);
-    if(bonus>0){
-      if(event.channelModelCred.bonus!=bonus){
-        ChannelModelCred  channelModelCred = event.channelModelCred;
-        channelModelCred = channelModelCred.copyWith(bonus: bonus);
-        emit(state.copyWith(translateStatus: TranslateStatus.updateBonusLocal,updatedChannel: channelModelCred));
-        if(_balanceEmpty(cubitUserData.state.userData.numberOfTrans,
-            bonus,event.codeLanguage.length)){
-          emit(state.copyWith(translateStatus: TranslateStatus.forbidden));
-          return;
-        }else{
-          emit(state.copyWith(translateStatus: TranslateStatus.initTranslate));
-          return;
-        }
-      }
-    }
+    final bonusRemote = await _youTubeRepository.getBonusOfRemoteChannel(idChannel: event.channelModelCred.idChannel);
+    int bonusLocal = event.channelModelCred.bonus;
+    final balanceRemote = await _userRepository.getBalance();
+    int balanceLocal = cubitUserData.state.userData.numberOfTrans;
 
-    if(_balanceEmpty(cubitUserData.state.userData.numberOfTrans,
-        event.channelModelCred.bonus,event.codeLanguage.length)){
+     ChannelModelCred  channelModelCred = event.channelModelCred;
+      channelModelCred = channelModelCred.copyWith(bonus: bonusRemote);
+      emit(state.copyWith(translateStatus: TranslateStatus.updateBonusLocal,updatedChannel: channelModelCred));
+      bonusLocal = bonusRemote<0?0:bonusRemote;
+      cubitUserData.updateLocalBonus(newBalance: balanceRemote);
+      emit(state.copyWith(translateStatus: TranslateStatus.updateBalanceLocal,updatedBalance: balanceRemote));
+      balanceLocal = balanceRemote;
+
+      if(_balanceEmpty(balanceLocal,
+        bonusLocal,event.codeLanguage.length)){
       emit(state.copyWith(translateStatus: TranslateStatus.forbidden));
     }else{
 
@@ -329,7 +327,7 @@ class TranslateBloc extends Bloc<TranslateEvent, TranslateState> {
             }
           }
         }
-       // await Future.delayed(Duration(milliseconds: 500));
+        //await Future.delayed(Duration(milliseconds: 500));
       }
 
       _operationQueueAll--;

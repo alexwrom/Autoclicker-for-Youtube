@@ -75,8 +75,8 @@ class ItemChannelCred extends StatelessWidget{
                           padding: const EdgeInsets.only(top: 10.0),
                           child: GestureDetector(
                             onTap: (){
-                              Dialoger.showTakeBonus(context:context,
-                                  channelModelCred: channelModelCred);
+                              // Dialoger.showTakeBonus(context:context,
+                              //     channelModelCred: channelModelCred);
                             },
                             child: SizedBox(
                               height: 30.0,

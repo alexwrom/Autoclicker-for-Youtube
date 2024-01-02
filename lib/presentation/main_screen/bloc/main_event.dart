@@ -24,6 +24,10 @@ class MainEvent extends Equatable{
   final ChannelModelCred channelModelCred;
   const TakeBonusEvent({required this.channelModelCred});
  }
+ class UpdateBalanceEvent extends MainEvent{
+  final int updateBalance;
+  const UpdateBalanceEvent({required this.updateBalance});
+ }
 
  class AddOrRemoveRemoteChannelEvent extends MainEvent{
   final ChannelModelCred channelModelCred;

@@ -34,28 +34,28 @@ import 'buttons.dart';
 
 class Dialoger {
 
-  static void showTakeBonus({required BuildContext context,required ChannelModelCred channelModelCred}) {
-    final email = PreferencesUtil.getEmail;
-    showCustomDialog(
-        textButtonCancel: 'Cancel'.tr(),
-        textButtonAccept: 'Yes'.tr(),
-        textButtonColor: Colors.white,
-        contextUp: context,
-        title: 'You want to credit bonus points to your account balance'.tr(),
-        titleColor: Platform.isIOS?colorPrimary:Colors.white,
-        content:  Text(email,
-          style:  TextStyle(
-              color: Platform.isIOS?colorPrimary:Colors.grey
-          ),),
-        voidCallbackAccept: (){
-           context.read<MainBloc>().add(TakeBonusEvent(channelModelCred:channelModelCred));
-        },
-        voidCallbackCancel: (){
-
-        }
-
-    );
-  }
+  // static void showTakeBonus({required BuildContext context,required ChannelModelCred channelModelCred}) {
+  //   final email = PreferencesUtil.getEmail;
+  //   showCustomDialog(
+  //       textButtonCancel: 'Cancel'.tr(),
+  //       textButtonAccept: 'Yes'.tr(),
+  //       textButtonColor: Colors.white,
+  //       contextUp: context,
+  //       title: 'You want to credit bonus points to your account balance'.tr(),
+  //       titleColor: Platform.isIOS?colorPrimary:Colors.white,
+  //       content:  Text(email,
+  //         style:  TextStyle(
+  //             color: Platform.isIOS?colorPrimary:Colors.grey
+  //         ),),
+  //       voidCallbackAccept: (){
+  //          context.read<MainBloc>().add(TakeBonusEvent(channelModelCred:channelModelCred));
+  //       },
+  //       voidCallbackCancel: (){
+  //
+  //       }
+  //
+  //   );
+  // }
 
 
 

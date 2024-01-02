@@ -151,9 +151,14 @@ class _TranslatePageState extends State<TranslatePage> {
               }
 
               if(stateLis.translateStatus == TranslateStatus.updateBonusLocal){
-                print('Update Channel ${stateLis.updatedChannel.bonus}');
+                _channelModelCred = stateLis.updatedChannel;
                 context.read<MainBloc>().add(UpdateBonusEvent(
                 channelModelCred: stateLis.updatedChannel));
+              }
+
+              if(stateLis.translateStatus == TranslateStatus.updateBalanceLocal){
+                context.read<MainBloc>().add(UpdateBalanceEvent(
+                    updateBalance: stateLis.updatedBalance));
               }
 
 

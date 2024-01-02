@@ -43,10 +43,11 @@ class MainBloc extends Bloc<MainEvent,MainState>{
      on<AddChannelByInvitationEvent>(_addChannelByCodeInvitation,transformer: droppable());
      on<RemoveChannelEvent>(_removeChannel,transformer: droppable());
      on<BlockAccountEvent>(_blockAccountUser);
-     on<TakeBonusEvent>(_takeBonus,transformer: droppable());
+     //on<TakeBonusEvent>(_takeBonus,transformer: droppable());
      on<AddOrRemoveRemoteChannelEvent>(_addOrRemoveRemoteChannel,transformer: droppable());
      on<UpdateChannelListEvent>(_updateChannelList);
      on<UpdateBonusEvent>(_updateBonus);
+     on<UpdateBalanceEvent>(_updateBalance);
   }
 
 
@@ -67,8 +68,12 @@ class MainBloc extends Bloc<MainEvent,MainState>{
     }
   }
 
+
+  void _updateBalance(UpdateBalanceEvent event,emit) async {
+
+  }
+
   void _updateBonus(UpdateBonusEvent event,emit) async {
-    print('_updateBonus ${event.channelModelCred.bonus}');
     emit(state.copyWith(mainStatus: MainStatus.loading,isChannelDeactivation:true));
     final listNew = await _updateLocalChannels(event.channelModelCred);
     emit(state.copyWith(listCredChannels: listNew,mainStatus: MainStatus.success));
@@ -119,20 +124,20 @@ class MainBloc extends Bloc<MainEvent,MainState>{
     _cubitUser.updateUser(userData: userData);
   }
 
- void _takeBonus(TakeBonusEvent event, emit) async {
-   emit(state.copyWith(mainStatus: MainStatus.loading));
-   UserData userData = _cubitUser.state.userData;
-   int transQuantity = userData.numberOfTrans + 400;
-   userData = userData.copyWith(numberOfTrans: transQuantity);
-   _cubitUser.updateUser(userData: userData);
-   await Future.delayed(const Duration(seconds: 1));
-   await userRepository.takeBonusChannel(idChannel: event.channelModelCred.idChannel,
-       newBalance:transQuantity);
-   ChannelModelCred channelModelCred = event.channelModelCred;
-   channelModelCred = channelModelCred.copyWith(bonus: 0);
-   final listChannelsUpdated = await _updateLocalChannels(channelModelCred);
-   emit(state.copyWith(mainStatus: MainStatus.success,listCredChannels: listChannelsUpdated));
-}
+//  void _takeBonus(TakeBonusEvent event, emit) async {
+//    emit(state.copyWith(mainStatus: MainStatus.loading));
+//    UserData userData = _cubitUser.state.userData;
+//    int transQuantity = userData.numberOfTrans + 400;
+//    userData = userData.copyWith(numberOfTrans: transQuantity);
+//    _cubitUser.updateUser(userData: userData);
+//    await Future.delayed(const Duration(seconds: 1));
+//    await userRepository.takeBonusChannel(idChannel: event.channelModelCred.idChannel,
+//        newBalance:transQuantity);
+//    ChannelModelCred channelModelCred = event.channelModelCred;
+//    channelModelCred = channelModelCred.copyWith(bonus: 0);
+//    final listChannelsUpdated = await _updateLocalChannels(channelModelCred);
+//    emit(state.copyWith(mainStatus: MainStatus.success,listCredChannels: listChannelsUpdated));
+// }
 
   Future<void> _getListCredChannel(GetChannelEvent event,emit)async{
     emit(state.copyWith(mainStatus: MainStatus.loading,isChannelDeactivation:true));

@@ -98,6 +98,11 @@ class UserDataCubit extends Cubit<UserdataState>{
   }
 
 
+  updateLocalBonus({required int newBalance}) async{
+    _userData=_userData!.copyWith(numberOfTrans: newBalance);
+    emit(state.copyWith(userDataStatus: UserDataStatus.success,userData: _userData));
+  }
+
 
 
   addBalance(int limitTranslate,int isTakeBonus)async{

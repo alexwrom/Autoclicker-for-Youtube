@@ -26,8 +26,8 @@ class UserRepositoryImpl extends UserRepository{
   }
 
   @override
-  Future<void> takeBonusChannel({required String idChannel,required int newBalance}) async {
-   await _util.takeBonusChannel(idChannel: idChannel,newBalance: newBalance);
+  Future<int> getBalance() async {
+  return await _util.getBalance();
   }
 
   @override
