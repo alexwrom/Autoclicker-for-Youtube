@@ -74,7 +74,7 @@
   "Choose the appropriate offer for further work with translations": "Выберите подходящее предложение для дальнейшей работы с переводами",
   "To the store": "В магазин",
   "Close": "Закрыть",
-  "Your transfer balance will be debited": "Ваш переводной баланс будет списан",
+  "Your transfer balance will be debited": "Ваш баланс будет уменьшен на:",
   "Translate?": "Перевести?",
   "To begin": "Начать",
   "Cancel": "Отмена",
@@ -212,6 +212,7 @@
   "Later": "Позже",
   "Update": "Обновить",
   "Open chat": "Открыть чат",
+  "Bonus points can be used after adding a channel to the public list from iOS, MacOS or Windows devices.": "Использование бонусных баллов доступно после добавления канала в список общедоступных с устройств на iOS, MacOS или Windows.",
   "Want to ask a question in the support group?": "Хотите задать вопрос в группе поддержки?",
   "When you purchase any package for the first time, you receive 800 points as a bonus.": "При первой покупке любого пакета Вы получаете 800 баллов бонусом."
 

@@ -267,6 +267,7 @@ class TranslateBloc extends Bloc<TranslateEvent, TranslateState> {
         try {
           final titleT = await _translateRepository.translate(
               codeLanguage[_indexTitle], videoModel.title);
+          /// for test mode
           //final titleT = 'kllksdj;fklasjdklfjasdkfaklsdjfasd';
           if (titleT.length > 100) {
             final textTitleLimit = titleT.substring(0, 100);
@@ -281,12 +282,15 @@ class TranslateBloc extends Bloc<TranslateEvent, TranslateState> {
           emit(state.copyWith(
               translateStatus: TranslateStatus.error, error: e.message));
         }
+        /// for test mode
         //await Future.delayed(Duration(milliseconds: 500));
       } else if (_operationQueueTitleTrans == 0) {
         if (_operationQueueDescTrans > 0) {
+          /// for test mode
           //await Future.delayed(Duration(milliseconds: 500));
           final descT = await _translateRepository.translate(
               codeLanguage[_indexDesc], videoModel.description);
+          /// for test mode
           //final descT = 'llkammc,.mz.x,cm.z,xmc.,zmxc,zmx,czmx';
           _descTranslate.add(descT);
           _indexDesc++;
@@ -312,6 +316,7 @@ class TranslateBloc extends Bloc<TranslateEvent, TranslateState> {
                 try {
                   codeState = await _youTubeRepository.updateLocalization(
                       videoModel, channelModelCred, _mapUpdateLocalisation);
+                  /// for test mode
                   //codeState = 2;
                 } on Failure catch (e) {
                   emit(state.copyWith(
@@ -327,6 +332,7 @@ class TranslateBloc extends Bloc<TranslateEvent, TranslateState> {
             }
           }
         }
+        /// for test mode
         //await Future.delayed(Duration(milliseconds: 500));
       }
 

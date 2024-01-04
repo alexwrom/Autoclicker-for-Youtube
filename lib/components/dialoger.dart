@@ -284,7 +284,7 @@ class Dialoger {
 
 
 
-  static void showGetStartedTranslate(BuildContext context,int numberTranslate, VoidCallback callback) {
+  static void showGetStartedTranslate(BuildContext context,int numberTranslate, VoidCallback callback,ChannelModelCred channelModelCred) {
     showCustomDialog(
       textButtonCancel: 'Cancel'.tr(),
       textButtonAccept: 'To begin'.tr(),
@@ -295,13 +295,24 @@ class Dialoger {
       content:  Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          const SizedBox(height: 8.0),
+          Visibility(
+            visible: channelModelCred.refreshToken.isEmpty,
+            child: Text('Bonus points can be used after adding a channel to the public list from iOS, MacOS or Windows devices.'.tr(),
+              style:  TextStyle(
+                  color: Platform.isIOS?colorPrimary:Colors.grey
+              ),),
+          ),
+          const SizedBox(height: 10.0),
           Text('Your transfer balance will be debited'.tr(),
             style:  TextStyle(
                 color: Platform.isIOS?colorPrimary:Colors.grey
             ),),
-          const SizedBox(height: 8.0),
-          Text('- $numberTranslate',
+          const SizedBox(height: 3.0),
+          Text('$numberTranslate',
             style:  TextStyle(
+                fontSize: 18.0,
+                fontWeight: FontWeight.bold,
                 color: Platform.isIOS?colorPrimary:Colors.grey
             ),),
         ],

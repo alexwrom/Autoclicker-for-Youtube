@@ -156,10 +156,10 @@ class _TranslatePageState extends State<TranslatePage> {
                 channelModelCred: stateLis.updatedChannel));
               }
 
-              if(stateLis.translateStatus == TranslateStatus.updateBalanceLocal){
-                context.read<MainBloc>().add(UpdateBalanceEvent(
-                    updateBalance: stateLis.updatedBalance));
-              }
+              // if(stateLis.translateStatus == TranslateStatus.updateBalanceLocal){
+              //   context.read<MainBloc>().add(UpdateBalanceEvent(
+              //       updateBalance: stateLis.updatedBalance));
+              // }
 
 
 
@@ -445,7 +445,8 @@ class _TranslatePageState extends State<TranslatePage> {
                     codesLang: _listCodeLanguage,
                     repeatTranslate: false,
                     idVideo: widget.videoModel.idVideo));
-              });
+              },
+            _channelModelCred);
 
 
           }
@@ -482,12 +483,14 @@ class _TranslatePageState extends State<TranslatePage> {
             //Dialoger.showNotTranslate(context,'The balance of active transfers is over'.tr());
             Dialoger.showNotTranslate(context,'You don\'t have enough translations'.tr());
           }else{
-            Dialoger.showGetStartedTranslate(context,_listCodeLanguage.length, () {
+            Dialoger.showGetStartedTranslate(context,_listCodeLanguage.length,
+                    () {
                 _translateBloc.add(StartTranslateEvent(
                     channelModelCred: _channelModelCred,
                     codeLanguage: _listCodeLanguage,
                     videoModel: widget.videoModel));
-              });
+              },
+              _channelModelCred);
 
 
           }

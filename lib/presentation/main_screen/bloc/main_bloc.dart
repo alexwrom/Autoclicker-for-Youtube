@@ -47,7 +47,7 @@ class MainBloc extends Bloc<MainEvent,MainState>{
      on<AddOrRemoveRemoteChannelEvent>(_addOrRemoveRemoteChannel,transformer: droppable());
      on<UpdateChannelListEvent>(_updateChannelList);
      on<UpdateBonusEvent>(_updateBonus);
-     on<UpdateBalanceEvent>(_updateBalance);
+     //on<UpdateBalanceEvent>(_updateBalance);
   }
 
 
@@ -69,12 +69,16 @@ class MainBloc extends Bloc<MainEvent,MainState>{
   }
 
 
-  void _updateBalance(UpdateBalanceEvent event,emit) async {
-
-  }
+  // void _updateBalance(UpdateBalanceEvent event,emit) async {
+  //    print('Update Balance');
+  // }
 
   void _updateBonus(UpdateBonusEvent event,emit) async {
     emit(state.copyWith(mainStatus: MainStatus.loading,isChannelDeactivation:true));
+    if(event.channelModelCred.refreshToken.isEmpty){
+      emit(state.copyWith(mainStatus: MainStatus.success));
+      return;
+    }
     final listNew = await _updateLocalChannels(event.channelModelCred);
     emit(state.copyWith(listCredChannels: listNew,mainStatus: MainStatus.success));
 
@@ -175,7 +179,7 @@ class MainBloc extends Bloc<MainEvent,MainState>{
               isChannelDeactivation: isActivatedChannel));
         }
       }else{
-        print('L 3');
+
          List<String> idsChannels = [];
          for(var channel in listCredChannels){
             idsChannels.add(channel.idChannel);
@@ -209,7 +213,7 @@ class MainBloc extends Bloc<MainEvent,MainState>{
 
 
     }on Failure catch (e) {
-      print('ERROR ${e.message}');
+
       emit(state.copyWith(mainStatus: MainStatus.error,error: e.message));
     }
 
