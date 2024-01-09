@@ -155,6 +155,7 @@ class MainBloc extends Bloc<MainEvent,MainState>{
           }).toList();
 
       if(event.user.channels.isEmpty){
+        print('Empty');
         if (listCredChannels.isEmpty) {
           emit(state.copyWith(
               mainStatus: MainStatus.empty,
@@ -162,7 +163,7 @@ class MainBloc extends Bloc<MainEvent,MainState>{
               urlAvatar: '',
               blockedAccount: blockedAccount));
         } else {
-
+          await _checkListChannelByLocal();
           final listFiltered=await _checkListChanelByInvitation(listCredChannels);
           final isActivatedChannel=await _checkActivatedChanelByInvitation(listCredFiltered: listFiltered,
               listCredOld: listCredChannels);
@@ -179,8 +180,9 @@ class MainBloc extends Bloc<MainEvent,MainState>{
               isChannelDeactivation: isActivatedChannel));
         }
       }else{
-
+        print('NOtEmpty');
          List<String> idsChannels = [];
+        _checkListChannelByRemote(event);
          for(var channel in listCredChannels){
             idsChannels.add(channel.idChannel);
          }
@@ -193,7 +195,7 @@ class MainBloc extends Bloc<MainEvent,MainState>{
            }
          }
 
-        final listFiltered=await _checkListChanelByInvitation(listCredChannels);
+         final listFiltered=await _checkListChanelByInvitation(listCredChannels);
         final isActivatedChannel=await _checkActivatedChanelByInvitation(listCredFiltered: listFiltered,
             listCredOld: listCredChannels);
         if(!isActivatedChannel){
@@ -220,13 +222,32 @@ class MainBloc extends Bloc<MainEvent,MainState>{
 
   }
 
+  Future<void> _checkListChannelByLocal() async {
+    for(var channel in listCredChannels){
+         channel = channel.copyWith(remoteChannel: false);
+        _updateLocalChannels(channel);
+
+    }
+
+  }
+
+  Future<void> _checkListChannelByRemote(GetChannelEvent event) async {
+    for(var channel in listCredChannels){
+      if(event.user.channels.contains(channel.idChannel)){
+        channel = channel.copyWith(remoteChannel: true);
+        _updateLocalChannels(channel);
+      }
+    }
+
+  }
+
   Future<List<ChannelModelCred>> _checkBonusInRemoteChannel(
       {required List<ChannelModelCred> channels}) async {
     List<ChannelModelCred> listResult = [];
     List<String> idsCheck = [];
 
     for(var channel in channels){
-      if(channel.idInvitation.isEmpty&&channel.refreshToken.isNotEmpty){
+      if(channel.idInvitation.isEmpty){
         idsCheck.add(channel.idChannel);
       }
     }
@@ -236,9 +257,13 @@ class MainBloc extends Bloc<MainEvent,MainState>{
     }else{
       for(String id in idsCheck){
         final bonus = await _googleApiRepository.getBonusOfRemoteChannel(idChannel: id);
-        ChannelModelCred channelUpdated = listCredChannels.firstWhere((element) => element.idChannel == id);
-        channelUpdated = channelUpdated.copyWith(bonus: bonus);
-        listResult = await _updateLocalChannels(channelUpdated);
+        if(bonus>0){
+          ChannelModelCred channelUpdated = listCredChannels.firstWhere((element) => element.idChannel == id);
+          channelUpdated = channelUpdated.copyWith(bonus: bonus);
+          listResult = await _updateLocalChannels(channelUpdated);
+        }else{
+          listResult = channels;
+        }
 
       }
     }

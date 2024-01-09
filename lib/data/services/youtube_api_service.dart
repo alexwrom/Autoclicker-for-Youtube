@@ -191,7 +191,7 @@ class YouTubeApiService {
 
       final bonus = await _checkRemoteChannelsList(
             idChannel: channelModelCredFromApi.idChannel,
-            refreshToken: channelModelCredFromApi.refreshToken);
+          refreshToken: channelModelCredFromApi.refreshToken);
        channelModelCredFromApi = channelModelCredFromApi.copyWith(bonus: bonus);
        return channelModelCredFromApi;
     } on Failure catch (error, stackTrace) {
