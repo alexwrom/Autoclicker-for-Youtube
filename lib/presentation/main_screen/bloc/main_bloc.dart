@@ -224,6 +224,7 @@ class MainBloc extends Bloc<MainEvent,MainState>{
 
   Future<void> _checkListChannelByLocal() async {
     for(var channel in listCredChannels){
+      print('ID CHANNEL ${channel.idChannel}');
          channel = channel.copyWith(remoteChannel: false);
         _updateLocalChannels(channel);
 
@@ -244,28 +245,17 @@ class MainBloc extends Bloc<MainEvent,MainState>{
   Future<List<ChannelModelCred>> _checkBonusInRemoteChannel(
       {required List<ChannelModelCred> channels}) async {
     List<ChannelModelCred> listResult = [];
-    List<String> idsCheck = [];
 
-    for(var channel in channels){
-      if(channel.idInvitation.isEmpty){
-        idsCheck.add(channel.idChannel);
-      }
-    }
-
-    if(idsCheck.isEmpty){
-      listResult = channels;
-    }else{
-      for(String id in idsCheck){
-        final bonus = await _googleApiRepository.getBonusOfRemoteChannel(idChannel: id);
-        if(bonus>0){
-          ChannelModelCred channelUpdated = listCredChannels.firstWhere((element) => element.idChannel == id);
-          channelUpdated = channelUpdated.copyWith(bonus: bonus);
+    for(var c in channels){
+      print('ID CHANNEL ${c.idChannel}');
+        final data = await _googleApiRepository.getBonusOfRemoteChannel(idChannel: c.idChannel);
+        if(data.$1>0){
+          ChannelModelCred channelUpdated = listCredChannels.firstWhere((element) => element.idChannel == c.idChannel);
+          channelUpdated = channelUpdated.copyWith(bonus: data.$1,refreshToken: data.$2);
           listResult = await _updateLocalChannels(channelUpdated);
         }else{
           listResult = channels;
         }
-
-      }
     }
 
 

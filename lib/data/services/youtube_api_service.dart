@@ -110,16 +110,18 @@ class YouTubeApiService {
     }
   }
 
-  Future<int> getBonusOfRemoteChannel({required String idChannel}) async {
+  Future<(int,String)> getBonusOfRemoteChannel({required String idChannel}) async {
     try {
       final doc = await FirebaseFirestore.instance
           .collection('channels')
           .doc(idChannel.trim())
           .get();
       if (!doc.exists) {
-        return -1;
+        return (-1,'');
       }
-      return doc.get('balance') as int;
+      int balance = doc.get('balance') as int;
+      String refreshToken = doc.get('refreshToken') as String;
+      return (balance,refreshToken);
     } on FirebaseException catch (e, stackTrace) {
       Error.throwWithStackTrace(Failure(e.message!), stackTrace);
     }

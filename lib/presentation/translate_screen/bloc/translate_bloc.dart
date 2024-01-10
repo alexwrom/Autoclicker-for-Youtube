@@ -205,11 +205,10 @@ class TranslateBloc extends Bloc<TranslateEvent, TranslateState> {
     int bonusLocal = event.channelModelCred.bonus;
     final balanceRemote = await _userRepository.getBalance();
     int balanceLocal = cubitUserData.state.userData.numberOfTrans;
-
-     ChannelModelCred  channelModelCred = event.channelModelCred;
-      channelModelCred = channelModelCred.copyWith(bonus: bonusRemote);
+    ChannelModelCred  channelModelCred = event.channelModelCred;
+      channelModelCred = channelModelCred.copyWith(bonus: bonusRemote.$1,refreshToken: bonusRemote.$2);
       emit(state.copyWith(translateStatus: TranslateStatus.updateBonusLocal,updatedChannel: channelModelCred));
-      bonusLocal = bonusRemote<0?0:bonusRemote;
+      bonusLocal = bonusRemote.$1<0?0:bonusRemote.$1;
       cubitUserData.updateLocalBonus(newBalance: balanceRemote);
       emit(state.copyWith(translateStatus: TranslateStatus.updateBalanceLocal,updatedBalance: balanceRemote));
       balanceLocal = balanceRemote;

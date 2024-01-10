@@ -69,7 +69,7 @@ class YouTubeRepositoryImpl extends YouTubeRepository{
   }
 
   @override
-  Future<int> getBonusOfRemoteChannel({required String idChannel}) async {
+  Future<(int,String)> getBonusOfRemoteChannel({required String idChannel}) async {
     return await _youTubeApiUtil.getBonusOfRemoteChannel(idChannel: idChannel);
   }
 
