@@ -264,10 +264,10 @@ class TranslateBloc extends Bloc<TranslateEvent, TranslateState> {
     if (_operationQueueAll > 0) {
       if (_operationQueueTitleTrans > 0) {
         try {
-          // final titleT = await _translateRepository.translate(
-          //     codeLanguage[_indexTitle], videoModel.title);
+          final titleT = await _translateRepository.translate(
+              codeLanguage[_indexTitle], videoModel.title);
           /// for test mode
-          final titleT = 'kllksdj;fklasjdklfjasdkfaklsdjfasd';
+          //final titleT = 'kllksdj;fklasjdklfjasdkfaklsdjfasd';
           if (titleT.length > 100) {
             final textTitleLimit = titleT.substring(0, 100);
             _titleTranslate.add(textTitleLimit);
@@ -282,15 +282,15 @@ class TranslateBloc extends Bloc<TranslateEvent, TranslateState> {
               translateStatus: TranslateStatus.error, error: e.message));
         }
         /// for test mode
-        await Future.delayed(Duration(milliseconds: 500));
+        //await Future.delayed(Duration(milliseconds: 500));
       } else if (_operationQueueTitleTrans == 0) {
         if (_operationQueueDescTrans > 0) {
           /// for test mode
-          await Future.delayed(Duration(milliseconds: 500));
-          // final descT = await _translateRepository.translate(
-          //     codeLanguage[_indexDesc], videoModel.description);
+          //await Future.delayed(Duration(milliseconds: 500));
+          final descT = await _translateRepository.translate(
+              codeLanguage[_indexDesc], videoModel.description);
           /// for test mode
-          final descT = 'llkammc,.mz.x,cm.z,xmc.,zmxc,zmx,czmx';
+          //final descT = 'llkammc,.mz.x,cm.z,xmc.,zmxc,zmx,czmx';
           _descTranslate.add(descT);
           _indexDesc++;
           _operationQueueDescTrans--;
@@ -313,10 +313,10 @@ class TranslateBloc extends Bloc<TranslateEvent, TranslateState> {
             if (i == _titleTranslate.length - 1) {
               if (_mapUpdateLocalisation.isNotEmpty) {
                 try {
-                  // codeState = await _youTubeRepository.updateLocalization(
-                  //     videoModel, channelModelCred, _mapUpdateLocalisation);
+                  codeState = await _youTubeRepository.updateLocalization(
+                      videoModel, channelModelCred, _mapUpdateLocalisation);
                   /// for test mode
-                  codeState = 2;
+                  //codeState = 2;
                 } on Failure catch (e) {
                   emit(state.copyWith(
                       translateStatus: TranslateStatus.error,
@@ -332,7 +332,7 @@ class TranslateBloc extends Bloc<TranslateEvent, TranslateState> {
           }
         }
         /// for test mode
-        await Future.delayed(Duration(milliseconds: 500));
+        //await Future.delayed(Duration(milliseconds: 500));
       }
 
       _operationQueueAll--;

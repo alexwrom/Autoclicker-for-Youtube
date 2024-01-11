@@ -140,7 +140,7 @@ class _TranslatePageState extends State<TranslatePage> {
               }
               if(stateLis.translateStatus.isForbidden){
                 //Dialoger.showNotTranslate(context,'The balance of active transfers is over'.tr());
-                Dialoger.showNotTranslate(context,'You don\'t have enough translations'.tr());
+                Dialoger.showNotTranslate(context,'You don\'t have enough translations'.tr(),_channelModelCred);
               }
 
               if(stateLis.translateStatus.isSuccess){
@@ -436,7 +436,7 @@ class _TranslatePageState extends State<TranslatePage> {
         if(_listCodeLanguage.isNotEmpty){
           if(state.translateStatus.isForbidden){
             //Dialoger.showNotTranslate(context,'The balance of active transfers is over'.tr());
-            Dialoger.showNotTranslate(context,'You don\'t have enough translations'.tr());
+            Dialoger.showNotTranslate(context,'You don\'t have enough translations'.tr(),_channelModelCred);
           }else{
             Dialoger.showGetStartedTranslate(context,_listCodeLanguage.length, () {
                 _translateBloc.add(InsertSubtitlesEvent(
@@ -481,7 +481,7 @@ class _TranslatePageState extends State<TranslatePage> {
         if(_listCodeLanguage.isNotEmpty){
           if(state.translateStatus.isForbidden){
             //Dialoger.showNotTranslate(context,'The balance of active transfers is over'.tr());
-            Dialoger.showNotTranslate(context,'You don\'t have enough translations'.tr());
+            Dialoger.showNotTranslate(context,'You don\'t have enough translations'.tr(),_channelModelCred);
           }else{
             Dialoger.showGetStartedTranslate(context,_listCodeLanguage.length,
                     () {

@@ -247,7 +247,6 @@ class MainBloc extends Bloc<MainEvent,MainState>{
     List<ChannelModelCred> listResult = [];
 
     for(var c in channels){
-      print('ID CHANNEL ${c.idChannel}');
         final data = await _googleApiRepository.getBonusOfRemoteChannel(idChannel: c.idChannel);
         if(data.$1>0){
           ChannelModelCred channelUpdated = listCredChannels.firstWhere((element) => element.idChannel == c.idChannel);

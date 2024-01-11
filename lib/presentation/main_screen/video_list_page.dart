@@ -131,8 +131,7 @@ class _VideoListPageState extends State<VideoListPage> with WidgetsBindingObserv
                 ),
 
                 Visibility(
-                  visible: _channelModelCred.refreshToken.isNotEmpty&&
-                      _channelModelCred.idInvitation.isEmpty,
+                  visible: _channelModelCred.refreshToken.isNotEmpty,
                   child: BlocConsumer<MainBloc,MainState>(
                     listener: (c,s){
                       if(s.statusAddRemoteChannel.isError){

@@ -327,18 +327,31 @@ class Dialoger {
     );
   }
 
-  static void showNotTranslate(BuildContext context,String title) {
+  static void showNotTranslate(BuildContext context,String title,ChannelModelCred channelModelCred) {
     showCustomDialog(
       textButtonCancel: 'Close'.tr(),
       textButtonAccept: 'To the store'.tr(),
       contextUp: context,
       title: title,
       titleColor: const Color.fromRGBO(212,32,60, 1),
-      content:  Text(
-        'Choose the appropriate offer for further work with translations'.tr(),
-        style: TextStyle(
-          color: Platform.isIOS?colorPrimary:Colors.white
-        ),
+      content:  Column(
+        children: [
+          const SizedBox(height: 8.0),
+          Visibility(
+            visible: channelModelCred.refreshToken.isEmpty,
+            child: Text('Bonus points can be used after adding a channel to the public list from iOS, MacOS or Windows devices.'.tr(),
+              style:  TextStyle(
+                  color: Platform.isIOS?colorPrimary:Colors.grey
+              ),),
+          ),
+          const SizedBox(height: 10.0),
+          Text(
+            'Choose the appropriate offer for further work with translations'.tr(),
+            style: TextStyle(
+              color: Platform.isIOS?colorPrimary:Colors.white
+            ),
+          ),
+        ],
       ),
       voidCallbackAccept: (){
           Navigator.of(context).push(MaterialPageRoute(builder: (_)=>MembershipPage()));
