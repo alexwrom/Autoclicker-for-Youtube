@@ -30,9 +30,9 @@ class CredChannel{
   final String idInvitation;
   @HiveField(11)
   final String typePlatformRefreshToken;
-  @HiveField(12)
+  @HiveField(12,defaultValue: false)
   final bool remoteChannel;
-  @HiveField(13)
+  @HiveField(13,defaultValue: 0)
   final int bonus;
 
 

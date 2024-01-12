@@ -1,6 +1,7 @@
 
 
-  import 'package:youtube_clicker/di/locator.dart';
+  import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:youtube_clicker/di/locator.dart';
 import 'package:youtube_clicker/domain/models/user_data.dart';
 
 import '../../domain/models/channel_model_cred.dart';
@@ -38,6 +39,11 @@ class UserRepositoryImpl extends UserRepository{
   @override
   Future<int> addRemoteChannel({required String idChannel}) async {
     return await _util.addRemoteChannel(idChannel: idChannel);
+  }
+
+  @override
+  Stream<DocumentSnapshot<Map<String, dynamic>>> listenerRemoteChannels() {
+   return _util.listenerRemoteChannels();
   }
 
 

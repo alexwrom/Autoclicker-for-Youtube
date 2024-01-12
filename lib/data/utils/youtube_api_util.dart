@@ -2,6 +2,7 @@
 
 
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:googleapis/youtube/v3.dart';
 import 'package:youtube_clicker/data/models/channel_model_from_api.dart';
 import 'package:youtube_clicker/data/models/video_model_from_api.dart';
@@ -86,6 +87,9 @@ class YouTubeApiUtil{
     Future<(int,String)> getBonusOfRemoteChannel({required String idChannel}) async {
       return await _youTubeApi.getBonusOfRemoteChannel(idChannel: idChannel);
     }
+
+
+
 
 
 

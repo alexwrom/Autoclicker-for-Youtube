@@ -1,7 +1,8 @@
 
 
 
-  import 'package:hive/hive.dart';
+  import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hive/hive.dart';
 import 'package:youtube_clicker/di/locator.dart';
 import 'package:youtube_clicker/utils/preferences_util.dart';
 
@@ -40,6 +41,10 @@ class UserDataApiUtil{
 
     Future<int> addRemoteChannel({required String idChannel}) async {
      return await _api.addRemoteChannel(idChannel: idChannel);
+    }
+
+    Stream<DocumentSnapshot<Map<String, dynamic>>> listenerRemoteChannels(){
+      return _api.listenerRemoteChannels();
     }
 
 

@@ -72,3 +72,10 @@ class MainEvent extends Equatable{
    final int translateQuantity;
    const UpdateChannelListEvent({required this.channelModelCred,required this.translateQuantity});
  }
+
+
+ class UpdateWebSocketEvent extends MainEvent{
+    final List<dynamic> idsRemoteChannels;
+    final UserData user;
+    const UpdateWebSocketEvent({required this.idsRemoteChannels,required this.user});
+ }

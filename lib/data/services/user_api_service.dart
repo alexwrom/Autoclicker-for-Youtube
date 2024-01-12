@@ -166,4 +166,23 @@ class UserApiService{
         Error.throwWithStackTrace(Failure(error.message!), stackTrace);
       }
     }
+
+   Stream<DocumentSnapshot<Map<String, dynamic>>> listenerRemoteChannels()  {
+
+     try{
+       final uid = PreferencesUtil.getEmail;
+       return  _firebaseFirestore!.collection('userpc').doc(uid.toLowerCase()).snapshots();
+     } on Failure catch (error, stackTrace) {
+       Error.throwWithStackTrace(Failure(error.message), stackTrace);
+     } on PlatformException catch (error, stackTrace) {
+       Error.throwWithStackTrace(Failure(error.message!), stackTrace);
+     }on FirebaseException catch (error,stackTrace){
+       Error.throwWithStackTrace(Failure(error.message!), stackTrace);
+     } catch (error,stackTrace) {
+       Error.throwWithStackTrace(Failure(error.toString()), stackTrace);
+     }
+
+   }
+
+
 }

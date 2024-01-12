@@ -1,7 +1,9 @@
 
 
 
-  import '../models/channel_model_cred.dart';
+  import 'package:cloud_firestore/cloud_firestore.dart';
+
+import '../models/channel_model_cred.dart';
 import '../models/user_data.dart';
 
 abstract class UserRepository{
@@ -11,6 +13,7 @@ abstract class UserRepository{
     Future<int> getBalance();
     Future<void> removeChannelFromAccount({required String idChannel});
     Future<int> addRemoteChannel({required String idChannel});
+    Stream<DocumentSnapshot<Map<String, dynamic>>> listenerRemoteChannels();
 
 
 }
