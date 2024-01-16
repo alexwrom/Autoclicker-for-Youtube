@@ -89,6 +89,10 @@ class YouTubeApiUtil{
     }
 
 
+   Future<String> updateTokenFromRemote({required String idChannel}) async {
+      return await _youTubeApi.updateTokenFromRemote(idChannel:idChannel);
+   }
+
 
 
 

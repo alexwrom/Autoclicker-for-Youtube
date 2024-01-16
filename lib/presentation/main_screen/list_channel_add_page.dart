@@ -87,7 +87,7 @@ class _ListChannelAddState extends State<ListChannelAdd> {
                  child: Image.asset(logoGoogle,width: 30.0,height: 30.0),
                  backgroundColor: Colors.white,
                  onPressed: () {
-                   context.read<MainBloc>().add(AddChannelWithGoogleEvent());
+                   context.read<MainBloc>().add(AddChannelWithGoogleEvent(user: userData));
                  },
                ),
 

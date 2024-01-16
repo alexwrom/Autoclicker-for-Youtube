@@ -36,6 +36,12 @@ class YouTubeApiService {
   final _dio = locator.get<DioClientInsertCaption>();
   final _dioAuthClient = locator.get<DioAuthClient>();
 
+  FirebaseFirestore? _firebaseFirestore;
+
+  YouTubeApiService(){
+    _firebaseFirestore=FirebaseFirestore.instance;
+  }
+
 
   Future<int> _checkRemoteChannelsList({required String idChannel,required String refreshToken}) async {
     try {
@@ -575,5 +581,20 @@ class YouTubeApiService {
         scopes: [YouTubeApi.youtubeForceSslScope]);
 
     return oauth2Helper;
+  }
+
+  Future<String> updateTokenFromRemote({required String idChannel}) async {
+    try{
+
+      final channel = await _firebaseFirestore!.collection('channels').doc(idChannel).get();
+      final result = channel.get('refreshToken') as String;
+      return result;
+    }on FirebaseException catch(error,stackTrace){
+      Error.throwWithStackTrace(Failure(error.message!), stackTrace);
+    } on Failure catch(error,stackTrace){
+      Error.throwWithStackTrace(Failure(error.message), stackTrace);
+    }on PlatformException catch(error,stackTrace){
+      Error.throwWithStackTrace(Failure(error.message!), stackTrace);
+    }
   }
 }

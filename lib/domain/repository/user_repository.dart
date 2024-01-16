@@ -14,6 +14,8 @@ abstract class UserRepository{
     Future<void> removeChannelFromAccount({required String idChannel});
     Future<int> addRemoteChannel({required String idChannel});
     Stream<DocumentSnapshot<Map<String, dynamic>>> listenerRemoteChannels();
+    Stream<QuerySnapshot<Map<String, dynamic>>> listenerChannelsCatalog();
+    Future<bool> checkShareChannel({required String idChannel});
 
 
 }

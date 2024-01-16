@@ -19,7 +19,10 @@ class MainEvent extends Equatable{
   final bool unlock;
   const BlockAccountEvent({required this.unlock});
  }
- class AddChannelWithGoogleEvent extends MainEvent{}
+ class AddChannelWithGoogleEvent extends MainEvent{
+   final UserData user;
+   const AddChannelWithGoogleEvent({required this.user});
+ }
  class TakeBonusEvent extends MainEvent{
   final ChannelModelCred channelModelCred;
   const TakeBonusEvent({required this.channelModelCred});
@@ -76,6 +79,7 @@ class MainEvent extends Equatable{
 
  class UpdateWebSocketEvent extends MainEvent{
     final List<dynamic> idsRemoteChannels;
-    final UserData user;
-    const UpdateWebSocketEvent({required this.idsRemoteChannels,required this.user});
+    final List<String> idsLocalChannels;
+     final UserData user;
+    const UpdateWebSocketEvent({required this.idsRemoteChannels,required this.user,required this.idsLocalChannels});
  }

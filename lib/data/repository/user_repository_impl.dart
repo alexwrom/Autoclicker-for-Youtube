@@ -46,5 +46,15 @@ class UserRepositoryImpl extends UserRepository{
    return _util.listenerRemoteChannels();
   }
 
+  @override
+  Stream<QuerySnapshot<Map<String, dynamic>>> listenerChannelsCatalog() {
+    return _util.listenerChannelsCatalog();
+  }
+
+  @override
+  Future<bool> checkShareChannel({required String idChannel}) async {
+     return await _util.checkShareChannel(idChannel:idChannel);
+  }
+
 
   }

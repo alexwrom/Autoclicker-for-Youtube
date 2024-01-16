@@ -92,7 +92,7 @@ class MainBloc extends Bloc<MainEvent,MainState>{
 
   Future<void> _addOrRemoveRemoteChannel(AddOrRemoveRemoteChannelEvent event, emit) async {
     try{
-      emit(state.copyWith(statusAddRemoteChannel: StatusAddRemoteChannel.loading));
+      emit(state.copyWith(statusAddRemoteChannel: StatusAddRemoteChannel.loading,error: ''));
       if(event.remove){
         await userRepository.removeChannelFromAccount(idChannel: event.channelModelCred.idChannel);
         ChannelModelCred channel = event.channelModelCred;
@@ -100,9 +100,14 @@ class MainBloc extends Bloc<MainEvent,MainState>{
         _updateLocalChannels(channel);
       }else{
        final bonus =  await userRepository.addRemoteChannel(idChannel: event.channelModelCred.idChannel);
+       if(bonus<0){
+         emit(state.copyWith(statusAddRemoteChannel: StatusAddRemoteChannel.error,error: 'Error'));
+         return;
+       }
        ChannelModelCred channel = event.channelModelCred;
        channel = channel.copyWith(remoteChannel: true, bonus: bonus);
        _updateLocalChannels(channel);
+
       }
       emit(state.copyWith(statusAddRemoteChannel: StatusAddRemoteChannel.success));
 
@@ -118,7 +123,7 @@ class MainBloc extends Bloc<MainEvent,MainState>{
     try{
       emit(state.copyWith(statusBlockAccount: StatusBlockAccount.loading));
       await userRepository.blockAccountUser(unlock: event.unlock);
-      _updateUser(event);
+      _updateBlockStatusUser(event);
       emit(state.copyWith(statusBlockAccount: StatusBlockAccount.success,blockedAccount: !event.unlock));
 
     }on Failure catch(e){
@@ -126,7 +131,7 @@ class MainBloc extends Bloc<MainEvent,MainState>{
     }
   }
 
-  void _updateUser(BlockAccountEvent event) {
+  void _updateBlockStatusUser(BlockAccountEvent event) {
      UserData userData = _cubitUser.state.userData;
     userData = userData.copyWith(isBlock:event.unlock?0:1);
     _cubitUser.updateUser(userData: userData);
@@ -154,10 +159,25 @@ class MainBloc extends Bloc<MainEvent,MainState>{
             CredChannel value = boxCredChannel.get(key);
             listCredChannels.add(ChannelModelCred.fromBoxHive(channel: value));
           }).toList();
+      List<String> idsChannels = [];
+      for(var channel in listCredChannels){
+        idsChannels.add(channel.idChannel);
+      }
+      userRepository.listenerChannelsCatalog().listen((snap) {
+       if(idsChannels.contains(snap.docChanges.first.doc.id)){
+         add(UpdateWebSocketEvent(idsRemoteChannels: event.user.channels,
+             user: event.user,idsLocalChannels: idsChannels));
+       }
 
+      });
       userRepository.listenerRemoteChannels().listen((snap) {
         var channelsId = snap.get('channels') as List<dynamic>;
-        add(UpdateWebSocketEvent(idsRemoteChannels: channelsId, user: event.user));
+        var newBalance = snap.get('balance') as int;
+        UserData userData = event.user;
+        userData = userData.copyWith(numberOfTrans: newBalance);
+        _cubitUser.updateUser(userData: userData);
+        add(UpdateWebSocketEvent(idsRemoteChannels: channelsId,
+            user: event.user,idsLocalChannels: idsChannels));
       });
 
     }on Failure catch (e) {
@@ -198,13 +218,9 @@ class MainBloc extends Bloc<MainEvent,MainState>{
               isChannelDeactivation: isActivatedChannel));
         }
       }else{
-        List<String> idsChannels = [];
         _checkListChannelByRemote(event.idsRemoteChannels);
-        for(var channel in listCredChannels){
-          idsChannels.add(channel.idChannel);
-        }
         for (String element in event.idsRemoteChannels) {
-          if(!idsChannels.contains(element)){
+          if(!event.idsLocalChannels.contains(element)){
             ChannelModelCred channel = await _googleApiRepository.addRemoteChannelByRefreshToken(idChannel: element);
             int key = await _saveLocalChannel(channel);
             channel = channel.copyWith(keyLangCode: key,remoteChannel: true);
@@ -243,7 +259,6 @@ class MainBloc extends Bloc<MainEvent,MainState>{
 
   Future<void> _checkListChannelByLocal() async {
     for(var channel in listCredChannels){
-      print('ID CHANNEL ${channel.idChannel}');
          channel = channel.copyWith(remoteChannel: false);
         _updateLocalChannels(channel);
 
@@ -283,7 +298,7 @@ class MainBloc extends Bloc<MainEvent,MainState>{
   Future<List<ChannelModelCred>> _updateLocalChannels(ChannelModelCred channel) async {
     int index = listCredChannels.indexWhere((element) => element.idChannel==channel.idChannel);
     await boxCredChannel.put(channel.keyLangCode, CredChannel(
-        bonus: channel.bonus,
+        //bonus: channel.bonus,
         typePlatformRefreshToken:  typeRefreshToken(typePlatformRefreshToken:
         channel.typePlatformRefreshToken),
         refreshToken: channel.refreshToken,
@@ -295,7 +310,7 @@ class MainBloc extends Bloc<MainEvent,MainState>{
         idUpload: channel.idUpload,
         idToken: channel.idToken,
         accessToken: channel.accessToken,
-        remoteChannel: channel.remoteChannel,
+        //remoteChannel: channel.remoteChannel,
         idInvitation: channel.idInvitation,
         defaultLanguage: channel.defaultLanguage));
    listCredChannels[index] = channel;
@@ -308,7 +323,7 @@ class MainBloc extends Bloc<MainEvent,MainState>{
     });
     await boxCredChannel
         .add(CredChannel(
-        bonus: channel.bonus,
+        //bonus: channel.bonus,
         typePlatformRefreshToken:  typeRefreshToken(typePlatformRefreshToken:
         channel.typePlatformRefreshToken),
         refreshToken: channel.refreshToken,
@@ -320,7 +335,7 @@ class MainBloc extends Bloc<MainEvent,MainState>{
         idUpload: channel.idUpload,
         idToken: channel.idToken,
         accessToken: channel.accessToken,
-        remoteChannel: channel.remoteChannel,
+        //remoteChannel: channel.remoteChannel,
         idInvitation: channel.idInvitation,
         defaultLanguage: channel.defaultLanguage))
         .catchError((error) {
@@ -381,14 +396,29 @@ class MainBloc extends Bloc<MainEvent,MainState>{
       if(exists.isNotEmpty){
         throw const Failure('Сhannel already added');
       }
-      int key = await _saveLocalChannel(result);
 
-      listCredChannels.add(result.copyWith(keyLangCode: key));
-      emit(state.copyWith(mainStatus:MainStatus.success,addCredStatus: AddCredStatus.success,listCredChannels: listCredChannels));
+      int key = await _saveLocalChannel(result);
+      final share =await _checkShareChannel(result.idChannel,event.user);
+      final updatedToken = await _updateTokenRemote(result.idChannel);
+      listCredChannels.add(result.copyWith(keyLangCode: key,
+          remoteChannel: share,
+          refreshToken: updatedToken));
+      emit(state.copyWith(mainStatus:MainStatus.success,
+          addCredStatus: AddCredStatus.success,listCredChannels: listCredChannels));
     }on Failure catch (error){
       emit(state.copyWith(addCredStatus: AddCredStatus.error,error: error.message));
     }
 
+  }
+
+  Future<bool> _checkShareChannel(String idChannel,UserData userData) async {
+    final share = await userRepository.checkShareChannel(idChannel:idChannel);
+    return share;
+  }
+
+  Future<String> _updateTokenRemote(String idChannel) async {
+    final token = await _googleApiRepository.updateTokenFromRemote(idChannel:idChannel);
+    return token;
   }
 
 

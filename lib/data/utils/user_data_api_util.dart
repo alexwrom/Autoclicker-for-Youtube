@@ -47,5 +47,13 @@ class UserDataApiUtil{
       return _api.listenerRemoteChannels();
     }
 
+    Stream<QuerySnapshot<Map<String, dynamic>>> listenerChannelsCatalog(){
+      return _api.listenerChannelsCatalog();
+    }
+
+    Future<bool> checkShareChannel({required String idChannel}) async {
+      return await _api.checkShareChannel(idChannel:idChannel);
+    }
+
 
 }

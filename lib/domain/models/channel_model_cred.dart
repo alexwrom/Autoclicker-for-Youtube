@@ -73,8 +73,8 @@ class ChannelModelCred{
         keyLangCode:channel.keyLangCode,
         refreshToken:  channel.refreshToken,
         idInvitation: channel.idInvitation,
-        bonus: channel.bonus,
-        remoteChannel: channel.remoteChannel,
+        bonus: 0,
+        remoteChannel: false,
         defaultLanguage:  channel.defaultLanguage,
     typePlatformRefreshToken: channel.typePlatformRefreshToken==androidPlatform?
     TypePlatformRefreshToken.android:

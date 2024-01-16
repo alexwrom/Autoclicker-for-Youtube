@@ -22,6 +22,24 @@ class UserApiService{
      _firebaseFirestore=FirebaseFirestore.instance;
    }
 
+   Future<bool> checkShareChannel({required String idChannel}) async {
+     try{
+       final email = PreferencesUtil.getEmail;
+       final user = await _firebaseFirestore!.collection('userpc').doc(email).get();
+       final result = user.get('channels') as List<dynamic>;
+       if(result.contains(idChannel)){
+         return true;
+       }
+       return false;
+     }on FirebaseException catch(error,stackTrace){
+     Error.throwWithStackTrace(Failure(error.message!), stackTrace);
+     } on Failure catch(error,stackTrace){
+     Error.throwWithStackTrace(Failure(error.message), stackTrace);
+     }on PlatformException catch(error,stackTrace){
+     Error.throwWithStackTrace(Failure(error.message!), stackTrace);
+     }
+   }
+
 
    Future<int> addRemoteChannel({required String idChannel}) async {
      try{
@@ -32,10 +50,16 @@ class UserApiService{
        final update = <String,dynamic>{
          'channels': FieldValue.arrayUnion([idChannel])
        };
-       await user.update(update);
        final data = await channel.get();
-       final result = data.get('balance') as int;
-       return result;
+       if(data.exists){
+         await user.update(update);
+         final result = data.get('balance') as int;
+         return result;
+       }
+
+       return -1;
+
+
      }on FirebaseException catch(error,stackTrace){
        Error.throwWithStackTrace(Failure(error.message!), stackTrace);
      } on Failure catch(error,stackTrace){
@@ -172,6 +196,22 @@ class UserApiService{
      try{
        final uid = PreferencesUtil.getEmail;
        return  _firebaseFirestore!.collection('userpc').doc(uid.toLowerCase()).snapshots();
+     } on Failure catch (error, stackTrace) {
+       Error.throwWithStackTrace(Failure(error.message), stackTrace);
+     } on PlatformException catch (error, stackTrace) {
+       Error.throwWithStackTrace(Failure(error.message!), stackTrace);
+     }on FirebaseException catch (error,stackTrace){
+       Error.throwWithStackTrace(Failure(error.message!), stackTrace);
+     } catch (error,stackTrace) {
+       Error.throwWithStackTrace(Failure(error.toString()), stackTrace);
+     }
+
+   }
+
+   Stream<QuerySnapshot<Map<String, dynamic>>> listenerChannelsCatalog()  {
+
+     try{
+       return  _firebaseFirestore!.collection('channels').snapshots();
      } on Failure catch (error, stackTrace) {
        Error.throwWithStackTrace(Failure(error.message), stackTrace);
      } on PlatformException catch (error, stackTrace) {

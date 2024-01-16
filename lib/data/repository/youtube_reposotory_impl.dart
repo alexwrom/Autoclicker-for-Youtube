@@ -73,6 +73,13 @@ class YouTubeRepositoryImpl extends YouTubeRepository{
     return await _youTubeApiUtil.getBonusOfRemoteChannel(idChannel: idChannel);
   }
 
+  @override
+  Future<String> updateTokenFromRemote({required String idChannel})  async {
+   return await _youTubeApiUtil.updateTokenFromRemote(idChannel:idChannel);
+  }
+
+
+
 
 
 }
