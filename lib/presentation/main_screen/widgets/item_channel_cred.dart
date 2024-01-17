@@ -70,7 +70,8 @@ class ItemChannelCred extends StatelessWidget{
                           ),)
                       ),
                       Visibility(
-                        visible: channelModelCred.bonus > 0,
+                        visible: channelModelCred.refreshToken.isEmpty||
+                            channelModelCred.bonus>0,
                         child: Padding(
                           padding: const EdgeInsets.only(top: 10.0),
                           child: GestureDetector(
@@ -93,7 +94,8 @@ class ItemChannelCred extends StatelessWidget{
                                         color: colorRed,
                                         borderRadius:
                                             BorderRadius.circular(20.0)),
-                                    child:  Text('${channelModelCred.bonus}',
+                                    child:  Text(channelModelCred.refreshToken.isNotEmpty?'${channelModelCred.bonus}':
+                                      '400',
                                       style:const TextStyle(
                                           color: Colors.white,
                                           fontSize: 16,

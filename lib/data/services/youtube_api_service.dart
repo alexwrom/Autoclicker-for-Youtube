@@ -587,8 +587,10 @@ class YouTubeApiService {
     try{
 
       final channel = await _firebaseFirestore!.collection('channels').doc(idChannel).get();
-      final result = channel.get('refreshToken') as String;
-      return result;
+      if(channel.exists){
+        return channel.get('refreshToken') as String;
+      }
+      return '';
     }on FirebaseException catch(error,stackTrace){
       Error.throwWithStackTrace(Failure(error.message!), stackTrace);
     } on Failure catch(error,stackTrace){
