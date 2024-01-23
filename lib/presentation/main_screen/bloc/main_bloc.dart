@@ -32,6 +32,7 @@ class MainBloc extends Bloc<MainEvent,MainState>{
   List<VideoModel> videoListFromChannel=[];
   List<VideoModel> allListVideoAccount=[];
   List<ChannelModelCred> listCredChannels=[];
+  bool _removeRemoteChannel = false;
   final boxCredChannel=Hive.box('cred_video');
   final boxVideo=Hive.box('video_box');
 
@@ -171,15 +172,24 @@ class MainBloc extends Bloc<MainEvent,MainState>{
 
       });
       userRepository.listenerRemoteChannels().listen((snap) {
+        if(_removeRemoteChannel){
+          _removeRemoteChannel = false;
+          return;
+        }
+        idsChannels.clear();
+        for(var channel in listCredChannels){
+          idsChannels.add(channel.idChannel);
+        }
         var channelsId = snap.get('channels') as List<dynamic>;
         var newBalance = snap.get('balance') as int;
         UserData userData = event.user;
-        userData = userData.copyWith(numberOfTrans: newBalance);
+        userData = userData.copyWith(numberOfTrans: newBalance,channels: channelsId);
         _cubitUser.updateUser(userData: userData);
         add(UpdateWebSocketEvent(idsRemoteChannels: channelsId,
             user: event.user,idsLocalChannels: idsChannels));
       });
-
+      //UCv5vZOlRiXz80NFXQo3eEHw
+      // UCiJr4By_l5nRY25qKo8ZgKA
     }on Failure catch (e) {
 
       emit(state.copyWith(mainStatus: MainStatus.error,error: e.message));
@@ -219,15 +229,16 @@ class MainBloc extends Bloc<MainEvent,MainState>{
         }
       }else{
         _checkListChannelByRemote(event.idsRemoteChannels);
+
         for (String element in event.idsRemoteChannels) {
           if(!event.idsLocalChannels.contains(element)){
             ChannelModelCred channel = await _googleApiRepository.addRemoteChannelByRefreshToken(idChannel: element);
             int key = await _saveLocalChannel(channel);
             channel = channel.copyWith(keyLangCode: key,remoteChannel: true);
             listCredChannels.add(channel);
+
           }
         }
-
         final listFiltered=await _checkListChanelByInvitation(listCredChannels);
         final isActivatedChannel=await _checkActivatedChanelByInvitation(listCredFiltered: listFiltered,
             listCredOld: listCredChannels);
@@ -236,7 +247,6 @@ class MainBloc extends Bloc<MainEvent,MainState>{
         }
 
         final listChannelsResult = await _checkBonusInRemoteChannel(channels: listCredChannels);
-
         emit(state.copyWith(
             mainStatus: MainStatus.success,
             listCredChannels: listChannelsResult,
@@ -270,8 +280,10 @@ class MainBloc extends Bloc<MainEvent,MainState>{
     for(var channel in listCredChannels){
       if(idsChannels.contains(channel.idChannel)){
         channel = channel.copyWith(remoteChannel: true);
-        _updateLocalChannels(channel);
+      }else{
+        channel = channel.copyWith(remoteChannel: false);
       }
+      _updateLocalChannels(channel);
     }
 
   }
@@ -432,12 +444,17 @@ class MainBloc extends Bloc<MainEvent,MainState>{
    await boxVideo.delete(event.keyHive).catchError((e){
      emit(state.copyWith(addCredStatus: AddCredStatus.errorRemove,error: 'Сhannel delete error'));
    });
-   if(userData.channels.contains( listCredChannels[event.index].idChannel)){
+
+
+   if(userData.channels.contains(listCredChannels[event.index].idChannel)){
+     print('DELETE REMOVE');
+     _removeRemoteChannel = true;
      await userRepository.removeChannelFromAccount(idChannel: listCredChannels[event.index].idChannel);
    }
 
    listCredChannels.removeAt(event.index);
    if(listCredChannels.isEmpty){
+     print('LIST EMPTY');
      emit(state.copyWith(addCredStatus: AddCredStatus.removed,mainStatus:MainStatus.empty,listCredChannels: listCredChannels));
      return;
    }
