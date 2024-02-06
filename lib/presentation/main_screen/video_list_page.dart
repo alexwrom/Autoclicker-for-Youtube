@@ -78,7 +78,7 @@ class _VideoListPageState extends State<VideoListPage> with WidgetsBindingObserv
       body: Column(
         children: [
           Container(
-            height: 100,
+            height: 120,
             padding: const EdgeInsets.only(top: 30,left: 20,right: 20),
             decoration: BoxDecoration(
                 color: colorPrimary,
