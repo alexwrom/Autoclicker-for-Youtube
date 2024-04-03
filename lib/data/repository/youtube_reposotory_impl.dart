@@ -6,6 +6,7 @@
 import 'package:googleapis/youtube/v3.dart';
 import 'package:youtube_clicker/domain/models/channel_model.dart';
 import 'package:youtube_clicker/domain/repository/youtube_repository.dart';
+import 'package:youtube_clicker/presentation/translate_screen/bloc/translate_event.dart';
 
 import '../../di/locator.dart';
 import '../../domain/models/channel_model_cred.dart';
@@ -37,8 +38,8 @@ class YouTubeRepositoryImpl extends YouTubeRepository{
   }
 
   @override
-  Future<bool> insertCaption({required String idCap, required String idVideo, required String codeLang})async {
-   return await _youTubeApiUtil.insertCaption(idCap: idCap, idVideo: idVideo, codeLang: codeLang);
+  Future<bool> insertCaption({required String idCap, required InsertSubtitlesEvent event, required String codeLang, required String defCaptionData})async {
+   return await _youTubeApiUtil.insertCaption(idCap: idCap, event: event, codeLang: codeLang, defCaptionData:defCaptionData);
   }
 
   @override

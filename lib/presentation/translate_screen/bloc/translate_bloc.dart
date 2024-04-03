@@ -16,8 +16,10 @@ import '../../../domain/repository/user_repository.dart';
 import '../../../domain/repository/youtube_repository.dart';
 import '../../main_screen/bloc/main_bloc.dart';
 import '../../main_screen/cubit/user_data_cubit.dart';
+import '../../../data/http_client/dio_client_insert_caption.dart';
 
 class TranslateBloc extends Bloc<TranslateEvent, TranslateState> {
+  final _dio = locator.get<DioClientInsertCaption>();
   final _translateRepository = locator.get<TranslateRepository>();
   final _userRepository = locator.get<UserRepository>();
   final _youTubeRepository = locator.get<YouTubeRepository>();
@@ -95,7 +97,6 @@ class TranslateBloc extends Bloc<TranslateEvent, TranslateState> {
         List<String> listCodeLanguageNotSuccessful = [];
         listCodeLang.remove(defLang);
         int operationAll = listCodeLang.length;
-        int opTick = operationAll;
 
         if (_oldCodeList.length == listCodeLang.length) {
           _listCap.clear();
@@ -120,8 +121,10 @@ class TranslateBloc extends Bloc<TranslateEvent, TranslateState> {
                       .tr()));
           return;
         }
+        int opTick = operationAll + _listCap.length;
 
         for (var element in _listCap) {
+          opTick--;
           var codeLangFromSubtitle = element.snippet!.language;
           if (codeLangFromSubtitle!.contains('-')) {
             codeLangFromSubtitle = codeLangFromSubtitle.split('-')[0];
@@ -129,19 +132,27 @@ class TranslateBloc extends Bloc<TranslateEvent, TranslateState> {
           if (listCodeLang.contains(codeLangFromSubtitle)) {
             await _youTubeRepository.removeCaptions(element.id!);
           }
+         emit(state.copyWith(
+              translateStatus: TranslateStatus.translating,
+              progressTranslateDouble: _getProgressDouble(opTick, operationAll + _listCap.length),
+              progressTranslate: _getProgress(opTick, operationAll + _listCap.length),
+              messageStatus: 'Status CAP '));
         }
+        final defCaption = await _dio
+            .init()
+            .get('/$idCap', queryParameters: {'tlang': defLang, 'tfmt': 'sbv'});
 
         for (int i = 0; i < operationAll; i++) {
           opTick--;
           final result = await _youTubeRepository.insertCaption(
-              idCap: idCap!, idVideo: event.idVideo, codeLang: listCodeLang[i]);
+              idCap: idCap!, event: event, codeLang: listCodeLang[i],defCaptionData: defCaption.data);
           if (!result) {
             listCodeLanguageNotSuccessful.add(listCodeLang[i]);
           }
           emit(state.copyWith(
               translateStatus: TranslateStatus.translating,
-              progressTranslateDouble: _getProgressDouble(opTick, operationAll),
-              progressTranslate: _getProgress(opTick, operationAll),
+              progressTranslateDouble: _getProgressDouble(opTick, operationAll + _listCap.length),
+              progressTranslate: _getProgress(opTick, operationAll + _listCap.length),
               messageStatus: 'Status CAP $i'));
           if (opTick == 0) {
             final l1 = listCodeLang.length;

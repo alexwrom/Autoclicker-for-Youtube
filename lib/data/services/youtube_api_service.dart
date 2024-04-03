@@ -17,6 +17,7 @@ import 'package:oauth2_client/google_oauth2_client.dart';
 import 'package:oauth2_client/oauth2_helper.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:youtube_clicker/data/models/cred_by_code_invitation_model.dart';
+import 'package:youtube_clicker/presentation/translate_screen/bloc/translate_event.dart';
 import 'package:youtube_clicker/utils/failure.dart';
 import '../../di/locator.dart';
 import '../../domain/models/channel_model_cred.dart';
@@ -29,6 +30,7 @@ import '../models/channel_cred_from_api.dart';
 import '../models/config_app_model.dart';
 import '../models/video_model_from_api.dart';
 import 'package:google_sign_in_platform_interface/google_sign_in_platform_interface.dart';
+import '../../../domain/repository/translate_repository.dart';
 
 class YouTubeApiService {
   IOClient? httpClient;
@@ -456,8 +458,9 @@ class YouTubeApiService {
 
   Future<bool> insertCaption(
       {required String idCap,
-      required String idVideo,
-      required String codeLang}) async {
+      required InsertSubtitlesEvent event,
+      required String codeLang,
+      required String defCaptionData}) async {
     try {
       final authHeaderString = PreferencesUtil.getHeaderApiGoogle;
       final authHeaders = json.decode(authHeaderString);
@@ -470,13 +473,38 @@ class YouTubeApiService {
       String dir = (await getTemporaryDirectory()).path;
       final f1 = '$dir/captions.sbv';
       final f = await File(f1).create();
-      final file = await f.writeAsString(caption.data);
-      Stream<List<int>> stream = file.openRead();
-      final media = Media(stream, (await file.length()));
+      List<String> stringList = caption.data.split('\n');
+      var capIsEmtry = true;
+
+      for (int i = 0; i < stringList.length - 1; i++){
+        if (i - 1 % 3 == 0) {
+          if (stringList[i].trim().isNotEmpty) {
+            capIsEmtry = false;
+            break;
+          }
+        }
+      }
+      if (capIsEmtry){
+        final _translateRepository = locator.get<TranslateRepository>();
+        final translateData = await _translateRepository.translate(
+            codeLang, defCaptionData);
+        List<String> translateList = translateData.split('\n');
+
+        for (int i = 0; i < translateList.length - 1; i++){
+          if (i % 3 == 0) {
+            translateList[i] = stringList[i];
+          }
+        }
+        await f.writeAsString(translateList.join('\n'));
+      } else
+        await f.writeAsString(caption.data);
+
+      Stream<List<int>> stream = f.openRead();
+      final media = Media(stream, (await f.length()));
       await api.captions.insert(
           Caption(
             snippet:
-                CaptionSnippet(videoId: idVideo, language: codeLang, name: ''),
+                CaptionSnippet(videoId: event.idVideo, language: codeLang, name: ''),
           ),
           ['snippet'],
           uploadMedia: media);

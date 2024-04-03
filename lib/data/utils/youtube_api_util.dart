@@ -8,6 +8,7 @@ import 'package:youtube_clicker/data/models/channel_model_from_api.dart';
 import 'package:youtube_clicker/data/models/video_model_from_api.dart';
 import 'package:youtube_clicker/di/locator.dart';
 import 'package:youtube_clicker/domain/models/video_model.dart';
+import 'package:youtube_clicker/presentation/translate_screen/bloc/translate_event.dart';
 
 import '../../domain/models/channel_model.dart';
 import '../../domain/models/channel_model_cred.dart';
@@ -56,8 +57,8 @@ class YouTubeApiUtil{
       return await _youTubeApi.loadCaptions(idVideo,cred);
     }
 
-    Future<bool> insertCaption({required String idCap,required String idVideo,required String codeLang})async{
-      return await _youTubeApi.insertCaption(idCap: idCap, idVideo: idVideo, codeLang: codeLang);
+    Future<bool> insertCaption({required String idCap,required InsertSubtitlesEvent event,required String codeLang, required String defCaptionData})async{
+      return await _youTubeApi.insertCaption(idCap: idCap, event: event, codeLang: codeLang, defCaptionData:defCaptionData);
     }
 
     Future<bool> removeCaptions(String idCap)async{
